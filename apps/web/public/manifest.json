@@ -2,18 +2,19 @@
   "name": "OneShotsmith",
   "short_name": "OneShotsmith",
   "description": "D&D 5e Character & Adventure Generator",
-  "start_url": "/",
+  "start_url": "/oneshot/",
+  "scope": "/oneshot/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/oneshot/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/oneshot/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

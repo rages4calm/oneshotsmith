@@ -1,10 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@oneshotsmith/ui";
+import type { LucideIcon } from "lucide-react";
+import {
+  Shield,
+  Swords,
+  HeartPulse,
+  Sparkles,
+  ScrollText,
+  ArrowRight,
+  RefreshCw,
+  FileDown,
+  Save,
+  Check,
+  Loader2,
+  Target,
+  Brain,
+  Clipboard,
+} from "lucide-react";
 import { generateCharacter } from "@oneshotsmith/core";
 import type { Role, CharacterLevel, Character } from "@oneshotsmith/core";
+import { SiteFooter } from "../../components/site-footer";
 
 export default function CharacterCreatorPage() {
   const [step, setStep] = useState(1);
@@ -12,44 +30,240 @@ export default function CharacterCreatorPage() {
   const [role, setRole] = useState<Role | null>(null);
   const [character, setCharacter] = useState<Character | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const storageKey = "oneshotsmith:saved-characters";
 
   const roles: Array<{
     name: Role;
-    icon: string;
+    icon: LucideIcon;
     description: string;
     color: string;
   }> = [
     {
       name: "Frontliner",
-      icon: "🛡️",
+      icon: Shield,
       description: "Tank and protect allies. High HP and AC.",
       color: "from-red-500 to-orange-500",
     },
     {
       name: "Skirmisher",
-      icon: "⚔️",
+      icon: Swords,
       description: "High damage, mobile striker. Sneak attacks.",
       color: "from-purple-500 to-pink-500",
     },
     {
       name: "Support",
-      icon: "💚",
+      icon: HeartPulse,
       description: "Heal and buff allies. Keep the party alive.",
       color: "from-green-500 to-emerald-500",
     },
     {
       name: "Control",
-      icon: "✨",
+      icon: Sparkles,
       description: "Area control and crowd control. Spellcaster.",
       color: "from-blue-500 to-cyan-500",
     },
     {
       name: "Face",
-      icon: "🎭",
+      icon: ScrollText,
       description: "Social skills and support. Inspire allies.",
       color: "from-yellow-500 to-amber-500",
     },
   ];
+
+  const masteryAdvice = useMemo(() => {
+    if (!character) return [];
+    const advice: Record<Role, string[]> = {
+      Frontliner: [
+        "Lead the marching order and ready opportunity attacks to lock enemies in place.",
+        "Invest in defensive reactions (Shield, Fighting Style) to protect fragile allies.",
+      ],
+      Skirmisher: [
+        "Always plan an exit\u2014bonus action Disengage, Misty Step, or allies' displacement.",
+        "Focus fire on high-value targets; coordinate initiative swaps with support casters.",
+      ],
+      Support: [
+        "Track concentration spells carefully and keep backup buffs ready to redeploy.",
+        "Pre-roll likely healing values to keep table pace upbeat during clutch moments.",
+      ],
+      Control: [
+        "Pair battlefield shaping with terrain advantages created by the one-shot map.",
+        "Use readied actions to punish enemy movement when hard control is unavailable.",
+      ],
+      Face: [
+        "Leverage discovered NPC bonds before rolling initiative to create advantage.",
+        "Document social leverage (favors, debt, secrets) and share them with the party.",
+      ],
+    };
+    return advice[character.role] ?? [];
+  }, [character]);
+
+  const handleExportPdf = async () => {
+    if (!character) return;
+    try {
+      setIsExporting(true);
+      const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const pageHeight = doc.internal.pageSize.getHeight();
+      let y = 20;
+
+      const ensureSpace = (amount: number) => {
+        if (y + amount > pageHeight - 20) {
+          doc.addPage();
+          y = 20;
+        }
+      };
+
+      const addHeading = (title: string) => {
+        ensureSpace(10);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text(title, 14, y);
+        y += 8;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+      };
+
+      const addLine = (textLine: string) => {
+        ensureSpace(6);
+        const lines = doc.splitTextToSize(textLine, 180);
+        lines.forEach((line: string) => {
+          doc.text(line, 14, y);
+          y += 6;
+          ensureSpace(0);
+        });
+      };
+
+      const addBulletSection = (sectionTitle: string, items: string[] | undefined) => {
+        if (!items || items.length === 0) return;
+        addHeading(sectionTitle);
+        items.forEach((item) => {
+          ensureSpace(6);
+          const lines = doc.splitTextToSize(`• ${item}`, 176);
+          lines.forEach((line: string) => {
+            doc.text(line, 18, y);
+            y += 6;
+            ensureSpace(0);
+          });
+        });
+      };
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("OneShotsmith Character Summary", 14, y);
+      y += 10;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      addLine(`Name: ${character.name || `${character.role} ${character.class}`}`);
+      addLine(`Role: ${character.role} • Level ${character.level}`);
+      addLine(`Race / Class: ${character.race} ${character.class}`);
+      addLine(`Background: ${character.background}`);
+      addLine(`HP ${character.hp} • AC ${character.ac} • Proficiency +${character.proficiencyBonus}`);
+
+      addHeading("Ability Scores");
+      const abilityLine = Object.entries(character.abilities)
+        .map(([ability, score]) => `${ability}: ${score}`)
+        .join("    ");
+      addLine(abilityLine);
+
+      addBulletSection("Features", character.features);
+      addBulletSection("Equipment", character.equipment);
+      addBulletSection("Spells Prepared", character.spells);
+      addBulletSection("Tactics", character.tactics);
+
+      const fileName = character.name?.replace(/\s+/g, "_") || `${character.role}_level_${character.level}`;
+      doc.save(`${fileName}.pdf`);
+      setFeedback({ type: "success", message: "PDF exported. Check your downloads." });
+      setTimeout(() => setFeedback(null), 4000);
+    } catch (error) {
+      console.error("Failed to export PDF", error);
+      setFeedback({ type: "error", message: "Export failed. Please try again." });
+      setTimeout(() => setFeedback(null), 4000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleSaveCharacter = () => {
+    if (!character) return;
+    try {
+      setIsSaving(true);
+      const payload = {
+        ...character,
+        savedAt: new Date().toISOString(),
+        id: crypto.randomUUID(),
+      };
+      const existingRaw =
+        typeof window !== "undefined"
+          ? window.localStorage.getItem(storageKey)
+          : null;
+      const existing: typeof payload[] = existingRaw
+        ? JSON.parse(existingRaw)
+        : [];
+      const updated = [payload, ...existing].slice(0, 25);
+      window.localStorage.setItem(storageKey, JSON.stringify(updated));
+      setFeedback({
+        type: "success",
+        message:
+          "Character saved locally. Visit again soon to load your vault.",
+      });
+    } catch (error) {
+      console.error("Failed to save character", error);
+      setFeedback({
+        type: "error",
+        message: "Save failed. Browser storage may be disabled.",
+      });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setFeedback(null), 4000);
+    }
+  };
+
+  const handleCopyCharacter = async () => {
+    if (!character) return;
+    try {
+      setIsCopying(true);
+      const { name, race, class: characterClass, level: characterLevel, role: roleName, background, abilities, hp, ac, proficiencyBonus, features, equipment, spells, tactics } = character;
+      const summaryLines: string[] = [
+        "OneShotsmith Character Summary",
+        `Name: ${name || `${roleName} ${characterClass}`}`,
+        `Role: ${roleName} • Level ${characterLevel}`,
+        `Race / Class: ${race} ${characterClass}`,
+        `Background: ${background}`,
+        `HP ${hp} • AC ${ac} • Proficiency +${proficiencyBonus}`,
+        "",
+        "Ability Scores:",
+        ...Object.entries(abilities).map(([ability, score]) => `- ${ability}: ${score}`),
+        "",
+        "Features:",
+        ...features.map((feature) => `- ${feature}`),
+        "",
+        "Equipment:",
+        ...equipment.map((item) => `- ${item}`),
+      ];
+
+      if (spells && spells.length > 0) {
+        summaryLines.push("", "Spells Prepared:", ...spells.map((spell) => `- ${spell}`));
+      }
+
+      summaryLines.push("", "Tactics:", ...tactics.map((tactic) => `- ${tactic}`));
+
+      await navigator.clipboard.writeText(summaryLines.join("\n"));
+      setFeedback({ type: "success", message: "Character summary copied to clipboard." });
+      setTimeout(() => setFeedback(null), 4000);
+    } catch (error) {
+      console.error("Failed to copy character summary", error);
+      setFeedback({ type: "error", message: "Copy failed. Browser permissions may block clipboard access." });
+      setTimeout(() => setFeedback(null), 4000);
+    } finally {
+      setIsCopying(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!role) return;
@@ -77,16 +291,17 @@ export default function CharacterCreatorPage() {
       <header className="border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" prefetch={false} className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-xl">⚔️</span>
+                <Sparkles className="h-5 w-5 text-white" aria-hidden="true" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
                 OneShotsmith
               </span>
             </Link>
             <Button variant="ghost" onClick={handleReset} className="text-slate-300">
-              ← Back to Start
+              <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
+                Back to Start
             </Button>
           </div>
         </div>
@@ -158,11 +373,11 @@ export default function CharacterCreatorPage() {
                   <CardContent>
                     <ul className="space-y-2 text-sm text-slate-400">
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
+                        <Check className="h-4 w-4 text-green-400" />
                         Proficiency bonus: +{lvl <= 4 ? 2 : 3}
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
+                        <Check className="h-4 w-4 text-green-400" />
                         {lvl === 3 && "2-3 class features"}
                         {lvl === 5 && "Extra attack/3rd level spells"}
                         {lvl === 8 && "Powerful subclass features"}
@@ -180,7 +395,26 @@ export default function CharacterCreatorPage() {
                 className="px-12 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg"
               >
                 Continue
-                <span className="ml-2">→</span>
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={handleCopyCharacter}
+                disabled={isCopying}
+                className="px-8 py-6 text-lg border-2 border-slate-700 bg-slate-900/60 hover:border-blue-500 hover:bg-blue-500/10 disabled:opacity-60"
+              >
+                {isCopying ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                    Copying...
+                  </>
+                ) : (
+                  <>
+                    Copy Summary
+                    <Clipboard className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -199,29 +433,32 @@ export default function CharacterCreatorPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roles.map((r) => (
-                <Card
-                  key={r.name}
-                  className={`cursor-pointer transition-all duration-300 ${
-                    role === r.name
-                      ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20 scale-105"
-                      : "border-slate-800 hover:border-purple-500/50 bg-slate-900/50 hover:scale-102"
-                  }`}
-                  onClick={() => setRole(r.name)}
-                >
-                  <CardHeader>
-                    <div className={`w-16 h-16 bg-gradient-to-br ${r.color} rounded-2xl flex items-center justify-center text-4xl mb-4 shadow-lg`}>
-                      {r.icon}
-                    </div>
-                    <CardTitle className="text-2xl text-white">
-                      {r.name}
-                    </CardTitle>
-                    <CardDescription className="text-base">
-                      {r.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
+              {roles.map((r) => {
+                const RoleIcon = r.icon;
+                return (
+                  <Card
+                    key={r.name}
+                    className={`cursor-pointer transition-all duration-300 ${
+                      role === r.name
+                        ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20 scale-105"
+                        : "border-slate-800 hover:border-purple-500/50 bg-slate-900/50 hover:scale-102"
+                    }`}
+                    onClick={() => setRole(r.name)}
+                  >
+                    <CardHeader>
+                      <div className={`w-16 h-16 bg-gradient-to-br ${r.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
+                        <RoleIcon className="h-8 w-8 text-white" aria-hidden="true" />
+                      </div>
+                      <CardTitle className="text-2xl text-white">
+                        {r.name}
+                      </CardTitle>
+                      <CardDescription className="text-base">
+                        {r.description}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                );
+              })}
             </div>
 
             <div className="flex justify-center gap-4">
@@ -231,7 +468,8 @@ export default function CharacterCreatorPage() {
                 onClick={() => setStep(1)}
                 className="px-8 py-6 text-lg border-2 border-slate-700"
               >
-                ← Back
+                <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
+                Back
               </Button>
               <Button
                 size="lg"
@@ -241,13 +479,13 @@ export default function CharacterCreatorPage() {
               >
                 {isGenerating ? (
                   <>
-                    <span className="animate-spin mr-2">⚙️</span>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Generating...
                   </>
                 ) : (
                   <>
                     Generate Character
-                    <span className="ml-2">✨</span>
+                    <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                   </>
                 )}
               </Button>
@@ -266,7 +504,7 @@ export default function CharacterCreatorPage() {
                 Level {character.level} {character.race} {character.class}
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300">
-                <span className="text-xl">✓</span>
+                <Check className="h-4 w-4" aria-hidden="true" />
                 Character Ready!
               </div>
             </div>
@@ -331,7 +569,7 @@ export default function CharacterCreatorPage() {
                   <ul className="space-y-2">
                     {character.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-2 text-slate-300">
-                        <span className="text-purple-400">•</span>
+                        <Check className="h-4 w-4 text-purple-400" aria-hidden="true" />
                         {feature}
                       </li>
                     ))}
@@ -347,7 +585,7 @@ export default function CharacterCreatorPage() {
                   <ul className="space-y-2">
                     {character.equipment.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-slate-300">
-                        <span className="text-blue-400">•</span>
+                        <Check className="h-4 w-4 text-blue-400" aria-hidden="true" />
                         {item}
                       </li>
                     ))}
@@ -379,7 +617,7 @@ export default function CharacterCreatorPage() {
             <Card className="border-purple-500/20 bg-purple-900/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <span>💡</span>
+                  <Brain className="h-5 w-5 text-purple-300" aria-hidden="true" />
                   How to Play This Character
                 </CardTitle>
               </CardHeader>
@@ -403,26 +641,91 @@ export default function CharacterCreatorPage() {
                 onClick={handleReset}
                 className="px-8 py-6 text-lg border-2 border-slate-700"
               >
+                <RefreshCw className="mr-2 h-5 w-5" aria-hidden="true" />
                 Create Another
               </Button>
               <Button
                 size="lg"
-                className="px-8 py-6 text-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
+                onClick={handleExportPdf}
+                disabled={isExporting}
+                className="px-8 py-6 text-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:opacity-60"
               >
-                Export as PDF
-                <span className="ml-2">📄</span>
+                {isExporting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                    Preparing PDF...
+                  </>
+                ) : (
+                  <>
+                    Export as PDF
+                    <FileDown className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </>
+                )}
               </Button>
               <Button
                 size="lg"
-                className="px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500"
+                onClick={handleSaveCharacter}
+                disabled={isSaving}
+                className="px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 disabled:opacity-60"
               >
-                Save Character
-                <span className="ml-2">💾</span>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    Save Character
+                    <Save className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </>
+                )}
               </Button>
             </div>
+
+            {feedback && (
+              <div
+                className={`mt-6 rounded-lg border px-4 py-3 text-sm ${
+                  feedback.type === "success"
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+                    : "border-red-500/40 bg-red-500/10 text-red-200"
+                }`}
+              >
+                {feedback.message}
+              </div>
+            )}
+
+            {masteryAdvice.length > 0 && (
+              <Card className="border-blue-500/30 bg-slate-900/60">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-300" aria-hidden="true" />
+                    Table Leadership Tips
+                  </CardTitle>
+                  <CardDescription className="text-slate-300">
+                    Tactical guidance sourced from veteran GMs for this build.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {masteryAdvice.map((tip, index) => (
+                      <li key={index} className="flex items-start gap-3 text-slate-200">
+                        <span className="text-blue-400 font-semibold">{index + 1}.</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }
+
+
+
+
+

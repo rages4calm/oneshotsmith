@@ -49,7 +49,7 @@ This project includes a **fully functional, beautifully designed** web applicati
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/rages4calm/oneshotsmith.git
 cd oneshot
 
 # Install dependencies

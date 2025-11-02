@@ -19,30 +19,28 @@ A fast, friendly web app for D&D 5e character creation and one-shot adventure ge
 
 ## ✨ Features
 
-### 🎲 Smart Character Builder
-- **3-Step Wizard** - Choose level → Pick role → Get complete character
-- **5 Combat Roles** - Frontliner, Skirmisher, Support, Control, Face
-- **SRD-Compliant** - All D&D 5e SRD 5.1 content (CC-BY-4.0)
-- **Complete Stats** - HP, AC, abilities, skills, equipment, and tactical tips
-- **Export Ready** - PDF, VTT tokens (Foundry, Roll20)
+### v0.7 (Current)
+- [x] Character creator with 5 roles
+- [x] One-shot adventure generator
+- [x] Beautiful modern UI
+- [x] Export to PDF for characters and adventures
+- [x] Clipboard summaries for instant sharing
+- [x] Full test coverage
 
-### 📖 One-Shot Adventure Generator
-- **5 Adventure Themes** - Heist, Rescue, Dungeon Sprint, Horror-Lite, Travel Gauntlet
-- **3-Act Structure** - Hook, acts I-III, twist, and finale complication
-- **Balanced Encounters** - Level-appropriate monsters and XP budget
-- **Ready-to-Run** - NPCs with goals, treasure parcels, and key items
-- **Flexible Settings** - Configure level, session length (2-4h), and difficulty
+### v1.0 (Next)
+- [ ] Database integration (Turso)
+- [ ] User authentication (Supabase)
+- [ ] Save/load characters
+- [ ] Real-time multiplayer lobbies
+- [ ] Party balance meter
+- [ ] VTT exports (Foundry, Roll20)
 
-### 🎨 Beautiful Modern UI
-- **Dark Theme** - Professional gradient design with purple/blue accent
-- **Smooth Animations** - Hover effects, transitions, and micro-interactions
-- **Fully Responsive** - Perfect on mobile, tablet, and desktop
-- **Accessible** - Keyboard navigation, proper contrast ratios
-
-### 👥 Real-time Multiplayer (Planned)
-- **Party Balance Meter** - Live composition analysis
-- **Shared Lobbies** - Collaborate with players
-- **WebSocket Sync** - Real-time character updates
+### v1.1+ (Future)
+- [ ] Custom homebrew content
+- [ ] More adventure themes
+- [ ] Spell slot tracker
+- [ ] Encounter builder
+- [ ] Mobile PWA with offline mode
 
 ---
 
@@ -295,3 +293,8 @@ See [licenses/SRD-CC-BY-4.0.md](./licenses/SRD-CC-BY-4.0.md) for details.
 [⬆ Back to Top](#-oneshotsmith)
 
 </div>
+
+## Copyright
+
+© 2025 Carl Prewitt Jr. All rights reserved.
+

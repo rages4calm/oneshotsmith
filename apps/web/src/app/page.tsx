@@ -23,18 +23,15 @@ export default function HomePage() {
                 OneShotsmith
               </span>
             </div>
-            <div className="flex gap-4">
-              <Link href="/about">
-                <Button variant="ghost" className="text-slate-300 hover:text-white">
-                  About
-                </Button>
-              </Link>
-              <Link href="/docs">
-                <Button variant="ghost" className="text-slate-300 hover:text-white">
-                  Docs
-                </Button>
-              </Link>
-            </div>
+            <a
+              href="https://github.com/rages4calm/oneshotsmith"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" className="text-slate-300 hover:text-white">
+                GitHub
+              </Button>
+            </a>
           </nav>
 
           {/* Hero Content */}
@@ -75,17 +72,17 @@ export default function HomePage() {
                   className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 hover:scale-105"
                 >
                   Create Character
-                  <span className="ml-2">→</span>
+                  <span className="ml-2" aria-hidden>⚔️</span>
                 </Button>
               </Link>
               <Link href="/one-shot-generator">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="px-8 py-6 text-lg font-semibold border-2 border-slate-700 hover:border-purple-500 text-white hover:bg-purple-500/10 transition-all duration-300"
+                  className="px-8 py-6 text-lg font-semibold border-2 border-slate-700 bg-slate-900/70 text-white hover:border-purple-500 hover:bg-purple-500/20 transition-all duration-300 shadow-lg/40"
                 >
                   Generate One-Shot
-                  <span className="ml-2">✨</span>
+                  <span className="ml-2" aria-hidden>🎲</span>
                 </Button>
               </Link>
             </div>
@@ -241,9 +238,16 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/docs" className="text-slate-400 hover:text-purple-400 transition">Documentation</Link></li>
-                <li><Link href="/about" className="text-slate-400 hover:text-purple-400 transition">About</Link></li>
-                <li><a href="https://github.com/your-repo" className="text-slate-400 hover:text-purple-400 transition">GitHub</a></li>
+                <li>
+                  <a
+                    href="https://github.com/rages4calm/oneshotsmith"
+                    className="text-slate-400 hover:text-purple-400 transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -253,7 +257,7 @@ export default function HomePage() {
               Portions of the materials used are property of Wizards of the Coast LLC and are used under CC-BY-4.0.
             </p>
             <p className="mt-2">
-              © {new Date().getFullYear()} OneShotsmith. All rights reserved.
+              {"\u00A9"} {new Date().getFullYear()} Carl Prewitt Jr. All rights reserved.
             </p>
           </div>
         </div>
@@ -261,3 +265,7 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+
+
