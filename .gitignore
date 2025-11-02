@@ -1,0 +1,63 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+.nyc_output
+
+# Next.js
+.next/
+out/
+build
+dist/
+
+# Production
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local env files
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# Typescript
+*.tsbuildinfo
+*.d.ts
+*.d.ts.map
+*.js.map
+# But keep config files
+!*.config.js
+!eslint.config.mjs
+
+# PartyKit
+.partykit
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

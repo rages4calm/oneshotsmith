@@ -1,0 +1,5 @@
+{
+  "name": "oneshotsmith",
+  "main": "src/index.ts",
+  "compatibilityDate": "2024-06-01"
+}

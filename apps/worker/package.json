@@ -1,0 +1,19 @@
+{
+  "name": "@oneshotsmith/worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "partykit dev",
+    "build": "partykit build",
+    "deploy": "partykit deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "partykit": "^0.0.106",
+    "@oneshotsmith/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.2"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@oneshotsmith/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@oneshotsmith/ui": "workspace:*",
+    "@oneshotsmith/core": "workspace:*",
+    "@oneshotsmith/db": "workspace:*",
+    "@oneshotsmith/adapters": "workspace:*",
+    "partysocket": "^1.0.2",
+    "zustand": "^4.5.2",
+    "@supabase/supabase-js": "^2.43.4",
+    "@react-pdf/renderer": "^3.4.4",
+    "next-intl": "^3.15.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.2",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.0.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
+  }
+}
