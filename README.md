@@ -127,23 +127,6 @@ oneshotsmith/
 
 ---
 
-## 📸 Screenshots
-
-<div align="center">
-
-### Landing Page
-![Landing Page](./docs/screenshots/landing.png)
-
-### Character Creator
-![Character Creator](./docs/screenshots/character-creator.png)
-
-### One-Shot Generator
-![Adventure Generator](./docs/screenshots/adventure-generator.png)
-
-</div>
-
----
-
 ## 🧪 Development
 
 ### Available Commands
@@ -253,32 +236,6 @@ See [licenses/SRD-CC-BY-4.0.md](./licenses/SRD-CC-BY-4.0.md) for details.
 
 ---
 
-## 🗺️ Roadmap
-
-### ✅ MVP (Current)
-- [x] Character creator with 5 roles
-- [x] One-shot adventure generator
-- [x] Beautiful modern UI
-- [x] Export to PDF (placeholder)
-- [x] Full test coverage
-
-### 🚧 v1.0 (Next)
-- [ ] Database integration (Turso)
-- [ ] User authentication (Supabase)
-- [ ] Save/load characters
-- [ ] Real-time multiplayer lobbies
-- [ ] Party balance meter
-- [ ] PDF export implementation
-
-### 🔮 v1.1+ (Future)
-- [ ] VTT exports (Foundry, Roll20)
-- [ ] Custom homebrew content
-- [ ] More adventure themes
-- [ ] Spell slot tracker
-- [ ] Encounter builder
-- [ ] Mobile PWA with offline mode
-
----
 
 ## ⭐ Star History
 
