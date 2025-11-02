@@ -21,7 +21,7 @@ Thank you for your interest in contributing to OneShotsmith! We appreciate your 
 ### Installation
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/oneshotsmith.git
+git clone https://github.com/rages4calm/oneshotsmith.git
 cd oneshotsmith
 
 # Install dependencies

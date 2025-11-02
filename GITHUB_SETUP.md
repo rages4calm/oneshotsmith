@@ -63,11 +63,11 @@ git commit -m "Initial commit: Complete OneShotsmith D&D character creator
 
 ## 🌐 Step 3: Connect to GitHub
 
-Replace `YOUR_USERNAME` with your GitHub username:
+Replace `rages4calm` with your GitHub username:
 
 ```bash
 # Add remote repository
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 
 # Set main branch
 git branch -M main
@@ -98,7 +98,7 @@ If GitHub asks for a password:
 
 ## ✅ Step 5: Verify Upload
 
-Visit: `https://github.com/YOUR_USERNAME/oneshotsmith`
+Visit: `https://github.com/rages4calm/oneshotsmith`
 
 You should see:
 - ✅ All project files
@@ -112,11 +112,11 @@ You should see:
 
 ### Update README.md
 
-Replace `YOUR_USERNAME` in the README with your actual GitHub username:
+Replace `rages4calm` in the README with your actual GitHub username:
 
 ```bash
 # Find and replace (Windows PowerShell)
-(Get-Content README.md) -replace 'YOUR_USERNAME', 'youractualusername' | Set-Content README.md
+(Get-Content README.md) -replace 'rages4calm', 'youractualusername' | Set-Content README.md
 
 # Commit the change
 git add README.md
@@ -138,7 +138,7 @@ typescript, tailwindcss, react, adventure-generator, tabletop-rpg
 1. Go to **Settings** → **Pages**
 2. Source: `Deploy from a branch`
 3. Branch: `main` → `/ (root)` → Save
-4. Your site will be at: `https://YOUR_USERNAME.github.io/oneshotsmith`
+4. Your site will be at: `https://rages4calm.github.io/oneshotsmith`
 
 ---
 
@@ -246,7 +246,7 @@ If you want to accept donations:
 ```bash
 # Create .github/FUNDING.yml
 mkdir .github
-echo "github: YOUR_USERNAME" > .github/FUNDING.yml
+echo "github: rages4calm" > .github/FUNDING.yml
 
 git add .github/FUNDING.yml
 git commit -m "chore: add funding options"
@@ -274,8 +274,8 @@ Create `.github/CODEOWNERS`:
 ```
 # These owners will be requested for review when someone opens a PR
 
-* @YOUR_USERNAME
-/docs/ @YOUR_USERNAME
+* @rages4calm
+/docs/ @rages4calm
 ```
 
 ---
@@ -289,7 +289,7 @@ Your project already has `.github/workflows/ci.yml`! This will:
 - ✅ Build the project
 - ✅ Run E2E tests
 
-View workflows: `https://github.com/YOUR_USERNAME/oneshotsmith/actions`
+View workflows: `https://github.com/rages4calm/oneshotsmith/actions`
 
 ---
 
@@ -301,7 +301,7 @@ cd c:\Users\crono\Desktop\oneshot
 git init
 git add .
 git commit -m "Initial commit: Complete OneShotsmith"
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 git branch -M main
 git push -u origin main
 
@@ -328,7 +328,7 @@ git pull                           # Get latest from GitHub
 **Solution:** Use HTTPS instead of SSH:
 
 ```bash
-git remote set-url origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote set-url origin https://github.com/rages4calm/oneshotsmith.git
 ```
 
 ### "Updates were rejected"
@@ -389,7 +389,7 @@ Your OneShotsmith project is now on GitHub! 🚀
 
 **Repository URL:**
 ```
-https://github.com/YOUR_USERNAME/oneshotsmith
+https://github.com/rages4calm/oneshotsmith
 ```
 
 ---

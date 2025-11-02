@@ -57,7 +57,7 @@ A fast, friendly web app for D&D 5e character creation and one-shot adventure ge
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/oneshotsmith.git
+git clone https://github.com/rages4calm/oneshotsmith.git
 cd oneshotsmith
 
 # Install dependencies
@@ -186,7 +186,7 @@ All tests passing ✅ | No deprecated packages ✅ | TypeScript strict mode ✅
 
 ### Vercel (Recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/oneshotsmith)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rages4calm/oneshotsmith)
 
 ```bash
 npm i -g vercel
@@ -215,7 +215,7 @@ docker run -p 3000:3000 oneshotsmith
 We welcome contributions! Here's how you can help:
 
 1. **Fork** the repository
-2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/oneshotsmith.git`
+2. **Clone** your fork: `git clone https://github.com/rages4calm/oneshotsmith.git`
 3. **Create** a branch: `git checkout -b feature/amazing-feature`
 4. **Commit** changes: `git commit -m 'Add amazing feature'`
 5. **Push** to branch: `git push origin feature/amazing-feature`
@@ -249,8 +249,8 @@ See [licenses/SRD-CC-BY-4.0.md](./licenses/SRD-CC-BY-4.0.md) for details.
 ## 📞 Support
 
 - 📖 **Documentation**: [SETUP_GUIDE.md](./SETUP_GUIDE.md)
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/YOUR_USERNAME/oneshotsmith/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/oneshotsmith/discussions)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/rages4calm/oneshotsmith/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/rages4calm/oneshotsmith/discussions)
 - 🎮 **Discord**: [Join our community](#)
 
 ---
@@ -284,7 +284,7 @@ See [licenses/SRD-CC-BY-4.0.md](./licenses/SRD-CC-BY-4.0.md) for details.
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR_USERNAME/oneshotsmith&type=Date)](https://star-history.com/#YOUR_USERNAME/oneshotsmith&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=rages4calm/oneshotsmith&type=Date)](https://star-history.com/#rages4calm/oneshotsmith&Date)
 
 ---
 

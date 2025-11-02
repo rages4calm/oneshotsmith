@@ -44,7 +44,7 @@ cd c:\Users\crono\Desktop\oneshot
 git init
 git add .
 git commit -m "Initial commit: Complete OneShotsmith"
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 git branch -M main
 git push -u origin main
 ```
@@ -145,7 +145,7 @@ git commit -m "Initial commit"
 
 ### Step 4: Push to GitHub (1 minute)
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 git branch -M main
 git push -u origin main
 ```

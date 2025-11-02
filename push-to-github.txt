@@ -10,7 +10,7 @@ BEFORE YOU START:
    - Public repository
    - DO NOT add README, license, or .gitignore (we have them)
 
-2. Replace YOUR_USERNAME below with your GitHub username
+2. Replace rages4calm below with your GitHub username
 
 =================================================================
 
@@ -26,23 +26,23 @@ git add .
 git commit -m "Initial commit: Complete OneShotsmith D&D character creator"
 
 
-STEP 3: CONNECT TO GITHUB (REPLACE YOUR_USERNAME!)
+STEP 3: CONNECT TO GITHUB (REPLACE rages4calm!)
 ---------------------------------------------------
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 git branch -M main
 git push -u origin main
 
 
 STEP 4: VERIFY
 --------------
-Visit: https://github.com/YOUR_USERNAME/oneshotsmith
+Visit: https://github.com/rages4calm/oneshotsmith
 (Your project should be there!)
 
 
 STEP 5: UPDATE README WITH YOUR USERNAME
 -----------------------------------------
 1. Edit README.md
-2. Replace all "YOUR_USERNAME" with your actual username
+2. Replace all "rages4calm" with your actual username
 3. Run these commands:
 
 git add README.md

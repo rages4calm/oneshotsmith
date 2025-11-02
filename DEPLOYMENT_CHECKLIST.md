@@ -81,11 +81,11 @@ git commit -m "Initial commit: Complete OneShotsmith D&D character creator
 
 ### Step 3: Connect to GitHub
 
-**Replace `YOUR_USERNAME` with your actual GitHub username:**
+**Replace `rages4calm` with your actual GitHub username:**
 
 ```bash
 # Add remote
-git remote add origin https://github.com/YOUR_USERNAME/oneshotsmith.git
+git remote add origin https://github.com/rages4calm/oneshotsmith.git
 
 # Set main branch
 git branch -M main
@@ -96,10 +96,10 @@ git push -u origin main
 
 ### Step 4: Update README on GitHub
 
-After pushing, update the README to replace `YOUR_USERNAME`:
+After pushing, update the README to replace `rages4calm`:
 
 1. Edit `README.md`
-2. Replace all instances of `YOUR_USERNAME` with your GitHub username
+2. Replace all instances of `rages4calm` with your GitHub username
 3. Commit and push:
 
 ```bash
@@ -124,7 +124,7 @@ On GitHub (Settings):
 
 3. **Pages (Optional):**
    - Enable GitHub Pages from `main` branch
-   - Your docs will be at: `https://YOUR_USERNAME.github.io/oneshotsmith`
+   - Your docs will be at: `https://rages4calm.github.io/oneshotsmith`
 
 ---
 
@@ -167,7 +167,7 @@ Your CI/CD workflow (`.github/workflows/ci.yml`) will automatically:
 - Run all tests
 - Build the project
 
-View at: `https://github.com/YOUR_USERNAME/oneshotsmith/actions`
+View at: `https://github.com/rages4calm/oneshotsmith/actions`
 
 ---
 
