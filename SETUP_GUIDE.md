@@ -1,7 +1,7 @@
 # OneShotsmith - Complete Setup & Deployment Guide
 
 **Version:** 0.1.0
-**Last Updated:** 2025-01-02
+**Last Updated:** 2025-11-03
 
 A professional D&D 5e character creator and one-shot adventure generator. Get players table-ready in under 10 minutes.
 
@@ -9,12 +9,13 @@ A professional D&D 5e character creator and one-shot adventure generator. Get pl
 
 This project includes a **fully functional, beautifully designed** web application with:
 
-- ✨ **Stunning Landing Page** - Modern gradient design with animations
-- 🎲 **Character Creator Wizard** - 3-step process to generate characters
-- 📖 **One-Shot Adventure Generator** - Complete adventures with NPCs, encounters, and treasure
-- 🎨 **Professional UI** - Built with shadcn/ui and TailwindCSS
-- ✅ **All Dependencies Updated** - No deprecated packages
-- 🧪 **Fully Tested** - Unit tests passing, TypeScript configured correctly
+- ✨ **Stunning Landing Page** – Modern gradient design with animations and feature highlights
+- 🛡️ **Character Creator Wizard** – Three-step role/level flow with PDF export and clipboard summaries
+- 📦 **Character Vault** – Local save/load, rename, reopen, and JSON export for every hero you build
+- 🧭 **Session Pacing Clock** – Theme- and difficulty-aware timing guidance for the one-shot generator
+- 📖 **Adventure Generator** – Hooks, act beats, encounters, NPCs, treasure, and twist in one click
+- 🎨 **Professional UI** – Built with shadcn/ui and TailwindCSS, responsive and accessible
+- 🧪 **Tested Tooling** – ESLint 9 (flat), Vitest, Playwright, and strict TypeScript ready to run
 
 **All features are working and ready to use!**
 

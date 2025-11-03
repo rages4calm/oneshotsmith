@@ -19,6 +19,7 @@ import {
   Map,
   Megaphone,
   RefreshCw,
+  Timer,
   Save,
   Sparkles,
   Users,
@@ -27,6 +28,146 @@ import {
 import { SiteFooter } from "../../components/site-footer";
 import { generateOneShot } from "@oneshotsmith/core";
 import type { OneShotTheme, CharacterLevel, Difficulty, TimeBox, OneShotPacket } from "@oneshotsmith/core";
+
+const pacingBlueprint: Record<
+  TimeBox,
+  Array<{ id: string; label: string; minutes: number; core: string[] }>
+> = {
+  "2h": [
+    {
+      id: "hook",
+      label: "Hook & Safety Check-in",
+      minutes: 15,
+      core: ["Run a quick vibe check and spotlight consent tool reminders.", "Drop the inciting incident immediately."],
+    },
+    {
+      id: "approach",
+      label: "Approach & Discovery",
+      minutes: 30,
+      core: ["Let players gather intel or scout the problem space.", "Set up the midpoint complication early."],
+    },
+    {
+      id: "rising",
+      label: "Rising Action",
+      minutes: 35,
+      core: ["Run the signature encounter or skill challenge.", "Track who hasn't had spotlight yet."],
+    },
+    {
+      id: "climax",
+      label: "Climax",
+      minutes: 25,
+      core: ["Trigger the twist beat and escalate the stakes.", "Keep initiative rounds brisk (90 seconds per turn)."],
+    },
+    {
+      id: "wrap",
+      label: "Wrap-up & Debrief",
+      minutes: 15,
+      core: ["Reward big choices with cinematic narration.", "Collect stars & wishes or highlight next steps."],
+    },
+  ],
+  "3h": [
+    {
+      id: "hook",
+      label: "Hook & Table Calibration",
+      minutes: 20,
+      core: ["Establish tone, boundaries, and win conditions.", "Surface personal stakes for at least two PCs."],
+    },
+    {
+      id: "approach",
+      label: "Investigation & Approach",
+      minutes: 45,
+      core: ["Offer meaningful choices between stealth, diplomacy, or force.", "Share an escalating clock or countdown timer."],
+    },
+    {
+      id: "rising",
+      label: "Escalation",
+      minutes: 50,
+      core: ["Deliver a set piece encounter or chase sequence.", "Hand out advantage for inventive play to keep momentum."],
+    },
+    {
+      id: "climax",
+      label: "Showdown",
+      minutes: 40,
+      core: ["Introduce the final complication tied to the twist.", "Spotlight player driven solutions before rolling dice."],
+    },
+    {
+      id: "wrap",
+      label: "Resolution & Epilogue",
+      minutes: 25,
+      core: ["Resolve outstanding NPC arcs or bargains.", "Invite players to narrate an epilogue snapshot."],
+    },
+  ],
+  "4h": [
+    {
+      id: "hook",
+      label: "Hook, Lines & Boundaries",
+      minutes: 25,
+      core: ["Layer in sensory details and foreshadow the villain.", "Clarify table expectations and pacing as a group."],
+    },
+    {
+      id: "approach",
+      label: "Investigation & Travel",
+      minutes: 60,
+      core: ["Alternate between exploration, roleplay, and light conflict.", "Seed clues that pay off during the finale."],
+    },
+    {
+      id: "rising",
+      label: "Escalation & Complications",
+      minutes: 70,
+      core: ["Run a tiered conflict or social duel.", "Rotate spotlight intentionally every 10 minutes."],
+    },
+    {
+      id: "climax",
+      label: "Finale",
+      minutes: 55,
+      core: ["Let the twist reshape the battlefield or objectives.", "Bring in dynamic terrain or environmental hazards."],
+    },
+    {
+      id: "wrap",
+      label: "Aftercare & Celebration",
+      minutes: 30,
+      core: ["Resolve outstanding threads and highlight player heroics.", "Close with table debrief or plug future adventures."],
+    },
+  ],
+};
+
+const themeOverlays: Partial<Record<OneShotTheme, Partial<Record<string, string>>>> = {
+  Heist: {
+    approach: "Offer flashback tokens to retroactively set up cons or gadgets.",
+    climax: "Trigger security sweeps or rival thieves on a failed clock.",
+  },
+  Rescue: {
+    approach: "Show glimpses of captives through whispered Sending or clues.",
+    wrap: "Prompt rescued NPCs to thank specific heroes for spotlight beats.",
+  },
+  "Dungeon Sprint": {
+    rising: "Lean into environmental hazards and collapsing architecture cues.",
+    climax: "Reveal the necromancer or guardian adapting to player tactics.",
+  },
+  "Horror-Lite": {
+    hook: "Use subtle sensory creep before the full supernatural reveal.",
+    climax: "Offer bargains with the haunting entity for desperate leverage.",
+  },
+  "Travel Gauntlet": {
+    approach: "Alternate between travel vignettes narrated by different players.",
+    wrap: "Let the VIP deliver epilogue monologues or future requests.",
+  },
+};
+
+const difficultyOverlays: Partial<Record<Difficulty, Partial<Record<string, string>>>> = {
+  Hard: {
+    rising: "Signal resource attrition: describe wounds, failing light, or rising heat.",
+    climax: "Prep a backup escape valve so defeat still feels earned.",
+  },
+  Deadly: {
+    approach: "Preview the opposition's calling card to justify high stakes.",
+    climax: "Telegraph lethal moves a round early to reward smart play.",
+  },
+  Easy: {
+    rising: "Add cinematic complications instead of extra hit points.",
+    wrap: "Frame downtime scenes that reinforce character growth moments.",
+  },
+};
 
 export default function OneShotGeneratorPage() {
   const [step, setStep] = useState(1);
@@ -126,6 +267,24 @@ export default function OneShotGeneratorPage() {
     };
     return theme ? ideas[theme] : [];
   }, [theme]);
+  const pacingPlan = useMemo(() => {
+    const blueprint = pacingBlueprint[timebox];
+    return blueprint.map((segment) => {
+      const beats = [...segment.core];
+      const themeOverlay = theme ? themeOverlays[theme]?.[segment.id] : undefined;
+      if (themeOverlay) beats.push(themeOverlay);
+      const difficultyOverlay = difficultyOverlays[difficulty]?.[segment.id];
+      if (difficultyOverlay) beats.push(difficultyOverlay);
+      return {
+        ...segment,
+        beats,
+      };
+    });
+  }, [timebox, theme, difficulty]);
+  const totalPacingMinutes = useMemo(
+    () => pacingPlan.reduce((sum, segment) => sum + segment.minutes, 0),
+    [pacingPlan]
+  );
   const handleExportPacket = async () => {
     if (!oneShot) return;
     try {
@@ -668,6 +827,43 @@ export default function OneShotGeneratorPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Pacing Clock */}
+            <Card className="border-blue-500/30 bg-slate-900/60">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Timer className="h-4 w-4 text-blue-300" aria-hidden="true" />
+                  Session Pacing Clock ({totalPacingMinutes} minutes)
+                </CardTitle>
+                <CardDescription className="text-slate-300">
+                  Keep an eye on these timeboxes to land your finale on schedule. Adjust live if the table needs more
+                  spotlight or breathing room.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {pacingPlan.map((segment) => (
+                  <div key={segment.id} className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-semibold text-white">{segment.label}</span>
+                      <span className="text-slate-400">{segment.minutes} min</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                        style={{
+                          width: `${totalPacingMinutes > 0 ? Math.round((segment.minutes / totalPacingMinutes) * 100) : 0}%`,
+                        }}
+                      />
+                    </div>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-slate-300">
+                      {segment.beats.map((beat) => (
+                        <li key={beat}>{beat}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
 
             {/* Encounters */}
             <Card className="border-slate-800 bg-slate-900/50">

@@ -1,11 +1,21 @@
 import type { OneShotInput, OneShotPacket } from "../types";
 
+interface OneShotTemplate {
+  title: string;
+  hook: string;
+  actOne: string;
+  actTwo: string;
+  actThree: string;
+  twist: string;
+  finale: string;
+}
+
 // Simplified one-shot generator
 export function generateOneShot(input: OneShotInput): OneShotPacket {
   const { theme, level, timebox, difficulty } = input;
 
   // Theme-based templates
-  const templates: Record<string, any> = {
+  const templates: Record<OneShotInput["theme"], OneShotTemplate> = {
     Heist: {
       title: "The Midnight Vault",
       hook: "A noble's priceless artifact was stolen; recover it before the thieves flee the city.",
@@ -56,7 +66,7 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
   const template = templates[theme] || templates["Dungeon Sprint"];
 
   // Generate encounters based on level and difficulty
-  const encounterXP: Record<string, number> = {
+  const encounterXP: Record<OneShotInput["difficulty"], number> = {
     Easy: level * 50,
     Medium: level * 100,
     Hard: level * 150,

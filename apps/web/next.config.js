@@ -6,6 +6,9 @@ const nextConfig = {
   basePath: BASE_PATH, // IMPORTANT: App is in subdirectory
   assetPrefix: BASE_PATH, // Ensure assets load from the subdirectory
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_BASE_PATH: BASE_PATH,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -85,7 +85,7 @@ export function generateCharacter(input: CharacterInput): Character {
     skills: getRoleSkills(role),
     features: getClassFeatures(selectedClass, level),
     equipment: getStartingEquipment(selectedClass),
-    tactics: getRoleTactics(role, selectedClass),
+    tactics: getRoleTactics(role),
   };
 }
 
@@ -122,7 +122,7 @@ function getStartingEquipment(className: string): string[] {
   return equipment[className] || [];
 }
 
-function getRoleTactics(role: string, className: string): string[] {
+function getRoleTactics(role: string): string[] {
   const tactics: Record<string, string[]> = {
     Frontliner: ["Stay in front, protect allies", "Use Action Surge for burst damage", "Second Wind when below half HP"],
     Skirmisher: ["Bonus action Dash/Disengage/Hide", "Fish for advantage for Sneak Attack", "Uncanny Dodge on big hits"],

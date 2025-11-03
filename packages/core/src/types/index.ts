@@ -94,5 +94,5 @@ export interface SRDDocument {
   type: "race" | "class" | "feature" | "spell" | "monster" | "item";
   slug: string;
   title: string;
-  content: any;
+  content: unknown;
 }

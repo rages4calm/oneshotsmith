@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import globals from "globals";
 import typescript from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
 import prettier from "eslint-config-prettier";
@@ -13,6 +14,7 @@ export default [
       "**/out/**",
       "**/.partykit/**",
       "**/drizzle/**",
+      "**/src/**/*.js",
     ],
   },
   js.configs.recommended,
@@ -23,15 +25,13 @@ export default [
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       globals: {
-        console: "readonly",
-        process: "readonly",
-        Buffer: "readonly",
-        __dirname: "readonly",
-        __filename: "readonly",
-        module: "readonly",
-        require: "readonly",
+        ...globals.browser,
+        ...globals.node,
       },
     },
     plugins: {
@@ -45,6 +45,34 @@ export default [
       ],
       "@typescript-eslint/no-explicit-any": "warn",
       "no-console": "off",
+      "no-undef": "off",
+    },
+  },
+  {
+    files: ["**/*.js", "**/*.jsx", "**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    rules: {
+      "no-undef": "off",
+    },
+  },
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
+      "no-undef": "off",
     },
   },
   prettier,

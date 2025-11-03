@@ -1,4 +1,4 @@
-import type { Character } from "@oneshotsmith/core";
+import type { Character, OneShotPacket } from "@oneshotsmith/core";
 
 // PDF export placeholder
 export async function generateCharacterPDF(character: Character): Promise<Buffer> {
@@ -7,7 +7,7 @@ export async function generateCharacterPDF(character: Character): Promise<Buffer
   return Buffer.from(`Character Sheet: ${character.name}`);
 }
 
-export async function generateOneShotPDF(packet: any): Promise<Buffer> {
+export async function generateOneShotPDF(packet: OneShotPacket): Promise<Buffer> {
   // Generate GM packet PDF
   return Buffer.from(`One-Shot: ${packet.title}`);
 }

@@ -3,7 +3,7 @@ import type * as Party from "partykit/server";
 export default class LobbyServer implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
-  async onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
+  async onConnect(conn: Party.Connection, _ctx: Party.ConnectionContext) {
     // New player/GM joins the lobby
     console.log(
       `Connection ${conn.id} joined lobby ${this.room.id}`
@@ -101,7 +101,7 @@ export default class LobbyServer implements Party.Server {
     };
   }
 
-  private async applyPatch(patch: any) {
+  private async applyPatch(patch: { path: string; value: unknown }) {
     // Apply CRDT-style patches to state
     // This is a simplified version - you'd use a proper CRDT library in production
     if (patch.path && patch.value) {

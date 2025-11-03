@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@oneshotsmith/ui";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -23,8 +24,32 @@ import {
 import { generateCharacter } from "@oneshotsmith/core";
 import type { Role, CharacterLevel, Character } from "@oneshotsmith/core";
 import { SiteFooter } from "../../components/site-footer";
+import { pregeneratedCharacters } from "../../lib/pregenerated-characters";
+import type { PregenSummary } from "../../lib/pregenerated-characters";
+import {
+  formatCharacterSummary,
+  readLastLoadedCharacter,
+  readStoredCharacters,
+  rememberLastLoadedCharacter,
+  writeStoredCharacters,
+  type StoredCharacter,
+} from "../../lib/local-storage";
 
 export default function CharacterCreatorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center text-slate-300">
+          Loading character tools…
+        </div>
+      }
+    >
+      <CharacterCreatorContent />
+    </Suspense>
+  );
+}
+
+function CharacterCreatorContent() {
   const [step, setStep] = useState(1);
   const [level, setLevel] = useState<CharacterLevel>(3);
   const [role, setRole] = useState<Role | null>(null);
@@ -34,8 +59,75 @@ export default function CharacterCreatorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [selectedPregen, setSelectedPregen] = useState<PregenSummary | null>(null);
+  const [activeCharacterId, setActiveCharacterId] = useState<string | null>(null);
+  const [appliedPregenSlug, setAppliedPregenSlug] = useState<string | null>(null);
+  const [appliedLoadId, setAppliedLoadId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let targetLoadId = searchParams.get("load");
+    if (!targetLoadId && !appliedLoadId) {
+      targetLoadId = readLastLoadedCharacter();
+    }
 
-  const storageKey = "oneshotsmith:saved-characters";
+    if (!targetLoadId) {
+      if (appliedLoadId) {
+        setAppliedLoadId(null);
+      }
+      return;
+    }
+
+    if (targetLoadId === appliedLoadId) return;
+
+    const stored = readStoredCharacters();
+    const match = stored.find((entry) => entry.id === targetLoadId);
+    if (!match) return;
+
+    const { id, pregenSlug, savedAt, label, source, ...rest } = match;
+    void savedAt;
+    void label;
+    void source;
+    const characterData = rest as Character;
+    setLevel(characterData.level);
+    setRole(characterData.role);
+    setCharacter(characterData);
+    setSelectedPregen(pregenSlug ? pregeneratedCharacters.find((entry) => entry.slug === pregenSlug) ?? null : null);
+    setActiveCharacterId(id);
+    rememberLastLoadedCharacter(id);
+    setAppliedLoadId(id);
+    setAppliedPregenSlug(pregenSlug ?? null);
+    setStep(3);
+  }, [searchParams, appliedLoadId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const loadParamExists = !!searchParams.get("load");
+    if (loadParamExists) return; // load takes precedence
+
+    const pregenSlug = searchParams.get("pregen");
+    if (!pregenSlug) {
+      if (appliedPregenSlug) {
+        setAppliedPregenSlug(null);
+      }
+      return;
+    }
+
+    if (pregenSlug === appliedPregenSlug) return;
+
+    const match = pregeneratedCharacters.find((entry) => entry.slug === pregenSlug);
+    if (!match) return;
+
+    setLevel(match.level);
+    setRole(match.role);
+    setCharacter(generateCharacter({ level: match.level, role: match.role }));
+    setSelectedPregen(match);
+    setActiveCharacterId(null);
+    rememberLastLoadedCharacter(null);
+    setAppliedPregenSlug(pregenSlug);
+    setAppliedLoadId(null);
+    setStep(3);
+  }, [searchParams, appliedPregenSlug]);
 
   const roles: Array<{
     name: Role;
@@ -193,24 +285,25 @@ export default function CharacterCreatorPage() {
     if (!character) return;
     try {
       setIsSaving(true);
-      const payload = {
+      const id = activeCharacterId ?? crypto.randomUUID();
+      const payload: StoredCharacter = {
         ...character,
+        id,
         savedAt: new Date().toISOString(),
-        id: crypto.randomUUID(),
+        label: character.name || `${character.role} Level ${character.level}`,
+        source: selectedPregen ? "pregen" : "generated",
+        pregenSlug: selectedPregen?.slug,
       };
-      const existingRaw =
-        typeof window !== "undefined"
-          ? window.localStorage.getItem(storageKey)
-          : null;
-      const existing: typeof payload[] = existingRaw
-        ? JSON.parse(existingRaw)
-        : [];
-      const updated = [payload, ...existing].slice(0, 25);
-      window.localStorage.setItem(storageKey, JSON.stringify(updated));
+      const existing = readStoredCharacters().filter((entry) => entry.id !== id);
+      const updated = [payload, ...existing].slice(0, 50);
+      writeStoredCharacters(updated);
+      rememberLastLoadedCharacter(id);
+      setActiveCharacterId(id);
+      setAppliedLoadId(id);
+      setAppliedPregenSlug(selectedPregen?.slug ?? null);
       setFeedback({
         type: "success",
-        message:
-          "Character saved locally. Visit again soon to load your vault.",
+        message: "Character saved locally. Visit the Character Vault to reopen it anytime.",
       });
     } catch (error) {
       console.error("Failed to save character", error);
@@ -228,32 +321,14 @@ export default function CharacterCreatorPage() {
     if (!character) return;
     try {
       setIsCopying(true);
-      const { name, race, class: characterClass, level: characterLevel, role: roleName, background, abilities, hp, ac, proficiencyBonus, features, equipment, spells, tactics } = character;
-      const summaryLines: string[] = [
-        "OneShotsmith Character Summary",
-        `Name: ${name || `${roleName} ${characterClass}`}`,
-        `Role: ${roleName} • Level ${characterLevel}`,
-        `Race / Class: ${race} ${characterClass}`,
-        `Background: ${background}`,
-        `HP ${hp} • AC ${ac} • Proficiency +${proficiencyBonus}`,
-        "",
-        "Ability Scores:",
-        ...Object.entries(abilities).map(([ability, score]) => `- ${ability}: ${score}`),
-        "",
-        "Features:",
-        ...features.map((feature) => `- ${feature}`),
-        "",
-        "Equipment:",
-        ...equipment.map((item) => `- ${item}`),
-      ];
+      const summary = formatCharacterSummary(
+        character,
+        selectedPregen
+          ? { concept: selectedPregen.concept, highlights: selectedPregen.highlights }
+          : undefined
+      );
 
-      if (spells && spells.length > 0) {
-        summaryLines.push("", "Spells Prepared:", ...spells.map((spell) => `- ${spell}`));
-      }
-
-      summaryLines.push("", "Tactics:", ...tactics.map((tactic) => `- ${tactic}`));
-
-      await navigator.clipboard.writeText(summaryLines.join("\n"));
+      await navigator.clipboard.writeText(summary);
       setFeedback({ type: "success", message: "Character summary copied to clipboard." });
       setTimeout(() => setFeedback(null), 4000);
     } catch (error) {
@@ -274,6 +349,11 @@ export default function CharacterCreatorPage() {
 
     const generated = generateCharacter({ level, role });
     setCharacter(generated);
+    setSelectedPregen(null);
+    setActiveCharacterId(null);
+    rememberLastLoadedCharacter(null);
+    setAppliedLoadId(null);
+    setAppliedPregenSlug(null);
     setIsGenerating(false);
     setStep(3);
   };
@@ -283,6 +363,19 @@ export default function CharacterCreatorPage() {
     setLevel(3);
     setRole(null);
     setCharacter(null);
+    setSelectedPregen(null);
+    setActiveCharacterId(null);
+    setAppliedLoadId(null);
+    setAppliedPregenSlug(null);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("pregen");
+      url.searchParams.delete("role");
+      url.searchParams.delete("level");
+      url.searchParams.delete("load");
+      window.history.replaceState(null, "", url.toString());
+    }
+    rememberLastLoadedCharacter(null);
   };
 
   return (
@@ -299,10 +392,17 @@ export default function CharacterCreatorPage() {
                 OneShotsmith
               </span>
             </Link>
-            <Button variant="ghost" onClick={handleReset} className="text-slate-300">
-              <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
-                Back to Start
-            </Button>
+            <div className="flex items-center gap-3">
+              <Link href="/character-vault" prefetch={false}>
+                <Button variant="outline" className="border-slate-700 bg-slate-900/70 text-slate-300 hover:border-purple-500 hover:text-white">
+                  Character Vault
+                </Button>
+              </Link>
+              <Button variant="ghost" onClick={handleReset} className="text-slate-300">
+                <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
+                  Back to Start
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -402,7 +502,7 @@ export default function CharacterCreatorPage() {
                 variant="secondary"
                 onClick={handleCopyCharacter}
                 disabled={isCopying}
-                className="px-8 py-6 text-lg border-2 border-slate-700 bg-slate-900/60 hover:border-blue-500 hover:bg-blue-500/10 disabled:opacity-60"
+                className="px-8 py-6 text-lg border-2 border-blue-500/40 bg-slate-900/70 text-blue-100 hover:border-blue-400 hover:bg-blue-500/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isCopying ? (
                   <>
@@ -508,6 +608,21 @@ export default function CharacterCreatorPage() {
                 Character Ready!
               </div>
             </div>
+
+            {selectedPregen && (
+              <div className="mx-auto max-w-3xl rounded-xl border border-purple-500/30 bg-purple-900/10 p-6 text-left shadow-inner">
+                <p className="text-xs font-semibold uppercase tracking-wide text-purple-300">
+                  Loaded from Pregen Library
+                </p>
+                <h2 className="mt-2 text-2xl font-bold text-white">{selectedPregen.name}</h2>
+                <p className="mt-3 text-slate-200">{selectedPregen.concept}</p>
+                <ul className="mt-4 space-y-2 text-slate-200 list-disc list-inside">
+                  {selectedPregen.highlights.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Stats Grid */}
             <div className="grid md:grid-cols-3 gap-6">
