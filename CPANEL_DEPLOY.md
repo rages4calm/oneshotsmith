@@ -1,6 +1,31 @@
 # 🚀 cPanel Deployment - Simple Guide
 
-Your OneShotsmith app is **ready to upload**! Follow these easy steps.
+Your OneShotsmith app will be deployed to **carl-prewitt.com/oneshot**
+
+This guide is for deploying to a **subdirectory** on your cPanel hosting.
+
+---
+
+## 🔨 Build for cPanel (Subdirectory)
+
+**IMPORTANT:** Before uploading, build with the basePath enabled:
+
+```bash
+cd c:\Users\crono\Desktop\oneshot\apps\web
+USE_BASE_PATH=true pnpm build
+```
+
+Or on Windows PowerShell:
+```powershell
+$env:USE_BASE_PATH="true"; pnpm build
+```
+
+Or on Windows CMD:
+```cmd
+set USE_BASE_PATH=true && pnpm build
+```
+
+This creates the `out` folder configured for the `/oneshot` subdirectory.
 
 ---
 
@@ -26,9 +51,9 @@ This folder contains:
 - Go to your hosting control panel
 - Find **File Manager**
 
-### Step 2: Navigate to Your Website Root
-- Go to `public_html` (or your domain's root folder)
-- This might be `public_html/yourdomain.com` depending on your setup
+### Step 2: Navigate to Your Subdirectory
+- Go to `public_html/oneshot` folder
+- Create the `oneshot` folder if it doesn't exist yet
 
 ### Step 3: Upload Files
 1. **Click "Upload"** button in File Manager
@@ -38,16 +63,17 @@ This folder contains:
 **OR use FTP:**
 - Use FileZilla or your preferred FTP client
 - Connect to your server
-- Upload the entire `out` folder contents to `public_html`
+- Upload the entire `out` folder contents to `public_html/oneshot`
 
 ---
 
 ## ✅ Verify It Works
 
 After uploading, visit your website:
-- **Homepage**: `https://yourdomain.com`
-- **Character Creator**: `https://yourdomain.com/character-creator`
-- **Adventure Generator**: `https://yourdomain.com/one-shot-generator`
+- **Homepage**: `https://carl-prewitt.com/oneshot`
+- **Character Creator**: `https://carl-prewitt.com/oneshot/character-creator`
+- **Adventure Generator**: `https://carl-prewitt.com/oneshot/one-shot-generator`
+- **Character Vault**: `https://carl-prewitt.com/oneshot/character-vault`
 
 ---
 
@@ -103,13 +129,18 @@ Characters and adventures generate instantly in the browser!
 
 When you make changes:
 
-1. **Rebuild** the project:
+1. **Rebuild** the project with basePath:
    ```bash
    cd c:\Users\crono\Desktop\oneshot\apps\web
-   pnpm build
+   USE_BASE_PATH=true pnpm build
    ```
 
-2. **Upload new files** from the `out` folder to cPanel
+   Or Windows PowerShell:
+   ```powershell
+   $env:USE_BASE_PATH="true"; pnpm build
+   ```
+
+2. **Upload new files** from the `out` folder to `public_html/oneshot`
    - You can just replace the changed files
    - Or upload everything again to be safe
 
@@ -143,10 +174,10 @@ When you make changes:
 
 ## 📁 Folder Structure After Upload
 
-Your `public_html` should look like this:
+Your `public_html/oneshot` should look like this:
 
 ```
-public_html/
+public_html/oneshot/
 ├── index.html
 ├── .htaccess
 ├── _next/
@@ -156,7 +187,9 @@ public_html/
 │   │   └── media/
 │   └── ...
 ├── character-creator.html
+├── character-vault.html
 ├── one-shot-generator.html
+├── pregen-library.html
 └── favicon.ico
 ```
 
