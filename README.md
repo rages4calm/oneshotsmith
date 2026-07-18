@@ -6,13 +6,15 @@ OneShotsmith generates a full, runnable adventure module in your browser: a keye
 dungeon map in the classic blue style, encounters built on the real DMG XP math, a
 villain with a plan, boxed read-aloud text, NPCs with voices, a secrets checklist,
 treasure, pacing — formatted like a proper early-80s adventure module and
-print-perfect out of the box. No accounts. No server. No AI API. Free forever.
+print-perfect out of the box. The whole app is set at the game table after dark:
+lamplit paper artifacts in a warm black room, with the blue map glowing at the
+center of it. No accounts. No server. No AI API. Free forever.
 
 **Every adventure is deterministic.** The seed lives in the URL, so a module can be
 shared, bookmarked, or posted like a link to a song — same seed, same adventure,
 forever.
 
-![OneShotsmith landing page with a live generated module cover](docs/screenshots/landing.png)
+![OneShotsmith landing page — a live generated module lying in lamplight](docs/screenshots/landing.png)
 
 ---
 

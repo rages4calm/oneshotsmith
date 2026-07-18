@@ -9,6 +9,7 @@ import type {
 } from "@oneshotsmith/core";
 import { describeActualDifficulty, lazyBenchmark, open5eSlug } from "@oneshotsmith/core";
 import { DungeonMapSVG } from "./dungeon-map-svg";
+import { MapLantern } from "./map-lantern";
 
 // Renders a generated packet as a classic adventure module: cover head, boxed
 // read-alouds, keyed entries matching the map, stat tables, appendices.
@@ -164,7 +165,7 @@ export function ModuleSheet({ packet, onReroll }: Props) {
   const { input } = packet;
 
   return (
-    <article className="module-sheet module-frame bg-paper px-5 py-8 sm:px-10 sm:py-10" aria-label={`Adventure module: ${packet.title}`}>
+    <article className="module-sheet module-frame artifact bg-paper px-5 py-8 text-ink sm:px-10 sm:py-10" aria-label={`Adventure module: ${packet.title}`}>
       {/* ------------------------------------------------ Cover head */}
       <header>
         <div className="display-caps-wide flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[0.7rem] font-semibold text-ink">
@@ -213,9 +214,11 @@ export function ModuleSheet({ packet, onReroll }: Props) {
       <p className="mt-4 max-w-[70ch]">{packet.location.description}</p>
 
       <figure className="avoid-break mt-5">
-        <div className="map-print border-2 border-ink">
-          <DungeonMapSVG map={packet.map} playerView={playerView} />
-        </div>
+        <MapLantern>
+          <div className="map-print border-2 border-ink">
+            <DungeonMapSVG map={packet.map} playerView={playerView} />
+          </div>
+        </MapLantern>
         <figcaption className="mt-2 flex flex-wrap items-baseline justify-between gap-2">
           <span className="imprint">Map: {packet.map.title} — one square = 10 feet</span>
           <label className="no-print imprint flex cursor-pointer select-none items-center gap-2">

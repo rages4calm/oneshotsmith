@@ -7,7 +7,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // OneShotsmith print system
+        // The room (dark chrome)
+        room: "var(--room)",
+        "room-deep": "var(--room-deep)",
+        "room-raised": "var(--room-raised)",
+        "room-edge": "var(--room-edge)",
+        warm: "var(--warm)",
+        "warm-soft": "var(--warm-soft)",
+        brass: "var(--brass)",
+        "brass-soft": "var(--brass-soft)",
+        ember: "var(--ember)",
+        "ember-bright": "var(--ember-bright)",
+        // The paper artifacts
         paper: "var(--paper)",
         "paper-shade": "var(--paper-shade)",
         ink: "var(--ink)",

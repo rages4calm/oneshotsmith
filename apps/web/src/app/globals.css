@@ -3,18 +3,33 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   OneShotsmith — early-80s adventure-module print production.
-   White interior paper, black ink, the blue dungeon map, goldenrod sheets.
+   OneShotsmith — game night.
+   The room is dark: warm near-black, brass and ember, lamplight.
+   The artifacts are paper: the module, the blue map, the goldenrod sheet —
+   lit objects on a night table. Print stays ink-on-white.
 --------------------------------------------------------------------------- */
 
 @layer base {
   :root {
-    /* Paper & ink */
-    --paper: #fbfaf7;
-    --paper-shade: #f3f1e9;
+    /* The room (app chrome) */
+    --room: #14100c;
+    --room-deep: #0d0a07;
+    --room-raised: #1e1812;
+    --room-edge: #383026;
+    --warm: #f2ead9;
+    --warm-soft: #b3a68d;
+    --brass: #d8a54e;
+    --brass-soft: #a98544;
+    --ember: #c73b2a;
+    --ember-bright: #e04c37;
+    --lamp: 244, 196, 116;
+
+    /* The paper artifacts */
+    --paper: #fbf7ee;
+    --paper-shade: #f2ecdd;
     --ink: #23262b;
     --ink-soft: #575b63;
-    --rule: #d8d4c8;
+    --rule: #d9d2c0;
 
     /* The map — the identity color */
     --map-blue: #34719c;
@@ -27,30 +42,31 @@
     --goldenrod-shade: #dfb960;
     --goldenrod-ink: #5f451a;
 
-    /* Spot color — sparing */
+    /* Spot colors */
     --stamp-red: #a93b2a;
     --success: #2e6b45;
+    --success-bright: #8ec9a0;
 
-    /* shadcn semantic tokens mapped onto the system */
-    --background: 44 29% 97%;
-    --foreground: 220 10% 15%;
-    --card: 44 29% 97%;
-    --card-foreground: 220 10% 15%;
-    --popover: 44 29% 97%;
-    --popover-foreground: 220 10% 15%;
-    --primary: 208 61% 29%;
-    --primary-foreground: 44 29% 97%;
-    --secondary: 45 25% 93%;
-    --secondary-foreground: 220 10% 15%;
-    --muted: 45 25% 93%;
-    --muted-foreground: 220 6% 37%;
-    --accent: 205 50% 41%;
-    --accent-foreground: 44 29% 97%;
+    /* shadcn semantic tokens mapped onto the room */
+    --background: 30 25% 6%;
+    --foreground: 39 33% 90%;
+    --card: 32 25% 9%;
+    --card-foreground: 39 33% 90%;
+    --popover: 32 25% 9%;
+    --popover-foreground: 39 33% 90%;
+    --primary: 7 65% 47%;
+    --primary-foreground: 39 33% 95%;
+    --secondary: 32 25% 12%;
+    --secondary-foreground: 39 33% 90%;
+    --muted: 32 25% 12%;
+    --muted-foreground: 38 18% 63%;
+    --accent: 38 64% 58%;
+    --accent-foreground: 30 25% 6%;
     --destructive: 8 60% 41%;
-    --destructive-foreground: 44 29% 97%;
-    --border: 45 17% 82%;
-    --input: 45 17% 75%;
-    --ring: 205 50% 41%;
+    --destructive-foreground: 39 33% 95%;
+    --border: 33 20% 19%;
+    --input: 33 20% 24%;
+    --ring: 38 64% 58%;
     --radius: 0.25rem;
   }
 
@@ -59,11 +75,11 @@
   }
 
   html {
-    background: var(--paper);
+    background: var(--room);
   }
 
   body {
-    @apply bg-paper text-ink;
+    @apply bg-room text-warm;
     font-family: var(--font-alegreya), Georgia, serif;
     font-size: 17px;
     line-height: 1.65;
@@ -82,9 +98,8 @@
 }
 
 @layer components {
-  /* --- Trade dress ------------------------------------------------------- */
+  /* --- Trade dress (lives on paper artifacts) --------------------------- */
 
-  /* The double-rule frame from module covers: heavy outer, hairline inner. */
   .module-frame {
     border: 3px solid var(--ink);
     box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3px var(--ink);
@@ -143,7 +158,6 @@
     background: var(--paper);
   }
 
-  /* Mini stat block. */
   .stat-block {
     border: 1.5px solid var(--ink);
     background: var(--paper);
@@ -175,7 +189,80 @@
     color: var(--ink-soft);
   }
 
-  /* Goldenrod character-sheet surface. */
+  /* --- The room (dark chrome) ------------------------------------------- */
+
+  /* Chrome context: labels, rules, and key circles adapt to the dark. */
+  .chrome .imprint {
+    color: var(--warm-soft);
+  }
+  .chrome .module-rule,
+  .chrome .module-rule::after {
+    border-color: var(--brass-soft);
+  }
+  .chrome .key-circle {
+    background: transparent;
+    border-color: var(--room-edge);
+    color: var(--warm-soft);
+  }
+
+  /* A paper artifact lying in the dark room, lit from above. */
+  .artifact {
+    color: var(--ink);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06),
+      0 18px 50px -12px rgba(0, 0, 0, 0.85),
+      0 40px 120px -20px rgba(0, 0, 0, 0.7),
+      0 0 90px -10px rgba(var(--lamp), 0.10);
+  }
+
+  /* The pool of lamplight a hero artifact sits in. */
+  .lamp-pool {
+    position: relative;
+  }
+  .lamp-pool::before {
+    content: "";
+    position: absolute;
+    inset: -12% -30%;
+    background: radial-gradient(
+      ellipse 60% 55% at 50% 42%,
+      rgba(var(--lamp), 0.14),
+      rgba(var(--lamp), 0.05) 45%,
+      transparent 72%
+    );
+    pointer-events: none;
+  }
+
+  /* Dark-chrome buttons */
+  .btn-ember {
+    font-family: var(--font-jost), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    background: var(--ember);
+    border: 2px solid var(--ember);
+    color: var(--warm);
+    transition: background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+  }
+  .btn-ember:hover {
+    background: var(--ember-bright);
+    border-color: var(--ember-bright);
+    box-shadow: 0 0 28px -6px rgba(224, 76, 55, 0.55);
+  }
+  .btn-lantern {
+    font-family: var(--font-jost), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid var(--room-edge);
+    color: var(--warm);
+    transition: border-color 180ms ease-out, color 180ms ease-out, background-color 180ms ease-out;
+  }
+  .btn-lantern:hover {
+    border-color: var(--brass);
+    color: var(--brass);
+  }
+
   .goldenrod-sheet {
     background: var(--goldenrod);
     color: var(--goldenrod-ink);
@@ -208,15 +295,41 @@
       transform: scale(1);
     }
   }
+
+  /* Torch-over-the-map: a warm light radius follows the pointer. */
+  .lantern-surface {
+    position: relative;
+  }
+  .lantern-surface .lantern-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+    background: radial-gradient(
+      circle 170px at var(--lx, 50%) var(--ly, 50%),
+      rgba(var(--lamp), 0.24),
+      rgba(var(--lamp), 0.08) 55%,
+      transparent 75%
+    );
+    mix-blend-mode: soft-light;
+  }
+  .lantern-surface:hover .lantern-glow {
+    opacity: 1;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .map-stamp {
       animation: none;
+    }
+    .lantern-surface .lantern-glow {
+      display: none;
     }
   }
 }
 
 /* ---------------------------------------------------------------------------
-   Print — the module must look intentional on paper.
+   Print — the module leaves the dark room and becomes ink on white.
 --------------------------------------------------------------------------- */
 
 @page {
@@ -227,6 +340,7 @@
   html,
   body {
     background: #fff !important;
+    color: var(--ink) !important;
     font-size: 10.5pt;
     line-height: 1.5;
   }
@@ -243,6 +357,10 @@
     max-width: none !important;
     padding: 0 !important;
     border: none !important;
+    box-shadow: none !important;
+  }
+
+  .artifact {
     box-shadow: none !important;
   }
 

@@ -160,7 +160,7 @@ function CreatorInner() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper">
+    <div className="chrome flex min-h-screen flex-col bg-room">
       <SiteHeader current="/character-creator" />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
@@ -174,13 +174,13 @@ function CreatorInner() {
               <div key={label} className="flex items-center gap-2">
                 <span
                   className={`key-circle !h-8 !w-8 text-[0.85rem] ${
-                    active ? "!border-map-deep !bg-map-deep text-map-line" : done ? "!border-map-deep text-map-deep" : "!border-rule text-ink-soft"
+                    active ? "!border-brass !bg-brass !text-room" : done ? "!border-brass !text-brass" : "!border-room-edge !text-warm-soft"
                   }`}
                 >
                   {n}
                 </span>
-                <span className={`display-caps text-[0.68rem] font-semibold ${active ? "text-ink" : "text-ink-soft"}`}>{label}</span>
-                {n < 3 && <span className="mx-1 h-px w-8 bg-rule" aria-hidden="true" />}
+                <span className={`display-caps text-[0.68rem] font-semibold ${active ? "text-warm" : "text-warm-soft"}`}>{label}</span>
+                {n < 3 && <span className="mx-1 h-px w-8 bg-room-edge" aria-hidden="true" />}
               </div>
             );
           })}
@@ -189,18 +189,18 @@ function CreatorInner() {
         {/* Step 1: level */}
         {step === 1 && (
           <section className="mt-10">
-            <h1 className="text-center font-serif text-[1.9rem] font-bold">How seasoned is your hero?</h1>
-            <p className="mt-2 text-center text-ink-soft">Match the level your DM asked for. When in doubt: 3.</p>
+            <h1 className="text-center font-serif text-[1.9rem] font-bold text-warm">How seasoned is your hero?</h1>
+            <p className="mt-2 text-center text-warm-soft">Match the level your DM asked for. When in doubt: 3.</p>
             <div className="mx-auto mt-8 grid max-w-2xl gap-3">
               {LEVELS.map((l) => (
                 <button
                   key={l.level}
                   type="button"
                   onClick={() => { setLevel(l.level); setStep(2); }}
-                  className={`flex flex-col items-baseline justify-between gap-1 border-2 px-5 py-4 text-left transition-colors hover:border-map-deep sm:flex-row sm:gap-4 ${level === l.level ? "border-map-deep" : "border-rule"}`}
+                  className={`flex flex-col items-baseline justify-between gap-1 border-2 px-5 py-4 text-left transition-colors hover:border-brass sm:flex-row sm:gap-4 ${level === l.level ? "border-brass" : "border-room-edge"}`}
                 >
-                  <span className="display-caps text-[0.9rem] font-bold tracking-[0.1em]">{l.label}</span>
-                  <span className="font-serif italic text-ink-soft">{l.note}</span>
+                  <span className="display-caps text-[0.9rem] font-bold tracking-[0.1em] text-warm">{l.label}</span>
+                  <span className="font-serif italic text-warm-soft">{l.note}</span>
                 </button>
               ))}
             </div>
@@ -210,8 +210,8 @@ function CreatorInner() {
         {/* Step 2: role */}
         {step === 2 && (
           <section className="mt-10">
-            <h1 className="text-center font-serif text-[1.9rem] font-bold">Pick what sounds fun</h1>
-            <p className="mt-2 text-center text-ink-soft">
+            <h1 className="text-center font-serif text-[1.9rem] font-bold text-warm">Pick what sounds fun</h1>
+            <p className="mt-2 text-center text-warm-soft">
               Roles, not rulebooks — each one is a complete, legal level-{level} build.
             </p>
             <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-2">
@@ -220,16 +220,16 @@ function CreatorInner() {
                   key={r.role}
                   type="button"
                   onClick={() => handleGenerate(r.role)}
-                  className="border-2 border-rule px-5 py-4 text-left transition-colors hover:border-map-deep"
+                  className="border-2 border-room-edge px-5 py-4 text-left transition-colors hover:border-brass"
                 >
-                  <span className="display-caps block text-[0.8rem] font-bold tracking-[0.12em] text-map-deep">{r.role}</span>
-                  <span className="mt-1 block font-serif text-[1.05rem] italic">{r.pitch}</span>
-                  <span className="mt-1 block text-[0.85rem] text-ink-soft">{r.playsLike}</span>
+                  <span className="display-caps block text-[0.8rem] font-bold tracking-[0.12em] text-brass">{r.role}</span>
+                  <span className="mt-1 block font-serif text-[1.05rem] italic text-warm">{r.pitch}</span>
+                  <span className="mt-1 block text-[0.85rem] text-warm-soft">{r.playsLike}</span>
                 </button>
               ))}
             </div>
             <p className="mt-6 text-center">
-              <button type="button" onClick={() => setStep(1)} className="display-caps text-[0.7rem] font-semibold text-ink-soft underline underline-offset-4 hover:text-map-deep">
+              <button type="button" onClick={() => setStep(1)} className="display-caps text-[0.7rem] font-semibold text-warm-soft underline underline-offset-4 hover:text-brass">
                 Back to level
               </button>
             </p>
@@ -241,31 +241,31 @@ function CreatorInner() {
           <section className="mt-8">
             <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => window.print()} className="display-caps border-2 border-map-deep bg-map-deep px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] text-map-line hover:border-map-blue hover:bg-map-blue">
+                <button type="button" onClick={() => window.print()} className="btn-ember px-4 py-2 text-[0.7rem]">
                   Print sheet
                 </button>
-                <button type="button" onClick={handleSave} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                <button type="button" onClick={handleSave} className="btn-lantern px-4 py-2 text-[0.7rem]">
                   Save to vault
                 </button>
-                <button type="button" onClick={handleCopy} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                <button type="button" onClick={handleCopy} className="btn-lantern px-4 py-2 text-[0.7rem]">
                   Copy summary
                 </button>
-                <button type="button" onClick={rerollCharacter} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                <button type="button" onClick={rerollCharacter} className="btn-lantern px-4 py-2 text-[0.7rem]">
                   Re-roll hero
                 </button>
               </div>
-              <button type="button" onClick={handleReset} className="display-caps text-[0.68rem] font-semibold text-ink-soft underline underline-offset-4 hover:text-map-deep">
+              <button type="button" onClick={handleReset} className="display-caps text-[0.68rem] font-semibold text-warm-soft underline underline-offset-4 hover:text-brass">
                 Start over
               </button>
             </div>
 
             <div aria-live="polite">
               {feedback && (
-                <p className="no-print mb-3 border-2 border-success bg-paper-shade px-3 py-2 font-serif text-sm italic text-success">{feedback}</p>
+                <p className="no-print mb-3 border border-success bg-room-raised px-3 py-2 font-serif text-sm italic text-[color:var(--success-bright)]">{feedback}</p>
               )}
             </div>
 
-            <div className="goldenrod-sheet module-sheet p-5 sm:p-7">
+            <div className="goldenrod-sheet module-sheet artifact p-5 sm:p-7">
               <div className="flex items-baseline justify-between">
                 <p className="sheet-label">Character record sheet</p>
                 <p className="sheet-label">OneShotsmith &middot; 5E</p>
@@ -343,14 +343,14 @@ function CreatorInner() {
             </div>
 
             {role && (
-              <div className="no-print mt-6 border-2 border-ink bg-paper p-5">
-                <p className="display-caps text-[0.75rem] font-bold tracking-[0.14em]">First time playing a {role}?</p>
+              <div className="no-print mt-6 border border-room-edge bg-room-raised p-5">
+                <p className="display-caps text-[0.75rem] font-bold tracking-[0.14em] text-brass">First time playing a {role}?</p>
                 <ul className="mt-2.5 list-disc space-y-1.5 pl-5 text-[0.95rem]">
                   {TABLE_TIPS[role].map((tip) => <li key={tip}>{tip}</li>)}
                 </ul>
-                <p className="mt-3 text-[0.9rem] text-ink-soft">
+                <p className="mt-3 text-[0.9rem] text-warm-soft">
                   Need an adventure to go with them?{" "}
-                  <Link href="/one-shot-generator" prefetch={false} className="text-map-deep underline underline-offset-2">
+                  <Link href="/one-shot-generator" prefetch={false} className="text-brass underline underline-offset-2">
                     Forge a one-shot
                   </Link>{" "}
                   at the same level.

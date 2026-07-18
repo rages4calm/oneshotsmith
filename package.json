@@ -4,7 +4,7 @@
   "private": true,
   "description": "A fast, friendly web app for D&D 5e one-shot character creation and adventure generation",
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm --filter @oneshotsmith/web dev",
     "build": "pnpm -r build",
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
@@ -13,7 +13,8 @@
     "e2e": "playwright test",
     "db:generate": "cd packages/db && drizzle-kit generate",
     "db:migrate": "cd packages/db && drizzle-kit migrate",
-    "db:studio": "cd packages/db && drizzle-kit studio"
+    "db:studio": "cd packages/db && drizzle-kit studio",
+    "dev:all": "pnpm -r --parallel dev"
   },
   "engines": {
     "node": ">=20",

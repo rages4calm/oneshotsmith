@@ -110,45 +110,45 @@ export default function CharacterVaultPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper">
+    <div className="chrome flex min-h-screen flex-col bg-room">
       <SiteHeader current="/character-vault" />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
-        <h1 className="font-serif text-[2rem] font-bold">The Vault</h1>
-        <p className="mt-1 max-w-[64ch] text-ink-soft">
+        <h1 className="font-serif text-[2rem] font-bold text-warm">The Vault</h1>
+        <p className="mt-1 max-w-[64ch] text-warm-soft">
           Heroes and adventures saved in this browser — no account, no cloud. Export
           anything you can&rsquo;t bear to lose.
         </p>
 
         <div aria-live="polite">
           {feedback && (
-            <p className="mt-4 border-2 border-success bg-paper-shade px-3 py-2 font-serif text-sm italic text-success">{feedback}</p>
+            <p className="mt-4 border border-success bg-room-raised px-3 py-2 font-serif text-sm italic text-[color:var(--success-bright)]">{feedback}</p>
           )}
         </div>
 
         {/* ------------------------------------------------ Adventures */}
         <section aria-label="Saved adventures" className="mt-10">
           <div className="flex items-baseline justify-between">
-            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em]">Saved adventures</h2>
-            <Link href="/one-shot-generator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-map-deep underline underline-offset-4">
+            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em] text-warm">Saved adventures</h2>
+            <Link href="/one-shot-generator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-brass underline underline-offset-4">
               Forge a new one
             </Link>
           </div>
           <hr className="module-rule mt-1.5" aria-hidden="true" />
 
           {adventures.length === 0 ? (
-            <p className="mt-5 border border-rule bg-paper-shade px-4 py-5 text-center font-serif italic text-ink-soft">
+            <p className="mt-5 border border-room-edge bg-room-raised px-4 py-5 text-center font-serif italic text-warm-soft">
               No adventures saved yet. Generate one and hit &ldquo;Save to vault&rdquo; — it will
               keep its exact seed, map, and math forever.
             </p>
           ) : (
             <ul className="mt-5 space-y-3">
               {adventures.map((a) => (
-                <li key={a.id} className="flex flex-col justify-between gap-3 border-2 border-rule bg-paper px-4 py-3.5 sm:flex-row sm:items-center">
+                <li key={a.id} className="flex flex-col justify-between gap-3 border border-room-edge bg-room-raised px-4 py-3.5 sm:flex-row sm:items-center">
                   <div>
-                    <p className="font-serif text-[1.15rem] font-bold leading-tight">
+                    <p className="font-serif text-[1.15rem] font-bold leading-tight text-warm">
                       {a.label}
-                      <span className="display-caps ml-2 align-middle text-[0.6rem] font-semibold text-ink-soft">
+                      <span className="display-caps ml-2 align-middle text-[0.6rem] font-semibold text-warm-soft">
                         Module {a.packet.moduleCode}
                       </span>
                     </p>
@@ -160,14 +160,14 @@ export default function CharacterVaultPage() {
                     <Link
                       href={`/one-shot-generator?load=${a.id}`}
                       prefetch={false}
-                      className="display-caps border-2 border-map-deep bg-map-deep px-3.5 py-1.5 text-[0.65rem] font-bold tracking-[0.1em] text-map-line hover:border-map-blue hover:bg-map-blue"
+                      className="btn-ember px-3.5 py-1.5 text-[0.65rem]"
                     >
                       Open
                     </Link>
                     <button
                       type="button"
                       onClick={() => removeAdventure(a.id)}
-                      className="display-caps border-2 border-rule bg-paper px-3.5 py-1.5 text-[0.65rem] font-bold tracking-[0.1em] text-ink-soft hover:border-stamp hover:text-stamp"
+                      className="display-caps border-2 border-room-edge px-3.5 py-1.5 text-[0.65rem] font-bold tracking-[0.1em] text-warm-soft transition-colors hover:border-stamp hover:text-[color:var(--ember-bright)]"
                     >
                       Delete
                     </button>
@@ -181,24 +181,24 @@ export default function CharacterVaultPage() {
         {/* ------------------------------------------------ Characters */}
         <section aria-label="Saved characters" className="mt-12">
           <div className="flex items-baseline justify-between">
-            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em]">Saved heroes</h2>
-            <Link href="/character-creator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-map-deep underline underline-offset-4">
+            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em] text-warm">Saved heroes</h2>
+            <Link href="/character-creator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-brass underline underline-offset-4">
               Create a hero
             </Link>
           </div>
           <hr className="module-rule mt-1.5" aria-hidden="true" />
 
           {characters.length === 0 ? (
-            <p className="mt-5 border border-rule bg-paper-shade px-4 py-5 text-center font-serif italic text-ink-soft">
+            <p className="mt-5 border border-room-edge bg-room-raised px-4 py-5 text-center font-serif italic text-warm-soft">
               The vault stands empty. Roll a hero in the{" "}
-              <Link href="/character-creator" prefetch={false} className="text-map-deep underline underline-offset-2">creator</Link>{" "}
+              <Link href="/character-creator" prefetch={false} className="text-brass underline underline-offset-2">creator</Link>{" "}
               or start from a{" "}
-              <Link href="/pregen-library" prefetch={false} className="text-map-deep underline underline-offset-2">pregen</Link>.
+              <Link href="/pregen-library" prefetch={false} className="text-brass underline underline-offset-2">pregen</Link>.
             </p>
           ) : (
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {characters.map((c) => (
-                <article key={c.id} className="goldenrod-sheet flex flex-col p-4">
+                <article key={c.id} className="goldenrod-sheet artifact flex flex-col p-4">
                   {renamingId === c.id ? (
                     <input
                       autoFocus

@@ -199,21 +199,21 @@ export default function OneShotGeneratorPage() {
   };
 
   const segmented = (selected: boolean) =>
-    `display-caps border-2 px-3 py-1.5 text-[0.7rem] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-map-blue ${
+    `display-caps border-2 px-3 py-1.5 text-[0.7rem] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass ${
       selected
-        ? "border-map-deep bg-map-deep text-map-line"
-        : "border-rule bg-paper text-ink-soft hover:border-map-deep hover:text-map-deep"
+        ? "border-map-blue bg-map-deep text-map-line"
+        : "border-room-edge bg-transparent text-warm-soft hover:border-brass hover:text-brass"
     }`;
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper">
+    <div className="chrome flex min-h-screen flex-col bg-room">
       <SiteHeader current="/one-shot-generator" />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         {/* ------------------------------------------------ Commission slip */}
-        <section aria-label="Adventure settings" className="no-print border-2 border-ink bg-paper">
-          <div className="border-b-2 border-ink bg-paper-shade px-4 py-2.5 sm:px-5">
-            <h1 className="display-caps text-[0.85rem] font-bold tracking-[0.16em]">
+        <section aria-label="Adventure settings" className="no-print border border-room-edge bg-room-raised">
+          <div className="border-b border-room-edge bg-room-deep px-4 py-2.5 sm:px-5">
+            <h1 className="display-caps text-[0.85rem] font-bold tracking-[0.16em] text-brass">
               Commission an Adventure
             </h1>
           </div>
@@ -229,14 +229,14 @@ export default function OneShotGeneratorPage() {
                     type="button"
                     onClick={() => updateSettings({ theme: t })}
                     aria-pressed={settings.theme === t}
-                    className={`border-2 px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-map-blue ${
+                    className={`border-2 px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass ${
                       settings.theme === t
-                        ? "border-map-deep bg-map-deep text-map-line"
-                        : "border-rule bg-paper hover:border-map-deep"
+                        ? "border-map-blue bg-map-deep text-map-line"
+                        : "border-room-edge bg-room text-warm hover:border-brass"
                     }`}
                   >
                     <span className="display-caps block text-[0.72rem] font-bold tracking-[0.1em]">{t}</span>
-                    <span className={`block font-serif text-[0.85rem] italic leading-snug ${settings.theme === t ? "text-map-line/85" : "text-ink-soft"}`}>
+                    <span className={`block font-serif text-[0.85rem] italic leading-snug ${settings.theme === t ? "text-map-line/85" : "text-warm-soft"}`}>
                       {THEME_BLURBS[t]}
                     </span>
                   </button>
@@ -253,7 +253,7 @@ export default function OneShotGeneratorPage() {
                     type="button"
                     aria-label="Lower level"
                     onClick={() => updateSettings({ level: Math.max(1, settings.level - 1) })}
-                    className="h-9 w-9 border-2 border-rule font-display text-lg font-semibold hover:border-map-deep hover:text-map-deep"
+                    className="h-9 w-9 border-2 border-room-edge font-display text-lg font-semibold text-warm hover:border-brass hover:text-brass"
                   >
                     &minus;
                   </button>
@@ -266,17 +266,17 @@ export default function OneShotGeneratorPage() {
                     onChange={(e) =>
                       updateSettings({ level: Math.min(20, Math.max(1, Number(e.target.value) || 1)) })
                     }
-                    className="h-9 w-16 border-2 border-rule bg-paper text-center font-display text-lg font-semibold focus:border-map-deep focus:outline-none"
+                    className="h-9 w-16 border-2 border-room-edge bg-room-deep text-center font-display text-lg font-semibold text-warm focus:border-brass focus:outline-none"
                   />
                   <button
                     type="button"
                     aria-label="Raise level"
                     onClick={() => updateSettings({ level: Math.min(20, settings.level + 1) })}
-                    className="h-9 w-9 border-2 border-rule font-display text-lg font-semibold hover:border-map-deep hover:text-map-deep"
+                    className="h-9 w-9 border-2 border-room-edge font-display text-lg font-semibold text-warm hover:border-brass hover:text-brass"
                   >
                     +
                   </button>
-                  <span className="ml-2 font-serif text-sm italic text-ink-soft">of 20</span>
+                  <span className="ml-2 font-serif text-sm italic text-warm-soft">of 20</span>
                 </div>
               </div>
 
@@ -287,7 +287,7 @@ export default function OneShotGeneratorPage() {
                     type="button"
                     aria-label="Fewer characters"
                     onClick={() => updateSettings({ partySize: Math.max(2, settings.partySize - 1) })}
-                    className="h-9 w-9 border-2 border-rule font-display text-lg font-semibold hover:border-map-deep hover:text-map-deep"
+                    className="h-9 w-9 border-2 border-room-edge font-display text-lg font-semibold text-warm hover:border-brass hover:text-brass"
                   >
                     &minus;
                   </button>
@@ -300,17 +300,17 @@ export default function OneShotGeneratorPage() {
                     onChange={(e) =>
                       updateSettings({ partySize: Math.min(7, Math.max(2, Number(e.target.value) || 4)) })
                     }
-                    className="h-9 w-16 border-2 border-rule bg-paper text-center font-display text-lg font-semibold focus:border-map-deep focus:outline-none"
+                    className="h-9 w-16 border-2 border-room-edge bg-room-deep text-center font-display text-lg font-semibold text-warm focus:border-brass focus:outline-none"
                   />
                   <button
                     type="button"
                     aria-label="More characters"
                     onClick={() => updateSettings({ partySize: Math.min(7, settings.partySize + 1) })}
-                    className="h-9 w-9 border-2 border-rule font-display text-lg font-semibold hover:border-map-deep hover:text-map-deep"
+                    className="h-9 w-9 border-2 border-room-edge font-display text-lg font-semibold text-warm hover:border-brass hover:text-brass"
                   >
                     +
                   </button>
-                  <span className="ml-2 font-serif text-sm italic text-ink-soft">players</span>
+                  <span className="ml-2 font-serif text-sm italic text-warm-soft">players</span>
                 </div>
               </div>
 
@@ -325,7 +325,7 @@ export default function OneShotGeneratorPage() {
                       onClick={() => updateSettings({ difficulty: d })}
                       className={
                         d === "Deadly" && settings.difficulty === d
-                          ? "display-caps border-2 border-stamp bg-stamp px-3 py-1.5 text-[0.7rem] font-semibold text-paper"
+                          ? "display-caps border-2 border-stamp bg-stamp px-3 py-1.5 text-[0.7rem] font-semibold text-warm"
                           : segmented(settings.difficulty === d)
                       }
                     >
@@ -355,7 +355,7 @@ export default function OneShotGeneratorPage() {
           </div>
 
           {/* Seed row + generate */}
-          <div className="flex flex-wrap items-end justify-between gap-4 border-t border-rule px-4 py-4 sm:px-5">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-t border-room-edge px-4 py-4 sm:px-5">
             <div>
               <label htmlFor="seed" className="imprint block">Seed (optional — same seed, same adventure)</label>
               <input
@@ -365,21 +365,21 @@ export default function OneShotGeneratorPage() {
                 onChange={(e) => applySeed(e.target.value)}
                 placeholder="e.g. k3v9pq"
                 spellCheck={false}
-                className="mt-2 h-9 w-44 border-2 border-rule bg-paper px-2 font-display text-sm tracking-[0.08em] placeholder:text-ink-soft/60 focus:border-map-deep focus:outline-none"
+                className="mt-2 h-9 w-44 border-2 border-room-edge bg-room-deep px-2 font-display text-sm tracking-[0.08em] text-warm placeholder:text-warm-soft/50 focus:border-brass focus:outline-none"
               />
             </div>
             <div className="flex flex-wrap gap-2.5">
               <button
                 type="button"
                 onClick={surpriseMe}
-                className="display-caps border-2 border-ink bg-paper px-4 py-2.5 text-[0.75rem] font-bold tracking-[0.12em] transition-colors hover:bg-paper-shade focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-map-blue"
+                className="btn-lantern px-4 py-2.5 text-[0.75rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
               >
                 Surprise me
               </button>
               <button
                 type="button"
                 onClick={generateNew}
-                className="display-caps border-2 border-map-deep bg-map-deep px-6 py-2.5 text-[0.75rem] font-bold tracking-[0.12em] text-map-line transition-colors hover:bg-map-blue hover:border-map-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-map-blue"
+                className="btn-ember px-6 py-2.5 text-[0.75rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
               >
                 {packet ? "Roll a new adventure" : "Generate adventure"}
               </button>
@@ -390,22 +390,22 @@ export default function OneShotGeneratorPage() {
         {/* ------------------------------------------------ Output */}
         {packet ? (
           <>
-            <div className="no-print sticky top-0 z-20 -mx-4 mt-8 border-y-2 border-ink bg-paper px-4 py-2 sm:-mx-6 sm:px-6">
+            <div className="no-print sticky top-0 z-20 -mx-4 mt-8 border-y border-room-edge bg-room/95 px-4 py-2 backdrop-blur-sm sm:-mx-6 sm:px-6">
               <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-                <span className="display-caps hidden text-[0.68rem] font-bold tracking-[0.14em] text-ink-soft sm:inline">
+                <span className="display-caps hidden text-[0.68rem] font-bold tracking-[0.14em] text-warm-soft sm:inline">
                   Module {packet.moduleCode} &middot; seed {packet.input.seed}
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => window.print()} className="display-caps border-2 border-map-deep bg-map-deep px-3.5 py-1.5 text-[0.68rem] font-bold tracking-[0.12em] text-map-line hover:border-map-blue hover:bg-map-blue">
+                  <button type="button" onClick={() => window.print()} className="btn-ember px-3.5 py-1.5 text-[0.68rem]">
                     Print / PDF
                   </button>
-                  <button type="button" onClick={copyLink} className="display-caps border-2 border-ink bg-paper px-3.5 py-1.5 text-[0.68rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  <button type="button" onClick={copyLink} className="btn-lantern px-3.5 py-1.5 text-[0.68rem]">
                     Copy link
                   </button>
-                  <button type="button" onClick={copyMarkdown} className="display-caps border-2 border-ink bg-paper px-3.5 py-1.5 text-[0.68rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  <button type="button" onClick={copyMarkdown} className="btn-lantern px-3.5 py-1.5 text-[0.68rem]">
                     Copy Markdown
                   </button>
-                  <button type="button" onClick={handleSave} className="display-caps border-2 border-ink bg-paper px-3.5 py-1.5 text-[0.68rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  <button type="button" onClick={handleSave} className="btn-lantern px-3.5 py-1.5 text-[0.68rem]">
                     Save to vault
                   </button>
                 </div>
@@ -414,7 +414,7 @@ export default function OneShotGeneratorPage() {
 
             <div aria-live="polite" className="no-print">
               {feedback && (
-                <p className="mt-3 border-2 border-success bg-paper-shade px-3 py-2 font-serif text-sm italic text-success">
+                <p className="mt-3 border border-success bg-room-raised px-3 py-2 font-serif text-sm italic text-[color:var(--success-bright)]">
                   {feedback}
                 </p>
               )}
@@ -424,13 +424,13 @@ export default function OneShotGeneratorPage() {
               <ModuleSheet packet={packet} onReroll={handleReroll} />
             </div>
 
-            <p className="no-print mt-4 text-center font-serif text-sm italic text-ink-soft">
+            <p className="no-print mt-4 text-center font-serif text-sm italic text-warm-soft">
               Not quite right? Re-roll any section with the small dice buttons — everything else stays put.
             </p>
           </>
         ) : (
           <section aria-label="How it works" className="mx-auto mt-12 max-w-2xl text-center">
-            <p className="font-serif text-[1.35rem] italic leading-relaxed text-ink">
+            <p className="font-serif text-[1.35rem] italic leading-relaxed text-warm">
               Pick a shape for tonight&rsquo;s trouble, and the smithy will forge the rest:
               a keyed map, correct encounter math, a villain with a plan, and a table
               of secrets — ready to print or run from the screen.

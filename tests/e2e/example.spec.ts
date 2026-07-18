@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("homepage renders a live generated module cover", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(/forged from a seed/i);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/game night/i);
   // The hero shows a real generated adventure with its map and title.
   await expect(page.getByText(/Adventure Module/i).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Run this adventure/i })).toBeVisible();
