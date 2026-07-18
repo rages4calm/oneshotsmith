@@ -13,7 +13,7 @@ import { ALL_THEMES, generateOneShot, randomSeed } from "@oneshotsmith/core";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { ModuleSheet } from "../../components/module-sheet";
-import { inputToParams, paramsToInput } from "../../lib/share";
+import { inputToParams, paramsToInput, themeSlug } from "../../lib/share";
 import { packetToMarkdown } from "../../lib/markdown-export";
 import { readSavedAdventures, saveAdventure } from "../../lib/adventure-storage";
 
@@ -25,6 +25,8 @@ const THEME_BLURBS: Record<OneShotTheme, string> = {
   "Wilderness": "The land itself does not want you",
   "Mystery": "Every clue is true. Someone is lying.",
 };
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const DIFFICULTIES: Difficulty[] = ["Easy", "Medium", "Hard", "Deadly"];
 const TIMEBOXES: Array<{ value: TimeBox; label: string }> = [
@@ -223,24 +225,33 @@ export default function OneShotGeneratorPage() {
             <fieldset>
               <legend className="imprint mb-2.5">Theme</legend>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {ALL_THEMES.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => updateSettings({ theme: t })}
-                    aria-pressed={settings.theme === t}
-                    className={`border-2 px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass ${
-                      settings.theme === t
-                        ? "border-map-blue bg-map-deep text-map-line"
-                        : "border-room-edge bg-room text-warm hover:border-brass"
-                    }`}
-                  >
-                    <span className="display-caps block text-[0.72rem] font-bold tracking-[0.1em]">{t}</span>
-                    <span className={`block font-serif text-[0.85rem] italic leading-snug ${settings.theme === t ? "text-map-line/85" : "text-warm-soft"}`}>
-                      {THEME_BLURBS[t]}
-                    </span>
-                  </button>
-                ))}
+                {ALL_THEMES.map((t) => {
+                  const selected = settings.theme === t;
+                  const scrim = selected
+                    ? "linear-gradient(rgba(29,78,121,0.45), rgba(13,10,7,0.72))"
+                    : "linear-gradient(rgba(13,10,7,0.52), rgba(13,10,7,0.82))";
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => updateSettings({ theme: t })}
+                      aria-pressed={selected}
+                      className={`min-h-[4.6rem] border-2 px-3 py-2.5 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass ${
+                        selected ? "border-brass" : "border-room-edge hover:border-brass"
+                      }`}
+                      style={{
+                        backgroundImage: `${scrim}, url('${basePath}/art/themes/${themeSlug(t)}.jpg')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      <span className="display-caps block text-[0.72rem] font-bold tracking-[0.1em] text-warm [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">{t}</span>
+                      <span className="block font-serif text-[0.85rem] italic leading-snug text-warm/85 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
+                        {THEME_BLURBS[t]}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </fieldset>
 

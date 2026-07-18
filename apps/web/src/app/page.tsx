@@ -49,7 +49,7 @@ export default function HomePage() {
           className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-16"
           style={{
             backgroundColor: "var(--room-deep)",
-            backgroundImage: `linear-gradient(rgba(13,10,7,0.78), rgba(13,10,7,0.9) 55%, rgba(20,16,12,1)), url('${basePath}/art/table-hero.jpg')`,
+            backgroundImage: `linear-gradient(rgba(13,10,7,0.45), rgba(13,10,7,0.68) 55%, rgba(20,16,12,1)), url('${basePath}/art/table-hero.jpg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

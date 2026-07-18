@@ -40,6 +40,19 @@ export const metadata: Metadata = {
     ],
     apple: `${basePath}/icon-192.png`,
   },
+  // Absolute OG URLs resolve against the production host for the cPanel build.
+  metadataBase: basePath ? new URL("https://carl-prewitt.com") : undefined,
+  openGraph: {
+    title: "OneShotsmith — Complete D&D 5e One-Shots from a Seed",
+    description:
+      "Keyed blue dungeon maps, real DMG encounter math, villains, read-aloud text, and print-perfect modules — forged in your browser, shareable by seed.",
+    type: "website",
+    images: [{ url: `${basePath}/og.jpg`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [`${basePath}/og.jpg`],
+  },
 };
 
 export default function RootLayout({
