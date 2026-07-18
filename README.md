@@ -1,6 +1,12 @@
 # OneShotsmith
 
+[![CI](https://github.com/rages4calm/oneshotsmith/actions/workflows/ci.yml/badge.svg)](https://github.com/rages4calm/oneshotsmith/actions/workflows/ci.yml)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/rages4calm)
+[![License: MIT](https://img.shields.io/badge/License-MIT-1d4e79.svg)](LICENSE)
+
 **Complete D&D 5e one-shot adventures, forged from a seed — map, math, and story in one click.**
+
+**▶ Try it live: [carl-prewitt.com/oneshot](https://carl-prewitt.com/oneshot)**
 
 OneShotsmith generates a full, runnable adventure module in your browser: a keyed
 dungeon map in the classic blue style, encounters built on the real DMG XP math, a
@@ -134,7 +140,13 @@ packages/
 - Pregen party pack matched to the generated adventure's hooks
 - 2024 rules toggle surfaced in the UI (the math already ships in the engine)
 
+## Support the smithy
+
+OneShotsmith is free forever — no accounts, no ads, no paywalled themes. If it
+saved your game night and you'd like to keep the forge lit,
+**[sponsoring on GitHub](https://github.com/sponsors/rages4calm)** buys the
+coffee that the next feature runs on. A star helps other DMs find it, too.
+
 ---
 
-Built by [Carl Prewitt Jr](https://github.com/rages4calm). If OneShotsmith saved
-your game night, a star helps other DMs find it.
+Built by [Carl Prewitt Jr](https://github.com/rages4calm).
