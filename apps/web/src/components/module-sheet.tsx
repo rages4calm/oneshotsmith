@@ -190,6 +190,42 @@ export function ModuleSheet({ packet, onReroll }: Props) {
       {/* ------------------------------------------------ Synopsis */}
       <SectionHead>For the Game Master</SectionHead>
       <p className="mt-4 max-w-[70ch]">{packet.synopsis}</p>
+
+      {/* Quick anchor for every rolled proper noun, so nothing appears cold. */}
+      <div className="stat-block mt-4 p-3.5">
+        <p className="display-caps text-[0.65rem] font-semibold tracking-[0.14em] text-ink-soft">
+          The pieces on the board
+        </p>
+        <dl className="mt-2 grid gap-x-8 gap-y-1.5 text-[0.92rem] sm:grid-cols-2">
+          {packet.world && (
+            <div className="flex gap-2">
+              <dt className="font-sc w-24 flex-none font-bold">The town</dt>
+              <dd>{packet.world.settlement} (its tavern: {packet.world.tavern})</dd>
+            </div>
+          )}
+          <div className="flex gap-2">
+            <dt className="font-sc w-24 flex-none font-bold">The site</dt>
+            <dd>{packet.location.name}</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="font-sc w-24 flex-none font-bold">The villain</dt>
+            <dd>{packet.villain.name} — {packet.villain.epithet} ({packet.villain.stats.name}, CR {packet.villain.stats.cr})</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="font-sc w-24 flex-none font-bold">The patron</dt>
+            <dd>{packet.npcs[0].name}, {packet.npcs[0].ancestry} {packet.npcs[0].occupation} — who brings the party in</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="font-sc w-24 flex-none font-bold">Also present</dt>
+            <dd>{packet.npcs.slice(1).map((n) => `${n.name} (${n.occupation})`).join("; ")}</dd>
+          </div>
+        </dl>
+        <p className="mt-2.5 border-t border-rule pt-2 text-[0.82rem] italic text-ink-soft">
+          Any other name, faction, or debt a hook or scene mentions in passing is
+          yours to flesh out — or re-roll that section until the table likes it.
+        </p>
+      </div>
+
       <p className="mt-3 text-[0.9rem] text-ink-soft">
         Total combat XP {packet.xpSummary.total.toLocaleString()} ({packet.xpSummary.perCharacter.toLocaleString()} per character) — a full session&rsquo;s reward at this level.
       </p>

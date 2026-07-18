@@ -278,6 +278,7 @@ export const RESCUE: ThemePack = {
       {
         type: "exploration",
         title: "Where They Keep Them",
+        provides: ["captive-roster"],
         readAloud:
           "You find the captives by the quiet. The rest of the camp mutters, snores, clinks — but this room holds the specific silence of people listening for their lives. Then a child's whisper, fierce and hopeful: 'I TOLD you the fish would work.' Eyes appear at the grate, more and more of them, and every one of them is now a clock.",
         summary:
@@ -335,7 +336,7 @@ export const RESCUE: ThemePack = {
         details: [
           "The split is real: the column carries a third of the captives (name them — names make the choice cost). It moves slow (oxen, night, mud) and CAN be caught before the border ford by a party that leaves within the hour.",
           "Catching it buys a cleaner fight: six escorts, road-weary, no palisade, no dog line — the adventure's most winnable battle, three hours' ride away, in exchange for surprise back at camp.",
-          "DC 13 Survival on the ruts: the column took the low road, which floods. A local, a map, or the ferryman's daughter knows the cutoff that beats them to the ford entirely.",
+          "DC 13 Survival on the ruts: the column took the low road, which floods. A local, a good map, or a river-raised captive knows the cutoff that beats them to the ford entirely.",
           "If the party ignores the column, close the thread honestly in the epilogue — recovered later by ransom, by militia, or not — depending on what the party did with the ledgers and the buyer.",
         ],
       },
@@ -363,8 +364,9 @@ export const RESCUE: ThemePack = {
       {
         type: "exploration",
         title: "The Master Ledger",
+        provides: ["master-ledger"],
         readAloud:
-          "The book is bound in honest calfskin and kept better than scripture: dates, weights, names, prices, all in a hand you have seen once already tonight. You turn the pages by lantern light, and the operation opens up in front of you like a lanced wound. Then you reach the column that is different — three names with no debt beside them, no price, only a small drawn crest and the words 'as commissioned.'",
+          "The book is bound in honest calfskin and kept better than scripture: dates, weights, names, prices, all in one steady, unhurried hand. You turn the pages by lantern light, and the operation opens up in front of you like a lanced wound. Then you reach the column that is different — three names with no debt beside them, no price, only a small drawn crest and the words 'as commissioned.'",
         summary:
           "The adventure's truth in writing: the ledger reveals the twist, prices the villain's fear, and names names. What the party does with this book decides the county's next decade.",
         details: [
@@ -383,7 +385,7 @@ export const RESCUE: ThemePack = {
           "The villain offers terms before the finale — sincerely, by their own lights. The parley prices the captives, exposes the villain's fear, and configures the final scene.",
         details: [
           "The offer is real and specific: the captives, free, tonight — in exchange for the ledger unburned, the buyer unmentioned, and the party's oath to be three counties away by the dark of the moon. {villain} will keep this bargain to the letter.",
-          "DC 15 Insight (or the ledger's shaking entry, which grants it free): the deadline is not commerce — {villain} is AFRAID of what the dark of the moon brings, and the captives are somehow the payment, the shield, or the apology for it.",
+          "DC 15 Insight (granted free if the party found the shaking entry in the camp's master ledger): the deadline is not commerce — {villain} is AFRAID of what the dark of the moon brings, and the captives are somehow the payment, the shield, or the apology for it.",
           "Every extracted truth is a finale advantage: the buyer's name strips the escort {villain} was promised; the fear named aloud rattles them (first round of the finale, they act last); the informer exposed removes the ambush from the extraction.",
           "If the party takes the deal, honor it — and let the epilogue deliver what {villain} was afraid of, on schedule, to a camp the party chose to leave standing. Some victories invoice later.",
         ],
@@ -392,13 +394,13 @@ export const RESCUE: ThemePack = {
         type: "skill",
         title: "The Long Walk Out",
         readAloud:
-          "Nine people move behind you in a chain of held hands and held breath. The camp is a constellation of fires you now know by name, and the gap you mapped between them has never looked narrower. Somewhere to the left, a dog grumbles in its sleep. The ferryman's daughter squeezes the hand of the child behind her, and takes her place at the rear of the line, as agreed.",
+          "Nine people move behind you in a chain of held hands and held breath. The camp is a constellation of fires you now know by name, and the gap you mapped between them has never looked narrower. Somewhere to the left, a dog grumbles in its sleep. The eldest of the children squeezes the hand of the child behind her, and takes her place at the rear of the line, as agreed.",
         summary:
           "The extraction itself: moving the captives through everything the party learned, as a group challenge where every earlier choice pays out or bills the difference.",
         details: [
-          "Run as a group challenge, four successes before three failures, the captives' checks included — but every asset banked earlier converts a failure: the dog-line seam, the miscounted hour, the turned conscripts, the quartermaster's keys, the daughter's map.",
-          "Each failure costs in fiction, escalating: a child's cry hushed a heartbeat late (guards stir), the broken-ankle stretcher wedging in the sluice gap (one PC's round to free), and finally a true alarm — which turns the remaining distance into the finale with the captives in tow.",
-          "The one who would not leave balks at the wire, as promised. Thirty seconds of roleplay — the right true sentence, no roll — brings her. Dragging her works too, and she will say so, loudly, at the worst moment unless someone holds her hand the whole way.",
+          "Run as a group challenge, four successes before three failures, the captives' checks included — but every asset banked earlier converts a failure: the dog-line seam, the miscounted hour, the turned conscripts, the quartermaster's keys, a captive's char-drawn map.",
+          "Each failure costs in fiction, escalating: a child's cry hushed a heartbeat late (guards stir), a stretcher case wedging in the sluice gap (one PC's round to free), and finally a true alarm — which turns the remaining distance into the finale with the captives in tow.",
+          "One captive — the one who never believed in rescue — balks at the wire, exactly as feared. Thirty seconds of roleplay — the right true sentence, no roll — brings her. Dragging her works too, and she will say so, loudly, at the worst moment unless someone holds her hand the whole way.",
           "End the scene at the treeline headcount. Make them count out loud. If the count is right, let the table breathe. If the column left earlier and they chose the camp, the count is short, and the epilogue owes those names.",
         ],
         skill: {
@@ -424,9 +426,9 @@ export const RESCUE: ThemePack = {
         summary:
           "A holding action at the breach while the captives run: waves to blunt, a wagon-wall to keep, and {villain} arriving in person to reopen the arithmetic.",
         details: [
-          "Structure: three waves, rounds apart, then {villain} with their escort. The party does not need to win — they need to HOLD until the runners' signal (a whistle from the ridge, four rounds minimum, six if the stretcher slows them).",
+          "Structure: three waves, rounds apart, then {villain} with their escort. The party does not need to win — they need to HOLD until the runners' signal (a whistle from the ridge, four rounds minimum, six if a stretcher slows them).",
           "The breach is the battlefield's whole grammar: the wagon (cover, climbable, tippable — DC 13 Athletics to drop it on a wave), the gap's width (two abreast, no flanking while it stands), and the fired palisade if someone gets ambitious with a torch (closes the gap for good at round's end — including to the party).",
-          "Turned conscripts and freed captives who insisted on staying fight here — give each one one visible moment. If the informer went unexposed, their moment is the gate's bar lifting from inside.",
+          "Turned conscripts and freed captives who insisted on staying fight here — give each of them one visible moment. If the informer went unexposed, their moment is the gate's bar lifting from inside.",
           "When the whistle sounds, the scene's question inverts: the holding is done, and the party must LEAVE a winnable fight. {villain} will offer them the chance to stay, courteously. The exit, fighting and moving, is the finale's last test.",
         ],
         combat: {
@@ -444,7 +446,7 @@ export const RESCUE: ThemePack = {
         details: [
           "The clock is the crossing: the wagon reaches the far bank in five rounds unless the team is stopped (cut loose, calmed, or killed — the captives will feel each choice), the drover is taken, or a wheel is wedged (DC 13 Athletics in the current).",
           "The river fights everyone: waist-deep (difficult terrain), a swimmer's current (DC 12 Athletics on a hit that drops anyone), and the deep channel just downstream of the wagon — where anything that tips goes, bars and all. If the wagon starts to go over, the fight becomes a rescue mid-rescue.",
-          "The escort's captain has the wagon key and no loyalty deeper than the ledger: offered the shaking-entry page or its price in coin, he will throw the key and wade for the far bank, done with all of it. His men follow him, not the cause.",
+          "The escort's captain has the wagon key and no loyalty deeper than the ledger: offered a damning page from the camp's books — or its price in coin — he will throw the key and wade for the far bank, done with all of it. His men follow him, not the cause.",
           "Across the ford, on the far rise, whatever the dark of the moon was bringing is already watching (per the seed's secret — buyer, army, or worse). It does not intervene. It takes notes. End the fight under its gaze and let the epilogue carry the weight.",
         ],
         combat: {

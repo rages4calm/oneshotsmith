@@ -76,7 +76,13 @@ export function chance(rng: Rng, probability: number): boolean {
 
 /** Fill "{key}" slots in a template from vars. Unknown keys are left intact. */
 export function fill(template: string, vars: Record<string, string>): string {
-  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
-    Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : match
+  return (
+    template
+      .replace(/\{(\w+)\}/g, (match, key: string) =>
+        Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : match
+      )
+      // Interpolated names often carry their own article ("The Drowned Anvil"),
+      // so "at the {tavern}" would render "at the The Drowned Anvil".
+      .replace(/\b([Tt]he) The\b/g, "$1")
   );
 }

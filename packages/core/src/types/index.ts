@@ -268,6 +268,11 @@ export interface OneShotPacket {
     name: string;
     description: string;
   };
+  /** World dressing referenced across the text (optional in pre-existing saves). */
+  world?: {
+    settlement: string;
+    tavern: string;
+  };
   villain: Villain;
   npcs: NPCProfile[];
   scenes: Scene[];

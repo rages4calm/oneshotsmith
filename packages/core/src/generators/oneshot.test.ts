@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { generateOneShot } from "./oneshot";
-import { ALL_THEMES } from "../data/themes";
+import { ALL_THEMES, THEME_PACKS } from "../data/themes";
 import {
   encounterMultiplier,
   lazyBenchmark,
@@ -64,6 +64,8 @@ describe("generateOneShot", () => {
         // No unfilled template slots should leak into player-facing text.
         const text = JSON.stringify(packet);
         expect(text).not.toMatch(/\{(villain|epithet|site|place|patron|tavern|monster|item|adj|noun)\}/);
+        // Article collisions from interpolated proper nouns ("at the The Anvil").
+        expect(text).not.toMatch(/\b[Tt]he The\b/);
       }
     }
   });
@@ -90,6 +92,55 @@ describe("generateOneShot", () => {
     expect(
       climax.encounter!.groups.some((g) => g.monster.name === packet.villain.stats.name)
     ).toBe(true);
+  });
+
+  it("never emits a scene whose requirements weren't set up by earlier scenes", () => {
+    // Templates may declare provides/requires; verify selected adventures
+    // honor them, by matching generated scene titles back to their templates.
+    const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const titleMatches = (template: string, actual: string) =>
+      new RegExp(`^${escapeRe(template).replace(/\\\{\w+\\\}/g, ".+")}$`).test(actual);
+
+    for (const theme of ALL_THEMES) {
+      const pack = THEME_PACKS[theme];
+      const allTemplates = [
+        ...pack.scenes.arrival,
+        ...pack.scenes.middle,
+        ...pack.scenes.revelation,
+        ...pack.scenes.climax,
+      ];
+      for (let i = 0; i < 25; i++) {
+        const packet = generateOneShot({ ...baseInput, theme, seed: `dep-${theme}-${i}` });
+        const provided = new Set<string>();
+        for (const scene of packet.scenes) {
+          const template = allTemplates.find((t) => titleMatches(t.title, scene.title));
+          expect(template, `template for "${scene.title}"`).toBeDefined();
+          for (const req of template!.requires ?? []) {
+            expect(provided.has(req), `"${scene.title}" requires "${req}"`).toBe(true);
+          }
+          (template!.provides ?? []).forEach((p) => provided.add(p));
+        }
+      }
+    }
+  });
+
+  it("regression: no unconditional confession references (Reddit report, seed n0qwq5)", () => {
+    // https://www.reddit.com/r/dndnext/comments/1v056gf/ — a climax referenced
+    // a confession that a different revelation scene never introduced.
+    for (let i = 0; i < 40; i++) {
+      const packet = generateOneShot({
+        seed: i === 0 ? "n0qwq5" : `conf-${i}`,
+        theme: "Dungeon Crawl",
+        level: 3,
+        partySize: 5,
+        difficulty: "Medium",
+        timebox: "3h",
+      });
+      const text = JSON.stringify(packet);
+      expect(text).not.toContain("You've read the confession");
+      expect(text).not.toContain("per the confession");
+      expect(text).not.toContain("thanks to the confession");
+    }
   });
 
   it("map rooms never overlap", () => {

@@ -123,6 +123,25 @@ packages/
   adapters/, db/        Scaffolding for future VTT export / sync (unused at runtime)
 ```
 
+## Is this AI?
+
+Honest answer, both halves:
+
+- **At runtime: no.** The generator makes zero AI calls. Every adventure is
+  deterministic, seeded table-assembly — the same math donjon or a stack of
+  printed random tables uses, which is why the same seed produces the same
+  module forever, offline, on any machine.
+- **In the workshop: yes.** The code and the content libraries were built by
+  Carl working with Claude as the tool — directed, curated, tested, and
+  bug-fixed by a human (and by community feedback: several fixes in this repo
+  came straight from Reddit playtest reports). The encounter math comes from
+  the published DMG tables, not from a model's guess.
+
+Every random table is plain TypeScript in
+[`packages/core/src/data/themes/`](packages/core/src/data/themes/) — readable,
+editable, and replaceable. If you'd rather run your own hand-written tables,
+fork it and swap the files; the engine won't know the difference.
+
 ## Legal
 
 - **Code:** MIT License

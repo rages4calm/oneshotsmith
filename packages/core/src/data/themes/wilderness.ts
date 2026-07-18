@@ -214,7 +214,7 @@ export const WILDERNESS: ThemePack = {
           "The overview. The party sees the entire crossing at once — scale, weather systems, route options — and picks their line through it.",
         details: [
           "Lay the route out plainly in two or three stages, with where water and shelter should be. Let them plan aloud on real geography; the map handout earns its keep here.",
-          "DC 13 Survival reads the sky honestly: name the day the weather will break — and make it the day the storm challenge lands. Foreshadow, don't ambush.",
+          "DC 13 Survival reads the sky honestly: name the day the weather will break — then keep that promise, whatever scene that day holds. Foreshadow, don't ambush.",
           "DC 12 Perception on the birds: not migration. Wrong season, wrong direction, no formation. Everything with wings is simply leaving.",
           "Route choice with teeth: the low way (faster, wetter, floods first) or the high way (slower, exposed, sees trouble coming). Take their answer seriously and set the middle scenes on the line they chose.",
         ],
@@ -248,7 +248,7 @@ export const WILDERNESS: ThemePack = {
         summary:
           "The river is up and the crossing the map promised is gone. Cross now with rope-work and nerve, or spend hours hunting a better ford — the weather clock makes waiting the trap answer.",
         details: [
-          "State the meta-choice first: cross here (run the challenge), scout upstream (DC 13 Survival and two hours finds a wider, shallower braid — run the challenge at easy tiers), or camp and wait. If they wait, the river does drop — and the storm scene arrives a day early. The clock is real; tell them it is real.",
+          "State the meta-choice first: cross here (run the challenge), scout upstream (DC 13 Survival and two hours finds a wider, shallower braid — run the challenge at easy tiers), or camp and wait. If they wait, the river does drop — and the sky's promised break arrives a day early, on top of them. The clock is real; tell them it is real.",
           "The handcart holds trade goods and one tarp-wrapped bundle lashed with a shepherd's knot — seed a Secrets & Clues entry or the first physical sign of {villain}'s supply line.",
           "Anyone swept away washes onto the shingle bar a quarter mile down: alive, minus one carried item of the DM's choice, and on the wrong side of the light. Gear the river takes is gone. This is the scene where the supply ledger grows teeth.",
         ],
@@ -323,12 +323,13 @@ export const WILDERNESS: ThemePack = {
       {
         type: "exploration",
         title: "The Cairn Line",
+        provides: ["black-stone"],
         readAloud:
           "The cairns begin at the treeline — waist-high stacks a bowshot apart, older than any road authority, patched by ten generations of passing hands. Each one carries sign for the next: a flat stone tilted for 'water,' two set crossways for 'shelter,' the rare black stone that means 'no.' The line walks its message out ahead of you to the horizon. Four cairns on, even from here, something about the stacks is different.",
         summary:
           "The route's oldest information system, and someone has been editing it. Reading the line honestly means learning to distrust it — and repairing it is how the party leaves this country better than they found it.",
         details: [
-          "The near cairns are honest — water is where they say. DC 13 Survival at the fourth: rebuilt recently by book-learning, not trail-craft (moss inward, weathered faces turned wrong). The edits steer travelers off the true way — toward the territory, a drop, or {villain}'s watched approach, DM's choice.",
+          "The near cairns are honest — water is where they say. DC 13 Survival at the fourth: rebuilt recently by book-learning, not trail-craft (moss inward, weathered faces turned wrong). The edits steer travelers off the true way — toward an occupied territory, a drop, or {villain}'s watched approach, DM's choice.",
           "Following the false line anyway is allowed — never stop players, bill them. It costs half a day and one hazard, and ends where the last misled party's sign peters out: salvage, and a Secrets & Clues entry.",
           "Repairing the line: an hour and DC 12 Survival per bad cairn, three in all, for no mechanical reward on this trip — but every keeper, drover, and ranger they meet afterward already knows they did it. Word moves along this route faster than the people do.",
           "One cairn near {site} carries the black 'no' stone, and it is original — old, unedited, the true wardens' warning. Whatever the vandal's edits lie about, the black stone does not. Let the party see the difference between the forgery and the ancients.",
@@ -363,7 +364,7 @@ export const WILDERNESS: ThemePack = {
           "Do the arithmetic at the table: days of food against days of route, out loud, and let the number land. Options with prices: hunt (half a day, DC 13 Survival, feeds two days), forage as they walk (DC 12 Nature, feeds one, slows the pace), turn back (a real option — offer it neutrally), or tighten belts (the final leg costs everyone a level of exhaustion).",
           "Read the theft: DC 13 Investigation — one person, two trips, heavy load first, and the medicine taken last, like an afterthought or an order. DC 13 Survival outside: tracks heavy going toward {site}, light coming back. Someone up ahead is provisioning for a long stay.",
           "The tin whistle is not trash. It is a waystation keeper's, pitch-marked to its station — DC 12 History, or any keeper met earlier, names which one. Its presence in robbed goods means a keeper is involved, or a keeper's body was.",
-          "If the party dealt squarely at the Last Roof, a drover she tipped off intercepts them near here with two days of food and a one-line note: 'You paid fair. — R.' Conduct on this route compounds, and now they know it.",
+          "If the party dealt squarely at the Last Roof, a drover the keeper tipped off intercepts them near here with two days of food and a one-line note: 'You paid fair. — R.' Conduct on this route compounds, and now they know it.",
         ],
       },
     ],
@@ -379,7 +380,7 @@ export const WILDERNESS: ThemePack = {
         details: [
           "Deliver the twist here (see The Twist) as things seen from height, anchored to three hardships the party personally walked through. A revelation earned by miles beats one announced by monologue.",
           "DC 13 Perception — or a spyglass, or the guide — resolves the movement below: name {villain}'s presence in concrete terms. A count of figures, the state of the landmark, one detail that makes it personal.",
-          "This is the last defensible camp, and the only guaranteed safe rest since the Last Roof. The approach below has exactly two lines: fast and seen, or slow and hidden. Put the choice on the table with honest prices and let them own the plan.",
+          "This is the last defensible camp, and the only guaranteed safe rest since the route's last warm roof. The approach below has exactly two lines: fast and seen, or slow and hidden. Put the choice on the table with honest prices and let them own the plan.",
           "If the guide is present, this is where they stop walking. Whatever they have been not-saying, the view has made it undeniable — it comes out here, quietly. Then the party decides whether the guide walks down the hill with them.",
         ],
       },
@@ -436,7 +437,7 @@ export const WILDERNESS: ThemePack = {
           "The landmark is terrain and treasure both: three zones — the approach ground, the structure, the height at its heart. Holding the height sees everything, but reaching it means the exposed climb both sides can watch. Give {villain} a reason to leave one zone unguarded, and let the party smell whether it is a gap or a mouth.",
           "The wild fights nobody and inconveniences everybody: on initiative 20, one country event per round — a gust, groundwater, wildlife breaking cover — applied with perfect neutrality. The party rehearsed these all week. The minions didn't.",
           "The clock: {villain} is here to FINISH something — the last wagon, the claim, the collection, per their plan. After round 5, unfinished business becomes finished and the endgame hardens. Say what the clock is in round 1; dread beats surprise every time.",
-          "Victories that aren't damage: the Marker Fire terms can be reopened once, sincerely, by either side at half HP — and the landmark's original purpose (the black stone's warning) can be restored with two character-rounds of work, turning the ground itself against its occupier. The crossing taught them to read the land. The finale grades it.",
+          "Victories that aren't damage: terms can be put on the table once, sincerely, by either side at half HP (any offer made on the way in stands, one notch worse) — and the landmark's original purpose — beacon, warning, watch — can be restored with two character-rounds of work, turning the ground itself against its occupier. The crossing taught them to read the land. The finale grades it.",
         ],
         combat: {
           tactics: "{villain} fights on interior lines, spends minions on the party's ranged threats first, and retreats upward zone by zone — the plan needs the heart of the site held, and they will trade everything else for it, including dignity.",

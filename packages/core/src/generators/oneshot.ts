@@ -215,11 +215,26 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
   const clues = pickN(twistRng, pack.cluePool, 8).map((c) => fill(c, vars));
 
   // --- Scenes --------------------------------------------------------------
+  // Scenes are chosen in session order, tracking the story artifacts each one
+  // introduces (`provides`); a template whose `requires` aren't met by
+  // earlier-selected scenes is ineligible. This keeps cross-scene references
+  // (a confession, a ledger) from appearing in adventures that never set them
+  // up. If filtering would empty a pool, fall back to the full pool.
   const sceneRng = rngFor("scenes", nonce("scenes"));
-  const arrivalT = pick(sceneRng, pack.scenes.arrival);
-  const middlesT = chooseMiddles(sceneRng, pack.scenes.middle, structure.middles);
-  const revelationT = pick(sceneRng, pack.scenes.revelation);
-  const climaxT = pick(sceneRng, pack.scenes.climax);
+  const provided = new Set<string>();
+  const addProvides = (t: SceneTemplate) => (t.provides ?? []).forEach((p) => provided.add(p));
+  const eligible = (list: SceneTemplate[]) => {
+    const ok = list.filter((t) => (t.requires ?? []).every((r) => provided.has(r)));
+    return ok.length ? ok : list;
+  };
+
+  const arrivalT = pick(sceneRng, eligible(pack.scenes.arrival));
+  addProvides(arrivalT);
+  const middlesT = chooseMiddles(sceneRng, eligible(pack.scenes.middle), structure.middles);
+  middlesT.forEach(addProvides);
+  const revelationT = pick(sceneRng, eligible(pack.scenes.revelation));
+  addProvides(revelationT);
+  const climaxT = pick(sceneRng, eligible(pack.scenes.climax));
 
   const templates: Array<{ t: SceneTemplate; minutes: number }> = [
     { t: arrivalT, minutes: structure.minutes.arrival },
@@ -341,6 +356,7 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
     synopsis,
     hook,
     location: { name: siteName, description: fill(site.description, vars) },
+    world: { settlement: place, tavern },
     villain,
     npcs,
     scenes,

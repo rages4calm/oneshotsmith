@@ -199,7 +199,7 @@ export const HEIST: ThemePack = {
         details: [
           "The invitation book lists names with descriptions. A forged invitation passes on DC 12 Deception; claiming a listed no-show passes free — until the real one arrives (d6 each hour: on a 1, they do).",
           "Cloakroom rules: weapons and working tools go on the hook. DC 13 Sleight of Hand keeps something small; armor heavier than leather simply does not fit the fiction.",
-          "Each PC who works the room earns one acquaintance who will vouch for them later — name, title, one fact. These are load-bearing when the alarm ladder starts to climb.",
+          "Each PC who works the room earns one acquaintance who will vouch for them later — name, title, one fact. These are load-bearing later, once the house grows suspicious and starts checking faces.",
           "The steward stands where the whole floor is visible, the case-ward rod on his belt. Point him out once, unprompted — the players should know the face whose job is noticing them.",
         ],
       },
@@ -230,7 +230,7 @@ export const HEIST: ThemePack = {
         details: [
           "Let the players drive with questions and answer from the site's rooms and terrain, charging for the good material: the guard rotation costs an afternoon and DC 12 Perception, the servants' bell-code costs DC 12 Persuasion below stairs, the vault antechamber's layout costs DC 13 Investigation in public records or 25 gp to a retired chambermaid.",
           "Three successes build a plan with one banked advantage the party may invoke later ('we cased this — the coal chute is unbarred'). Declared once in play, it is simply true.",
-          "Overreach is the lever: a fourth question in the same place gets remembered. When the alarm ladder starts climbing, it starts one rung higher.",
+          "Overreach is the lever: a fourth question in the same place gets remembered. When the house later goes on alert, its suspicion starts one step higher.",
           "Seed one falsehood. One detail gathered here is wrong or out of date — the DM chooses which and keeps a straight face. Competent crews verify.",
         ],
       },
@@ -244,7 +244,7 @@ export const HEIST: ThemePack = {
         details: [
           "Decide with the players what they are fishing for, then price it: a guest's vouching costs DC 12 Persuasion, the seating chart costs a servant's goodwill, the steward's key-ring costs DC 14 Sleight of Hand and a plan for putting it BACK.",
           "The host's midnight toast empties the upper floors for a quarter hour — every servant comes down for it. Deliver this through an NPC ('the staff won't miss the toast; cook flogs latecomers') and let the party build on it.",
-          "Failure's price is memorability, not capture: each botched interaction adds one witness who can describe a PC. They surface at the alarm ladder's third rung.",
+          "Failure's price is memorability, not capture: each botched interaction adds one witness who can describe a PC. They surface once the house locks down and starts comparing descriptions.",
           "{villain} is here, working the same room for their own reasons. First to notice the other's craft wins an edge — one opposed Insight against Deception, winner gains advantage on their next move against the loser.",
         ],
       },
@@ -269,7 +269,7 @@ export const HEIST: ThemePack = {
             { skill: "Sleight of Hand", tier: "hard", use: "hook and pay out a line across the long gap for the rest of the crew" },
           ],
           success: "The party reaches the roof entry with the hour-patrol twenty minutes out and the high ground over the whole house — plus one free observation: which rooms are lit that should not be.",
-          failure: "Each failure costs: a slipped tile clatters into the street (one rung up the alarm ladder), a dropped tool waits in a gutter to be found, or a straggler arrives shaken and last. No damage yet — but the patrol's lantern is early, and closer than it should be.",
+          failure: "Each failure costs: a slipped tile clatters into the street (the house below grows a step more alert), a dropped tool waits in a gutter to be found, or a straggler arrives shaken and last. No damage yet — but the patrol's lantern is early, and closer than it should be.",
         },
       },
       {
@@ -280,7 +280,7 @@ export const HEIST: ThemePack = {
         summary:
           "The security set-piece: beat the vault door's locks, wards, and waiting guardians while the antechamber does what it was built to do — catch thieves in the act.",
         details: [
-          "The door: three of the nine keyholes are real (DC 13 Investigation reads the honest wear), three ring the alarm two rungs up the ladder, three are blanks that waste a careful minute each. Thieves' tools beat each true lock at DC 13; the steward's key-ring, if lifted earlier, turns two outright.",
+          "The door: three of the nine keyholes are real (DC 13 Investigation reads the honest wear), three ring the alarm below — patrols pair up and doors start locking — three are blanks that waste a careful minute each. Thieves' tools beat each true lock at DC 13; the steward's key-ring, if lifted earlier, turns two outright.",
           "The guardians do not challenge anyone who enters. They wait for the second lock to open, then move. Describe them as furniture until then.",
           "The floor is the witness: polished stone that carries footsteps to the post below. Stockinged feet or laid-down cloaks silence it — the detail that separates crews from burglars.",
           "On a full botch — two alarm holes, or a guardian out the door — the failsafe drops a portcullis across the stair. Locked IN with the prize is its own scene; play it, don't skip it.",
@@ -293,6 +293,7 @@ export const HEIST: ThemePack = {
       {
         type: "combat",
         title: "The First Bell",
+        provides: ["alarm-ladder"],
         readAloud:
           "It happens the way it always happens: a door opens that shouldn't, and a tray hits the floor with a crash like applause. For one long heartbeat you and the witness stand in perfect stillness, doing the same arithmetic. Then the corridor is full of running footsteps, and somewhere below, a hand is reaching for the bell-rope.",
         summary:
@@ -318,7 +319,7 @@ export const HEIST: ThemePack = {
         details: [
           "The watchman counted footsteps and waits with a hand crossbow under his coat — but he is, by his own lights, reasonable: DC 14 Persuasion slows his response if approached without drawn steel, and he will forget one face entirely for 10 gp. He has seen the wages clue (Secrets & Clues) and can be drawn out about it.",
           "If it goes to blades, the shutters are the lever: thrown open, the moon-bars carve the dark into lit lanes; kept shut, everything is knife-dark and Stealth stays live mid-fight.",
-          "Noise carries from here: every round of open fighting past the second adds a rung to the alarm ladder. Grapples, pins, and mercy are mechanically better than glory.",
+          "Noise carries from here: every round of open fighting past the second brings the house a step closer to full lockdown. Grapples, pins, and mercy are mechanically better than glory.",
           "His partner walks the floor below on a twenty-count. A body, a missing lantern, or an unanswered whistle brings the partner up the far stair — begin counting aloud where the players can hear you.",
         ],
         combat: {
@@ -329,6 +330,7 @@ export const HEIST: ThemePack = {
       {
         type: "exploration",
         title: "The Counting Room",
+        provides: ["foul-ledger"],
         readAloud:
           "This room is where {site} does its real business, and it smells of ink, sand, and candle-smoke worked into the wood. Two desks: a grand one facing the door, dressed with silver and self-importance, and a plain one in the corner, worn pale at the elbows, its drawers fitted with good small locks. The grand desk's ledger lies open, balanced to the penny — display-neat, like a made bed in a house where nobody sleeps.",
         summary:
@@ -337,7 +339,7 @@ export const HEIST: ThemePack = {
           "The corner desk's locks fall to DC 12 thieves' tools; inside sits the double ledger — the fair copy lies, the foul copy doesn't. One hour or DC 13 Investigation extracts the shape of the owner's true business. This is where the chosen villain's secret surfaces.",
           "The foul ledger is leverage, evidence, and a second prize: worth as much as the vault to the right buyer, to {patron}, or to the town of {place} it itemizes. Say nothing — let a player realize they are holding a bigger score than the one they came for.",
           "One entry names a PC, their patron, or the {tavern} in {place}: the job was priced into these books before it was ever offered. Someone in this plan appears in these accounts.",
-          "Copying pages takes minutes. Taking the book leaves a hole the steward sees by morning — the alarm ladder starts tomorrow at rung 2, which matters enormously to any crew planning a second night.",
+          "Copying pages takes minutes. Taking the book leaves a hole the steward sees by morning — the house wakes tomorrow already searching, patrols paired and doors locked on schedule, which matters enormously to any crew planning a second night.",
         ],
       },
       {
@@ -361,7 +363,7 @@ export const HEIST: ThemePack = {
             { skill: "Insight", tier: "easy", use: "read the footman's rhythm and call the four seconds his attention rests" },
           ],
           success: "The double sits in the case being admired, and {item} rides out under a coat. Nobody knows tonight; the owner may never know — the version of victory that keeps.",
-          failure: "Failures cascade in public: a gasp, a grab, a shout — each failed check climbs the alarm ladder one rung with the party standing at the center of the room. Two failures trigger the case's ward. The swap can still be finished; it is simply a heist with an audience now.",
+          failure: "Failures cascade in public: a gasp, a grab, a shout — each failed check raises the house's alarm a step with the party standing at the center of the room. Two failures trigger the case's ward. The swap can still be finished; it is simply a heist with an audience now.",
         },
       },
     ],
@@ -376,8 +378,8 @@ export const HEIST: ThemePack = {
           "Inside at last — and the vault tells the truth about the job. The chosen twist surfaces here as physical evidence, and the finale re-forms around what the party now knows.",
         details: [
           "Stage the Twist as objects: an empty tray dressed for show, a bill of sale predating the 'theft,' a ward-scorch in the shape of a hand — {villain}'s. Let the players assemble it. Do not narrate the conclusion.",
-          "The vault's own inventory (kept inside, naturally) is annotated in two hands — and the second matches the corrections in the counting room. Cross-reference for the table's quiet 'oh no.'",
-          "Time pressure arrives politely: the party downstairs applauds something. The toast is ending, the staff are returning, and every extra two minutes in here costs a rung on the ladder.",
+          "The vault's own inventory (kept inside, naturally) is annotated in two hands — and the second is {villain}'s, the same hand that corrects the house's ledgers. Any handwriting the party has gathered confirms it — cue the table's quiet 'oh no.'",
+          "Time pressure arrives politely: applause filters up from below — a toast ending, the staff returning to their floors — and every extra two minutes in here raises the house's alarm another step.",
           "Note WHERE anything taken was sitting. The villain knows this room blind and will read the gaps at a glance — a fact that shapes the confrontation ahead.",
         ],
       },
@@ -389,10 +391,10 @@ export const HEIST: ThemePack = {
         summary:
           "{villain} catches the party red-handed and offers a deal, because the twist means they need one. What the party accepts, refuses, or pretends to accept configures the finale.",
         details: [
-          "The offer is real and rooted in the villain's secret: walk out rich for one small service — carry the prize past a threshold, leave the forgery, burn one page of the foul ledger. Every version has a hook in it; DC 15 Insight surfaces the catch without the DM confessing it.",
+          "The offer is real and rooted in the villain's secret: walk out rich for one small service — carry the prize past a threshold, leave a convincing double in its place, burn one page of the house's true books. Every version has a hook in it; DC 15 Insight surfaces the catch without the DM confessing it.",
           "{epithet} negotiates like a craftsman: concedes small points graciously, never lies outright, prices everything. What they will not do is let the party leave with BOTH the prize and the proof. Watch which one they guard — it is the tell.",
-          "Stalling works both ways. Every minute of talk keeps the gala running — but on the third stall, the villain's own arrangements complete: a rung on the ladder, or their people arriving below, whichever hurts more.",
-          "Violence here is allowed and priced: the villain shouts, the ladder jumps to lockdown, and the finale opens with the house awake. Sometimes worth it. Say yes, and make it cost.",
+          "Stalling works both ways. Every minute of talk keeps the gala running — but on the third stall, the villain's own arrangements complete: the house a step closer to lockdown, or their people arriving below, whichever hurts more.",
+          "Violence here is allowed and priced: the villain shouts, the house slams straight into lockdown, and the finale opens with the house awake. Sometimes worth it. Say yes, and make it cost.",
         ],
       },
       {
@@ -432,8 +434,8 @@ export const HEIST: ThemePack = {
         details: [
           "The clock is the house: the lockdown sweep arrives in 5 rounds, and anyone still here on round 6 contends with the house guard too — villain included. Announce arrivals by sound a round early: boots, keys, the door.",
           "The prize is an object with rules: it can be thrown, hidden, bagged, or dropped down the chute. Whoever HOLDS it when the party quits the room wins the story. Make its position matter every round.",
-          "{villain} would rather trade than die and rather flee than trade: at half HP they offer the terms from the parley, one notch worse, and their escape route is real and pre-established. Letting them take it is an ending, not a failure — the epilogue names the price.",
-          "Ways to win: leave with the prize; leave with the proof and let the prize stay; hand the villain to the arriving guard gift-wrapped with the foul ledger; or walk out empty-handed but unsuspected, every door still open for a second visit. Heists are scored in the epilogue — say which ending the table earned.",
+          "{villain} would rather trade than die and rather flee than trade: at half HP they offer terms — the parley's offer one notch worse if terms were already discussed, safe passage for the prize if not — and their escape route is real and pre-established. Letting them take it is an ending, not a failure — the epilogue names the price.",
+          "Ways to win: leave with the prize; leave with the proof and let the prize stay; hand the villain to the arriving guard gift-wrapped with proof of the house's real business (its double-kept books, if the party found them); or walk out empty-handed but unsuspected, every door still open for a second visit. Heists are scored in the epilogue — say which ending the table earned.",
         ],
         combat: {
           tactics: "{villain} fights for possession, not murder — disarm, shove, snatch, screen — and spends minions as body-blocks at the door. The moment holding the prize becomes impossible, they pivot entirely to ensuring nobody else leaves with it.",
@@ -467,7 +469,7 @@ export const HEIST: ThemePack = {
           "The finale in public: a confrontation on the ballroom floor where reputation is terrain, violence has an audience, and the winner is whoever the room believes. Fighting is allowed. It just isn't free.",
         details: [
           "The room is the third combatant: open steel turns two hundred guests into a stampede — round 1 screaming, round 2 crush at the doors, round 3 clear floor and the house guard inside. Before steel, everything runs on social rules, and {villain} is better at those. Unless the party brought the proof.",
-          "Evidence played PUBLICLY does what swords can't: the foul ledger, the forged provenance, the founder's ring. Each solid proof presented buys a round of the crowd's doubt; three turn the house guard neutral — they stop being the villain's and start being {place}'s.",
+          "Evidence played PUBLICLY does what swords can't: a double-kept ledger, a forged provenance, the founder's ring — whatever proof the party carries. Each solid proof presented buys a round of the crowd's doubt; three turn the house guard neutral — they stop being the villain's and start being {place}'s.",
           "{villain} plays to the room until it stops working, then plays to kill — and the turn is visible: the moment they take off the smile. Say it exactly that way. Their first violent act targets the evidence or its holder, never the biggest threat.",
           "Guests are cover, hostage pool, and jury. Harm one and the room is lost for good; save one from the villain's side and the room turns like a tide. The best exit: villain unmasked, ruined, and taken — the party gone before anyone thinks to ask who they arrived with.",
         ],

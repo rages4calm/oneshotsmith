@@ -187,7 +187,7 @@ export const MYSTERY: ThemePack = {
           "Every read-aloud detail is real: the second place setting asks who dined, the candle stub fixes a two-hour burn against the hour supper was served, and the mirror was turned by the first finder — who will admit it if asked directly, an honest act that looks damning until then.",
           "The constable is competent and territorial: treat them as a colleague and share one finding to gain full scene access plus the first Secrets & Clues entry free; bigfoot them and every official door hereafter needs a DC 13 Persuasion that worsens with repetition.",
           "Ten minutes listening at the windows yields three crowd claims: two honestly wrong, one true. The true one names who ELSE was seen nearby last night — the first entry on the suspect list.",
-          "Exit decision: secure the scene now (slow, thorough — run the forensics challenge next) or chase the warm names (fast — interviews next, and the scene degrades honestly behind them).",
+          "Exit decision: secure the scene now (slow, thorough — evidence before people) or chase the warm names (fast — people before evidence, and the scene degrades honestly behind them).",
         ],
       },
       {
@@ -201,7 +201,7 @@ export const MYSTERY: ThemePack = {
           "The retainer is real: access to the scene, the coroner, and the records annex — on paper. Each institution honors it differently (the coroner gladly, the watch grudgingly, the annex only during posted hours), and the difference is playable.",
           "The crossed-out names are {patron}'s own guesses, eliminated honestly. Ask why, and {patron} walks through the two alibis personally verified — both true, and together a model of what checking looks like in this town.",
           "State the clock openly: the inquest closes in three days. If the party presents nothing, the standing verdict proceeds — name the person it lands on, so the cost of slow has a face.",
-          "Three doors out: the scene (forensics), the names (interviews), the paper (records). Any order works; the leads braid. What the party picks first decides which version of the second incident they are standing near.",
+          "Three doors out: the scene (forensics), the names (interviews), the paper (records). Any order works; the leads braid. What the party picks first decides where they are standing when the case moves again.",
         ],
       },
       {
@@ -214,7 +214,7 @@ export const MYSTERY: ThemePack = {
         details: [
           "The smeared name reads clear with DC 12 Investigation: the suspect the town favors — sincerely believed, conveniently poor, and innocent. Note aloud who watches the party read it; one watcher is worth tailing.",
           "A bought round (5 sp) collects three rumors. Build each as one true detail wrapped in one wrong conclusion — the wrong conclusions are earnest, which is exactly how the town has stayed wrong for nine days.",
-          "Whoever leaves the room within minutes of the party's first direct question is a lead: tail them now (run the shadowing challenge) or bank the face for the interview rounds. Both work; they surface different ends of the same thread.",
+          "Whoever leaves the room within minutes of the party's first direct question is a lead: tail them now, or bank the face for later interviews. Both work; they surface different ends of the same thread.",
           "Establish the town's opinion as a visible meter: it moves with public actions all session, and at the climax it is worth one evidence point if it stands with the party.",
         ],
       },
@@ -257,13 +257,14 @@ export const MYSTERY: ThemePack = {
       {
         type: "skill",
         title: "The Scene Reads Back",
+        provides: ["true-hour"],
         readAloud:
           "Daylight does the room no favors and every favor: dust shows its scuffs, the hearth shows its ashes, and the furniture has kept opinions about where everyone stood. Somewhere in this room the whole night is still written down. It is a matter of reading it in order.",
         summary:
           "Crime-scene forensics as a structured challenge. Success fixes the true hour and method; failure leaves the party carrying the town's confident, wrong version into every scene after.",
         details: [
           "Run as three successes before three failures, one check per character per pass; each success reveals one Secrets & Clues entry, in whatever order serves the chosen villain.",
-          "The prize is the true time of death — it contradicts the hour the town believes, and every rehearsed alibi in the case is built on the wrong hour. Without it, the timeline scene later offers two candidate gaps instead of one.",
+          "The prize is the true time of death — it contradicts the hour the town believes, and every rehearsed alibi in the case is built on the wrong hour. Without it, the case's timeline will show two candidate gaps instead of one.",
           "Magic complicates: one surface was cleaned by cantrip, and Arcana finds the too-clean patch — which is itself evidence, since the suspect pool contains very few hands that can cast anything. Detect magic likewise finds where something enchanted rested, never what it was.",
           "If this scene was skipped or delayed, degrade it honestly: the family tidies, the watch treads, the insert in the ledger gets a day older. State what was lost. Never un-lose it.",
         ],
@@ -276,7 +277,7 @@ export const MYSTERY: ThemePack = {
             { skill: "Arcana", tier: "hard", use: "find the surface somebody magically cleaned and the shelf where something enchanted stood" },
           ],
           success: "Three clues and the true hour of death — the timeline will show a single gap, and the party knows the town's version is wrong before the town does.",
-          failure: "One clue, plus the coroner's confident errors adopted as fact: the timeline scene will offer two suspects until the hour is corrected elsewhere — the candle stub, the kennel keeper, or the tide table can each still fix it.",
+          failure: "One clue, plus the coroner's confident errors adopted as fact: the timeline will hold two suspects until the hour is corrected elsewhere — a candle's burn, the kennel keeper, or the tide table can each still fix it.",
         },
       },
       {
@@ -304,7 +305,7 @@ export const MYSTERY: ThemePack = {
           "Their secret explains every guilty behavior — pick one: they were somewhere shameful, they were stealing something small, they were covering someone else's absence. It surfaces on DC 12 Insight plus one honest kindness (food, a message carried, a lamp left burning).",
           "Their gold is corrections. Shown any piece of the official story, they can say precisely what is wrong with it — 'That is not my knife. Mine has a marked handle; ask the grinder.' Every correction is checkable, and every one checks TRUE.",
           "Pressure backfires specifically: a second Intimidation produces cooperation-shaped lies, and by morning a full false confession to make the fear stop. The magistrates will take it gladly. This trap is the party's to spring on themselves; do not soften it.",
-          "Cleared publicly later, they stand witness at the climax — worth one evidence point — and the town's opinion meter swings hard. Cleared quietly, they leave town by the next ferry, and who could blame them.",
+          "Cleared publicly later, they stand witness at the climax — worth one evidence point — and the town's opinion swings hard. Cleared quietly, they leave town by the next ferry, and who could blame them.",
         ],
       },
       {
@@ -381,7 +382,7 @@ export const MYSTERY: ThemePack = {
         details: [
           "Run it as a table exercise: the DM answers who-where-when strictly from facts the party actually gathered. Verified facts in one chalk color, hearsay in another. The gap must emerge from their wall, not from an NPC — wait for it, however long it takes.",
           "The killer's alibi is perfect for the hour the town believes and empty for the true hour fixed in forensics. If the party never fixed the true hour, the wall shows two gaps and two names — still playable, but the confrontation runs at +2 DC while the wrong name stays live.",
-          "The empty quarter hour has one witness nobody counted: someone whose own small crime — the runner, a poacher, a sneaking lover — put them where respectable people were not. The wall says exactly where such a person would have stood. Finding them is one scene's work.",
+          "The empty quarter hour has one witness nobody counted: someone whose own small crime — a poacher, a sneaking lover, the suspect who bolted if one did — put them where respectable people were not. The wall says exactly where such a person would have stood. Finding them is one scene's work.",
           "Exit decision: accuse now with what stands (fast, public, harder DCs) or spend one more scene hardening a likely clue into a SOLID one — knowing that {villain} can count quarter hours too, and spends that same scene moving.",
         ],
       },
@@ -395,7 +396,7 @@ export const MYSTERY: ThemePack = {
         details: [
           "Each cleared suspect yields one fact only they could hold: an hour {villain} was not where claimed, a purchase witnessed, a debt carried to the victim on the villain's behalf. Three cleared suspects close the means-motive-opportunity triangle completely.",
           "Offer each a choice: cleared quietly (the fact, then they leave the story) or cleared publicly (they stand at the climax — each public witness is worth one evidence point, and each is one more person {villain} might reach first). Let the players advocate; protection is now a resource.",
-          "Treated gently, the false confessor recants here — and their invented details, held against the timeline wall, show exactly which true facts the town's story was built to explain away. A lie can be a stencil.",
+          "If anyone confessed falsely along the way, they recant here when treated gently — and their invented details, held against the true timeline, show exactly which true facts the town's story was built to explain away. A lie can be a stencil.",
           "The town's opinion turns audibly: chalk names rubbed off the beam, a drink sent over, the landlord's rag finally at rest. Say it out loud. The party has earned the weather changing.",
         ],
       },
@@ -410,7 +411,7 @@ export const MYSTERY: ThemePack = {
           "Three successes before three failures, cross-town and then in-building. Every failure burns pages: the proof degrades from SOLID (full weight at the climax) to partial (half weight) to ash with one legible corner (a clue, no longer evidence).",
           "The plant: a forged proof incriminating the town's favorite scapegoat sits where hurried hands find it first. The forger's-tell clue or a successful Insight spots the wrongness — and spotting it is itself SOLID evidence of the cover-up. Carrying the plant to the climax unspotted hands {villain} a devastating counter.",
           "The hand tending the grate is nobody: paid through a slot, cannot name the payer, can name the drop point and the schedule. Left in place and unbruised, the villain's last quiet channel now reports to the party. Dragged to the watch, it goes silent forever. Choose.",
-          "If the party arrives with the town behind them (opinion meter high), the building's neighbors delay the burner without being asked — convert one failure to a success and tell the players exactly why it happened.",
+          "If the party arrives with the town behind them (its opinion publicly won over), the building's neighbors delay the burner without being asked — convert one failure to a success and tell the players exactly why it happened.",
         ],
         skill: {
           description: "Cross {place} and beat the fire to the file.",

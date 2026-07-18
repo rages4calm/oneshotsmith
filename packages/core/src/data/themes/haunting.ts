@@ -198,7 +198,7 @@ export const HAUNTING: ThemePack = {
         summary:
           "The site announces itself before the party ever touches the door. The candle's route is information; so is the fact that it stopped to look.",
         details: [
-          "The circuit repeats every dusk, always the same route. DC 13 Investigation from outside maps it — the route ends at the room this adventure keys as the kept room. The house shows visitors where to look.",
+          "The circuit repeats every dusk, always the same route. DC 13 Investigation from outside maps it — the route ends at the room where the tragedy is best preserved. The house shows visitors where to look.",
           "Watching the full circuit costs the last daylight; entering during it means the 'servant' is mid-rounds. Both are fine choices. Say nothing to suggest either is safe.",
           "A spyglass or DC 15 Perception on the fourth window: the shutter stands open now. It was closed when the party crested the rise.",
           "If anyone calls out or signals, the candle stops mid-window for a long moment before moving on. Nothing else changes tonight. Remember that they did this.",
@@ -212,7 +212,7 @@ export const HAUNTING: ThemePack = {
         summary:
           "A guided handover at the property line. The caretaker's three rules are real, and the caretaker will not cross the line for wages, rescue, or shame.",
         details: [
-          "The three rules are true and mechanically live (see The Rule Made Plain). The caretaker knows a fourth they do not say: the hour the house rearranges. DC 13 Insight catches them checking the sun as they leave.",
+          "The three rules are true and mechanically live: the haunting's manifestations can only touch someone who has broken one. The caretaker knows a fourth rule they do not say: the hour the house rearranges. DC 13 Insight catches them checking the sun as they leave.",
           "They answer three questions honestly at the line, then stop — 'Three is what you get. It counts questions. I don't know how, but it does.'",
           "The ring is complete except one key: small, brass, missing since before their time. Its door is wherever the DM wants the finale's proof to wait.",
           "If the party asks the caretaker's own name, there is a pause one beat too long before the answer. File it away (see the twist list).",
@@ -224,6 +224,7 @@ export const HAUNTING: ThemePack = {
       {
         type: "combat",
         title: "The Rule Made Plain",
+        provides: ["haunting-rules"],
         readAloud:
           "The cold arrives first, rolling down the corridor like water finding a drain, and every flame narrows to a blue thread. Then the sound: one chair, somewhere ahead, dragged slowly back from a table. In the doorway where your lights cross, something has assembled itself out of the dark between lanterns — and though there are several of you, it faces only one.",
         summary:
@@ -247,8 +248,8 @@ export const HAUNTING: ThemePack = {
         summary:
           "The house's reliquary: the night of the wrong, preserved in objects. It answers questions if read carefully — and it enforces the rules absolutely.",
         details: [
-          "DC 13 Investigation reconstructs the last hour from positions alone: who sat where, who left mid-meal, which door was locked from which side. This is the true history's skeleton; the archive will put flesh on it.",
-          "Everything here is 'arranged' (the caretaker's first rule). Taking anything marks the taker as a breaker and starts the hour early. The room resets overnight — anything moved is back by morning, including things carried to other floors.",
+          "DC 13 Investigation reconstructs the last hour from positions alone: who sat where, who left mid-meal, which door was locked from which side. This is the true history's skeleton; whatever records survive elsewhere in {site} can put flesh on it.",
+          "Everything here is 'arranged' (the first of the haunting's rules: take nothing it has arranged). Taking anything marks the taker as a breaker and starts the hour early. The room resets overnight — anything moved is back by morning, including things carried to other floors.",
           "Beside the handprint, faint pencil ticks climb the plaster with dates — a family measuring a child's reach, year by year. The marks stop the year of the tragedy. The print is a full hand's width above the highest tick.",
           "Righting one wrong detail (the fallen chair, the book closed on its ribbon) makes the cold withdraw from this room while the party works — first proof that the haunting can be soothed, not merely fought. A small gift left at the untouched place setting earns a quiet favor: one locked door, later, found open.",
         ],
@@ -303,9 +304,9 @@ export const HAUNTING: ThemePack = {
         summary:
           "An interview with the last living person who was there. They know the rules, the hour, and the name — and they lie about exactly one thing: their own part in it.",
         details: [
-          "Freely given: the rules (confirming the caretaker's), the hour the house changes, and the tragedy as the official story tells it. DC 13 Insight during the telling: the official story has one seam, and the witness looks at their hands every time they cross it.",
+          "Freely given: the rules (matching the caretaker's, if the party met them), the hour the house changes, and the tragedy as the official story tells it. DC 13 Insight during the telling: the official story has one seam, and the witness looks at their hands every time they cross it.",
           "The lie is theirs to own: they did something, or failed to do something, that night — pick the version that feeds your chosen villain and twist. They confess only to kindness; Intimidation shuts them like a door and loses the name for good.",
-          "Shown any object from {site} — a letter, the tin soldier, the portrait — they stop performing and start remembering: one automatic truth per object, delivered as your best slow monologue.",
+          "Shown any object from {site} — a letter, a child's toy, the portrait — they stop performing and start remembering: one automatic truth per object, delivered as your best slow monologue.",
           "When at last they write the name (they will not say it), every candle on the table leans. The witness watches this, nods, and says: 'It knows I'm talking to you. Good. Tell it I'm sorry I took this long.'",
         ],
       },
@@ -319,8 +320,8 @@ export const HAUNTING: ThemePack = {
         details: [
           "Run it as a moving maze with a fight in it: each round, one announced change (a door migrates, a corridor shortens by ten feet, a room rotates its exits). Doorframes never move — standing in one is safe ground, and clever parties will chain them like stepping stones.",
           "What walks the seams herds rather than kills: shoving, dragging, closing a wall between the strongest and the weakest. Separating the party is its victory condition; reunion is the party's.",
-          "DC 15 Investigation or History mid-chaos: the moves are not random — the house is restoring the floor plan of the night of the wrong. Whoever passes can predict the final change before it lands and acts first in the last round. This foreshadows the re-enactment finale.",
-          "When the hour ends, redraw two map connections. Any change that would strand the party instead deposits them at the kept room's door — the house is not killing them; it is showing them where to look.",
+          "DC 15 Investigation or History mid-chaos: the moves are not random — the house is restoring the floor plan of the night of the wrong. Whoever passes can predict the final change before it lands and acts first in the last round. The house is rehearsing its worst night; remember that when the finale arrives.",
+          "When the hour ends, redraw two map connections. Any change that would strand the party instead deposits them at the door of the room the house keeps best — the house is not killing them; it is showing them where to look.",
         ],
         combat: {
           tactics: "It works the geometry rather than the party: shoves through moving thresholds, walls closed between allies, and direct strikes reserved for whoever tries to hold a seam open.",
@@ -371,14 +372,15 @@ export const HAUNTING: ThemePack = {
       {
         type: "exploration",
         title: "The Wrong Gravestone",
+        provides: ["true-name"],
         readAloud:
           "The burial yard is small, walled, and honest — until the far corner, where the honesty stops. One stone stands fifty years newer than its carved date, the grass before it worn bare in a kneeling-shaped patch, and fresh lilies lie against it with their cut stems still beading water in front of you. In a yard where the family's older stones all repeat one small, faithful misspelling, this stone alone is spelled perfectly — cut by someone who never knew them.",
         summary:
           "The truth room. The stone, the register, and what lies — or does not lie — beneath assemble the full tragedy and hand the party the true name: the finale's key.",
         details: [
-          "Assemble everything here: the scraped register, the eleven-day gap, the date from the knocking, the witness's seam. DC 13 Religion or Investigation cross-reads them into the true history — deliver it as one clean paragraph. This is the adventure's turn: from here the finale is a choice, not merely a fight.",
+          "Assemble everything here: the scraped register, the eleven-day gap, every date and seam the house or its witnesses have surrendered. DC 13 Religion or Investigation cross-reads them into the true history — deliver it as one clean paragraph. This is the adventure's turn: from here the finale is a choice, not merely a fight.",
           "The stone is wrong on purpose — wrong name, wrong date, or wrong grave, per your villain: the body absent, the body doubled, or the body somebody else's. Opening the grave is loud, honest, and definitive; reading the stone-cutter's mark (DC 12 Investigation, traceable to a paid commission) is quiet and damning.",
-          "The true name, once learned, is equipment: spoken aloud in the finale it staggers the fury for a round (once), slips the pretender's mask a layer, or — said kindly at the right moment — counts as one full step of the laying-to-rest.",
+          "The true name, once learned, is equipment: spoken aloud in the finale it staggers the haunting's fury for a round (once), slips a pretender's mask a layer, or — said kindly at the right moment — counts as one full step of any laying-to-rest.",
           "Fresh lilies mean a living visitor, weekly, for decades, and the worn footprints lead toward {place}. Whoever kneels here is the moral choice, walking — decide now whether it is your villain, your witness, or your patron.",
         ],
       },
@@ -417,7 +419,7 @@ export const HAUNTING: ThemePack = {
             { skill: "Religion", tier: "hard", use: "hold the vigil-words steady as the procession passes through the party" },
           ],
           success: "The party reaches the heart with a round in hand: positions chosen, tokens ready, and the presence's attention not yet turned their way.",
-          failure: "They arrive marked by the crossing: the fury acts first, and each net failure has claimed its price — a carried proof taken ahead to the heart-room (retrievable there), one PC arriving a round late by another door, or every light they carry arriving out.",
+          failure: "They arrive marked by the crossing: the haunting's fury acts first, and each net failure has claimed its price — a carried proof taken ahead to the heart-room (retrievable there), one PC arriving a round late by another door, or every light they carry arriving out.",
         },
       },
     ],
@@ -449,7 +451,7 @@ export const HAUNTING: ThemePack = {
         summary:
           "The re-enactment finale: the tragedy replays at full strength with the party cast in it. Fight the night's momentum — or change the ending from inside it.",
         details: [
-          "Script beats land on a clock, announced one round ahead like weather: the quarrel, the lights failing, the locked door, the wrong itself on round 5, the hush after. The party can spend actions on the fight or on the beats — holding a door open, keeping a lamp lit, standing in the way. Each beat broken weakens the fury (a cumulative -1 to its attack rolls) and loosens one lock on the ending.",
+          "Script beats land on a clock, announced one round ahead like weather: the quarrel, the lights failing, the locked door, the wrong itself on round 5, the hush after. The party can spend actions on the fight or on the beats — holding a door open, keeping a lamp lit, standing in the way. Each beat broken weakens the haunting's fury (a cumulative -1 to its attack rolls) and loosens one lock on the ending.",
           "At the wrong's moment there is one window: a single interposing action (contested check or DC 15, fit to the deed — a catch, a parry, a truth shouted across the room) changes the ending. The replay collapses into a laying-to-rest already half-done. Reward it as the true victory.",
           "Failing the window is not defeat. The night completes, hardens, and the fury turns on the witnesses with everything it has: a straight, honest final fight in the wreck of the scene — ended by damage, or by the true name spoken to it while it stands over someone.",
           "PCs the house has 'cast' move through the replay untouched while they play along — carry the tray, dance the step, answer to the borrowed name — and draw every eye the instant they break character. Stepping in and out of the script is the scene's tactical texture.",
@@ -467,7 +469,7 @@ export const HAUNTING: ThemePack = {
         summary:
           "The confrontation finale: {villain} against the party before the one witness that matters. Truth is ammunition — every proof spoken strips the villain of something — and the fight stands ready for when the last mask drops.",
         details: [
-          "Each distinct proof presented aloud — the true name, the register page, the rubbing, the stone-cutter's mark, the witness's word — is an action and a DC 14 Persuasion, Religion, or Intimidation. Success strips one villain asset: a disguise layer, a ward, a wave of help, the hirelings' nerve. At three truths landed, the presence itself joins the party's side — give it one described action every round.",
+          "Each distinct proof presented aloud — the true name, a register page, a rubbing, a stone-cutter's mark, a witness's word — is an action and a DC 14 Persuasion, Religion, or Intimidation. Success strips one villain asset: a disguise layer, a ward, a wave of help, the hirelings' nerve. At three truths landed, the presence itself joins the party's side — give it one described action every round.",
           "{villain} answers in kind, fighting the evidence first: braziers stand lit, and proof in hand is a target. A proof destroyed unheard is gone for good; a proof already spoken cannot be unsaid. Remember {epithet} was earned somehow — let them be frighteningly good at this.",
           "The corner the villain will not cross is the presence's ground. PCs who have kept the rules, or who carry the name, may retreat into it — the cold parts for them, the villain cannot follow, and anything hurled in fails. One safe square, and everyone in the room knows which it is.",
           "Mercy stays on the table to the last: below half HP, with three truths standing, the villain can be offered confession instead of death — DC 15 Persuasion with the proofs in evidence, DC 20 without. Accepted, the finale resolves as a laying-to-rest for the living and the dead at once. Refused, the presence stops waiting.",

@@ -78,7 +78,7 @@ export const DUNGEON_CRAWL: ThemePack = {
     },
     {
       readAloud:
-        "The letter found you at the {tavern}, sealed with wax the color of a bruise. Inside, in a scholar's hand: 'The survey lied. The lower galleries are not empty. I have gone down to prove it and if you are reading this I have been gone nine days. The stair behind the smelting pit. Bring rope. Bring more rope than that.' It is signed {patron}.",
+        "The letter found you at {tavern}, sealed with wax the color of a bruise. Inside, in a scholar's hand: 'The survey lied. The lower galleries are not empty. I have gone down to prove it and if you are reading this I have been gone nine days. The stair behind the smelting pit. Bring rope. Bring more rope than that.' It is signed {patron}.",
       summary:
         "The antiquarian {patron} descended into {site} alone and left instructions for whoever came asking. Their academy will pay handsomely for their return — and quietly double it for their field journal.",
     },
@@ -308,11 +308,11 @@ export const DUNGEON_CRAWL: ThemePack = {
         type: "setpiece",
         title: "The Hall of the Great Engine",
         readAloud:
-          "The chamber is dominated by the engine the whole site was built to serve — wheel, chain, hammer, counterweight — and it is RUNNING. Chains thick as a man rise into darkness, descending weights glide past ascending ones, and the great hammer falls on its ancient rhythm. On the far gantry, silhouetted by forge-light, figures are feeding something into the mechanism, sheet by sheet. It looks like paper. It is the charter.",
+          "The chamber is dominated by the engine the whole site was built to serve — wheel, chain, hammer, counterweight — and it is RUNNING. Chains thick as a man rise into darkness, descending weights glide past ascending ones, and the great hammer falls on its ancient rhythm. On the far gantry, silhouetted by forge-light, figures are feeding something into the mechanism, sheet by sheet. It looks like paper. It is the site's founding record, going into the fire a page at a time.",
         summary:
           "The set-piece: a fight across a live machine while {villain}'s lieutenants destroy evidence in it. Two objectives, one countdown, everything moving.",
         details: [
-          "The lieutenants feed one charter page into the works per round — after round 5, the proof of {villain}'s secret is gone and the endgame hardens.",
+          "The lieutenants feed one page of the founding record into the works per round — after round 5, the proof of {villain}'s secret is gone and the endgame hardens.",
           "The machine is terrain, hazard, and weapon: the hammer falls on a fixed 2-round rhythm across the center (called shot of the room — DC 13 DEX or 4d10 bludgeoning, announced one round ahead).",
           "Riding the counterweights to the gantry is one move action and a DC 12 Athletics — the fast, loud, glorious route. The stairs are three rounds of cover-to-cover — the slow, sane one.",
           "Throwing the brake lever (on the gantry) stops the hammer AND the page-feeding — and wakes everything in the site that sleeps to the rhythm. Choose loudly.",
@@ -331,7 +331,7 @@ export const DUNGEON_CRAWL: ThemePack = {
           "The dungeon's honeypot. The treasure is real enough to bank — and taking it is how the site marks its prey.",
         details: [
           "The treasure is genuine (add one parcel from the Treasure section if looted). The trap is not mechanical: everything taken from this room can be FELT by the site's master, wherever it goes. The party is now trackable — reveal via increasingly precise ambushes.",
-          "DC 15 Arcana on the crown's stand: the velvet is new. Someone restocks this room. The obvious question — from what? — has an upsetting answer available in the ledger room.",
+          "DC 15 Arcana on the crown's stand: the velvet is new. Someone restocks this room. The obvious question — from what? — has an upsetting answer waiting wherever this site keeps its records.",
           "A character who takes nothing may notice (DC 13 Insight) the room's regard move off them like a light — and settle on whoever pocketed the most.",
           "This is deliberately skippable. If time is short, its treasure appears in the climax chamber instead.",
         ],
@@ -360,6 +360,7 @@ export const DUNGEON_CRAWL: ThemePack = {
       {
         type: "exploration",
         title: "The Warden's Confession",
+        provides: ["confession", "warden-seal"],
         readAloud:
           "This room was a shrine, then an office, then a cell, and the walls confess all three: painted prayers, then shelf-brackets, then scratched tally-years in groups of five, hundreds of them. At a desk of stacked flagstones sits the room's last occupant — long past harm, hands folded, posture straight — before a single sheet of vellum weighted with a warden's seal. The first line reads: 'To whoever is sent when the seals fail. We must apologize. We knew.'",
         summary:
@@ -375,11 +376,11 @@ export const DUNGEON_CRAWL: ThemePack = {
         type: "social",
         title: "Parley at the Last Door",
         readAloud:
-          "{villain} is waiting for you at the final door — unhurried, unarmed as far as you can see, in the manner of someone who has already moved the important pieces. 'You've read the confession by now,' they say. 'So you know I'm not the monster in this story. I'm the janitor. Now: you can help me finish, you can watch, or you can be the reason it takes longer. I'm told you're reasonable people. Which is it?'",
+          "{villain} is waiting for you at the final door — unhurried, unarmed as far as you can see, in the manner of someone who has already moved the important pieces. 'You've seen enough down here by now,' they say. 'So you know I'm not the monster in this story. I'm the janitor. Now: you can help me finish, you can watch, or you can be the reason it takes longer. I'm told you're reasonable people. Which is it?'",
         summary:
           "The villain offers terms before the finale — and the terrible thing is that, given the twist, the offer is partly sincere. Whatever the party chooses here configures the final fight.",
         details: [
-          "{villain} will genuinely trade: safe passage out for the warden's seal; the location of a hostage or treasure for non-interference; honest answers for honest answers. Every deal is kept to the letter and no further.",
+          "{villain} will genuinely trade: safe passage out for the most dangerous thing the party carries — {villain} names it, and is right; the location of a hostage or treasure for non-interference; honest answers for honest answers. Every deal is kept to the letter and no further.",
           "DC 15 Insight during the parley: the mannerism slips once — {epithet} is afraid of the timetable, not of the party. Something below is holding THEM to a schedule.",
           "If the party stalls three rounds of conversation, the villain's preparations complete (one advantage in the finale becomes theirs — pre-cast ward, positioned minions, or the hostage moved).",
           "Combat can start here, on the party's initiative, at the cost of the information they didn't finish extracting. The door to the finale opens either way.",
@@ -419,15 +420,15 @@ export const DUNGEON_CRAWL: ThemePack = {
         readAloud:
           "The final chamber is a drum of stone around a single object: the last seal, a disk of gray metal the size of a millstone, and the only thing in {site} with no dust on it at all. {villain} stands over it, work interrupted, and for one long moment nobody moves — because everyone in this room, on both sides, can hear what is on the other side of that seal, and it has noticed the door is thinner.",
         summary:
-          "The finale: stop {villain} at the seal itself. The fight has a clock, a centerpiece that must not break, and — thanks to the confession — at least two ways to 'win.'",
+          "The finale: stop {villain} at the seal itself. The fight has a clock, a centerpiece that must not break, and — if the party learned the wards' truth on the way down — more than one way to 'win.'",
         details: [
           "Clock: each round, {villain} (or their strongest minion, if engaged) spends an action on the seal. After 4 such actions the seal opens — run the aftermath, not a TPK: what comes out is a campaign seed, and getting OUT alive becomes the scene.",
-          "The seal is terrain: standing ON it grants the villain's foes advantage against fear (the wards' last kindness) — the confession's postscript says so.",
+          "The seal is terrain: standing ON it grants the villain's foes advantage against fear (the wards' last kindness — stated outright in the warden's confession, if the party found that letter).",
           "The warden's seal (if carried) can, once, as an action: counter one villain action at the disk, banish one summoned guard, or re-lock one opened increment. Spend it like the plot coupon it is.",
-          "Endings that count as victory: villain dead or bound; villain PERSUADED (the confession gives the leverage — DC 15 with it, DC 20 without); or the seal held for 6 rounds until the site's own defenses finish waking. State the survivors' walk out; it is earned.",
+          "Endings that count as victory: villain dead or bound; villain PERSUADED (DC 15 Persuasion with the warden's confession in hand, DC 20 without); or the seal held for 6 rounds until the site's own defenses finish waking. State the survivors' walk out; it is earned.",
         ],
         combat: {
-          tactics: "{villain} fights at the seal and will not be baited off it; minions screen and body-block. At half HP the villain offers the parley terms one final time — sincerely, mid-swing.",
+          tactics: "{villain} fights at the seal and will not be baited off it; minions screen and body-block. At half HP the villain offers terms one final time — safe passage for the seal left in peace — sincerely, mid-swing.",
           terrain: "a circular chamber with the seal as its centerpiece; the seal is cover, objective, and moral question in one",
         },
       },
@@ -457,10 +458,10 @@ export const DUNGEON_CRAWL: ThemePack = {
         summary:
           "A throne-room finale where the scenery is the second wave. The villain's coronation, ritual, or reckoning needs living witnesses — and the party qualifies whether they cooperate or not.",
         details: [
-          "The standing court: use the gallery rule — they animate in waves of three when the villain falls below half HP, or instantly if a party member touches the throne.",
+          "The standing court animates in waves of three per round once the villain falls below half HP — or instantly, all of them, if a party member touches the throne.",
           "The ceremony completes in 5 rounds. Completion doesn't end the fight; it PROMOTES the villain (max HP, +2 to hit, visibly wrong) — a second phase with the same initiative order.",
           "The banners burn beautifully: fire panics the court (they shield the banners over themselves — 1 round of wave-delay per banner burnt, three banners).",
-          "The throne is the site's true anchor (per the confession). Destroying it (AC 17, 40 HP, immune to piercing) ends the animation, the ceremony, and — gently, room by room — the site itself. Fifteen minutes to daylight. Make the walk out a victory lap with a countdown.",
+          "The throne is the site's true anchor (stated outright in the warden's confession if the party found it; otherwise DC 14 Arcana at the throne reveals it). Destroying it (AC 17, 40 HP, immune to piercing) ends the animation, the ceremony, and — gently, room by room — the site itself. Fifteen minutes to daylight. Make the walk out a victory lap with a countdown.",
         ],
         combat: {
           tactics: "{villain} opens with their strongest control option on the party's obvious heavy, monologues only while it holds, and uses the court as both shield wall and audience. They genuinely prefer the party alive until the ceremony completes.",

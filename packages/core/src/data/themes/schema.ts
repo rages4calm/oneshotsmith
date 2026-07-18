@@ -39,6 +39,16 @@ export interface SceneTemplate {
   /** Required when type is combat/setpiece/climax. */
   combat?: { tactics: string; terrain: string };
   skill?: SkillChallengeTemplate;
+  /**
+   * Story-artifact tags this scene introduces (e.g. "confession").
+   * Scenes are selected in session order; a scene whose `requires` tags are
+   * not all provided by earlier-selected scenes is ineligible. Text that only
+   * MENTIONS a sibling scene's artifact should instead be written
+   * conditionally ("if the party found the warden's confession…") so every
+   * combination reads correctly.
+   */
+  provides?: string[];
+  requires?: string[];
 }
 
 export interface SiteTemplate {
