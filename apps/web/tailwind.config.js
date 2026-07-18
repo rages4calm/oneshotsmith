@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,6 +7,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // OneShotsmith print system
+        paper: "var(--paper)",
+        "paper-shade": "var(--paper-shade)",
+        ink: "var(--ink)",
+        "ink-soft": "var(--ink-soft)",
+        rule: "var(--rule)",
+        "map-blue": "var(--map-blue)",
+        "map-deep": "var(--map-blue-deep)",
+        "map-grid": "var(--map-grid)",
+        "map-line": "var(--map-line)",
+        goldenrod: "var(--goldenrod)",
+        "goldenrod-shade": "var(--goldenrod-shade)",
+        "gold-ink": "var(--goldenrod-ink)",
+        stamp: "var(--stamp-red)",
+        success: "var(--success)",
+
+        // shadcn semantic tokens
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -41,6 +57,11 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      fontFamily: {
+        display: ["var(--font-jost)", "Futura", "sans-serif"],
+        serif: ["var(--font-alegreya)", "Georgia", "serif"],
+        sc: ["var(--font-alegreya-sc)", "var(--font-alegreya)", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

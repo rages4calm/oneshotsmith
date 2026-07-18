@@ -1,31 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@oneshotsmith/ui";
-import type { LucideIcon } from "lucide-react";
-import {
-  Shield,
-  Swords,
-  HeartPulse,
-  Sparkles,
-  ScrollText,
-  ArrowRight,
-  RefreshCw,
-  FileDown,
-  Save,
-  Check,
-  Loader2,
-  Target,
-  Brain,
-  Clipboard,
-} from "lucide-react";
-import { generateCharacter } from "@oneshotsmith/core";
-import type { Role, CharacterLevel, Character } from "@oneshotsmith/core";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { Character, CharacterLevel, Role } from "@oneshotsmith/core";
+import { generateCharacter, randomSeed } from "@oneshotsmith/core";
+import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
-import { pregeneratedCharacters } from "../../lib/pregenerated-characters";
-import type { PregenSummary } from "../../lib/pregenerated-characters";
 import {
   formatCharacterSummary,
   readLastLoadedCharacter,
@@ -34,813 +15,359 @@ import {
   writeStoredCharacters,
   type StoredCharacter,
 } from "../../lib/local-storage";
+import { pregeneratedCharacters, type PregenSummary } from "../../lib/pregenerated-characters";
 
-export default function CharacterCreatorPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center text-slate-300">
-          Loading character tools…
-        </div>
-      }
-    >
-      <CharacterCreatorContent />
-    </Suspense>
-  );
-}
+const ROLES: Array<{ role: Role; pitch: string; playsLike: string }> = [
+  { role: "Frontliner", pitch: "Stand in the doorway. Be the doorway.", playsLike: "Fighter — armor, sword, and the word 'no.'" },
+  { role: "Skirmisher", pitch: "Be where they aren't looking.", playsLike: "Rogue — daggers, shadows, decisive moments." },
+  { role: "Support", pitch: "Nobody dies today. You've decided.", playsLike: "Cleric — healing, blessings, divine backup." },
+  { role: "Control", pitch: "Rewrite the battlefield's rules.", playsLike: "Wizard — fireballs, walls, better ideas." },
+  { role: "Face", pitch: "Talk first. Talk during. Talk after.", playsLike: "Bard — charm, inspiration, one good song." },
+];
 
-function CharacterCreatorContent() {
+const LEVELS: Array<{ level: CharacterLevel; label: string; note: string }> = [
+  { level: 3, label: "Level 3", note: "The classic one-shot start — capable, not complicated" },
+  { level: 5, label: "Level 5", note: "The power spike — extra attacks and fireballs" },
+  { level: 8, label: "Level 8", note: "Seasoned heroes for a heavyweight session" },
+];
+
+const TABLE_TIPS: Record<Role, string[]> = {
+  Frontliner: ["Position first, attack second — stand where enemies must pass you.", "Announce Second Wind out loud when you're hurt; it reminds the healer you exist.", "Action Surge is for the round that decides the fight, not the first one."],
+  Skirmisher: ["Your bonus action is a whole second character — spend it every turn.", "You want advantage: flank, hide, or ask the Face to make a distraction.", "Uncanny Dodge is a reaction — save it for the biggest hit, not the first."],
+  Support: ["Healing Word is a bonus action at range — you can still do a thing on your turn.", "A downed ally needs 1 hit point to stand up. Efficiency is mercy.", "Turn Undead doesn't ask permission. Use it the moment skeletons outnumber friends."],
+  Control: ["One good concentration spell shapes the whole fight — protect it.", "Ask the DM what you can see before you commit the fireball.", "Your job isn't damage, it's making the enemy's plan impossible."],
+  Face: ["Bardic Inspiration before the roll, not after — hand it out early and often.", "In social scenes, state what you want, then roll. Never roll first.", "Vicious Mockery is a debuff wearing a joke as a hat."],
+};
+
+function CreatorInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [step, setStep] = useState(1);
   const [level, setLevel] = useState<CharacterLevel>(3);
   const [role, setRole] = useState<Role | null>(null);
   const [character, setCharacter] = useState<Character | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isCopying, setIsCopying] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [selectedPregen, setSelectedPregen] = useState<PregenSummary | null>(null);
   const [activeCharacterId, setActiveCharacterId] = useState<string | null>(null);
-  const [appliedPregenSlug, setAppliedPregenSlug] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [appliedLoadId, setAppliedLoadId] = useState<string | null>(null);
-  const searchParams = useSearchParams();
+  const [appliedPregenSlug, setAppliedPregenSlug] = useState<string | null>(null);
+
+  const flash = (message: string) => {
+    setFeedback(message);
+    setTimeout(() => setFeedback(null), 3000);
+  };
+
+  // Restore a saved character (?load=id, or the last one opened).
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    let targetLoadId = searchParams.get("load");
-    if (!targetLoadId && !appliedLoadId) {
-      targetLoadId = readLastLoadedCharacter();
-    }
-
-    if (!targetLoadId) {
-      if (appliedLoadId) {
-        setAppliedLoadId(null);
-      }
-      return;
-    }
-
-    if (targetLoadId === appliedLoadId) return;
-
-    const stored = readStoredCharacters();
-    const match = stored.find((entry) => entry.id === targetLoadId);
-    if (!match) return;
-
-    const { id, pregenSlug, savedAt, label, source, ...rest } = match;
-    void savedAt;
-    void label;
-    void source;
-    const characterData = rest as Character;
-    setLevel(characterData.level);
-    setRole(characterData.role);
-    setCharacter(characterData);
-    setSelectedPregen(pregenSlug ? pregeneratedCharacters.find((entry) => entry.slug === pregenSlug) ?? null : null);
-    setActiveCharacterId(id);
-    rememberLastLoadedCharacter(id);
-    setAppliedLoadId(id);
-    setAppliedPregenSlug(pregenSlug ?? null);
+    const loadId = searchParams.get("load") ?? readLastLoadedCharacter();
+    if (!loadId || appliedLoadId === loadId) return;
+    const stored = readStoredCharacters().find((c) => c.id === loadId);
+    if (!stored) return;
+    const { id, pregenSlug, savedAt: _savedAt, label: _label, source: _source, ...rest } = stored;
+    setCharacter(rest as Character);
+    setLevel(stored.level as CharacterLevel);
+    setRole(stored.role as Role);
+    setActiveCharacterId(id ?? null);
+    setSelectedPregen(pregenSlug ? pregeneratedCharacters.find((p) => p.slug === pregenSlug) ?? null : null);
+    setAppliedLoadId(loadId);
     setStep(3);
   }, [searchParams, appliedLoadId]);
 
+  // Start from a pregen concept (?pregen=slug).
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const loadParamExists = !!searchParams.get("load");
-    if (loadParamExists) return; // load takes precedence
-
-    const pregenSlug = searchParams.get("pregen");
-    if (!pregenSlug) {
-      if (appliedPregenSlug) {
-        setAppliedPregenSlug(null);
-      }
-      return;
-    }
-
-    if (pregenSlug === appliedPregenSlug) return;
-
-    const match = pregeneratedCharacters.find((entry) => entry.slug === pregenSlug);
-    if (!match) return;
-
-    setLevel(match.level);
-    setRole(match.role);
-    setCharacter(generateCharacter({ level: match.level, role: match.role }));
-    setSelectedPregen(match);
+    const slug = searchParams.get("pregen");
+    if (!slug || appliedPregenSlug === slug || searchParams.get("load")) return;
+    const pregen = pregeneratedCharacters.find((p) => p.slug === slug);
+    if (!pregen) return;
+    const fresh = generateCharacter({ level: pregen.level as CharacterLevel, role: pregen.role as Role, seed: randomSeed() });
+    setCharacter(fresh);
+    setLevel(pregen.level as CharacterLevel);
+    setRole(pregen.role as Role);
+    setSelectedPregen(pregen);
     setActiveCharacterId(null);
-    rememberLastLoadedCharacter(null);
-    setAppliedPregenSlug(pregenSlug);
-    setAppliedLoadId(null);
+    setAppliedPregenSlug(slug);
     setStep(3);
   }, [searchParams, appliedPregenSlug]);
 
-  const roles: Array<{
-    name: Role;
-    icon: LucideIcon;
-    description: string;
-    color: string;
-  }> = [
-    {
-      name: "Frontliner",
-      icon: Shield,
-      description: "Tank and protect allies. High HP and AC.",
-      color: "from-red-500 to-orange-500",
-    },
-    {
-      name: "Skirmisher",
-      icon: Swords,
-      description: "High damage, mobile striker. Sneak attacks.",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      name: "Support",
-      icon: HeartPulse,
-      description: "Heal and buff allies. Keep the party alive.",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      name: "Control",
-      icon: Sparkles,
-      description: "Area control and crowd control. Spellcaster.",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      name: "Face",
-      icon: ScrollText,
-      description: "Social skills and support. Inspire allies.",
-      color: "from-yellow-500 to-amber-500",
-    },
-  ];
-
-  const masteryAdvice = useMemo(() => {
-    if (!character) return [];
-    const advice: Record<Role, string[]> = {
-      Frontliner: [
-        "Lead the marching order and ready opportunity attacks to lock enemies in place.",
-        "Invest in defensive reactions (Shield, Fighting Style) to protect fragile allies.",
-      ],
-      Skirmisher: [
-        "Always plan an exit\u2014bonus action Disengage, Misty Step, or allies' displacement.",
-        "Focus fire on high-value targets; coordinate initiative swaps with support casters.",
-      ],
-      Support: [
-        "Track concentration spells carefully and keep backup buffs ready to redeploy.",
-        "Pre-roll likely healing values to keep table pace upbeat during clutch moments.",
-      ],
-      Control: [
-        "Pair battlefield shaping with terrain advantages created by the one-shot map.",
-        "Use readied actions to punish enemy movement when hard control is unavailable.",
-      ],
-      Face: [
-        "Leverage discovered NPC bonds before rolling initiative to create advantage.",
-        "Document social leverage (favors, debt, secrets) and share them with the party.",
-      ],
-    };
-    return advice[character.role] ?? [];
-  }, [character]);
-
-  const handleExportPdf = async () => {
-    if (!character) return;
-    try {
-      setIsExporting(true);
-      const { jsPDF } = await import("jspdf");
-      const doc = new jsPDF({ unit: "mm", format: "a4" });
-      const pageHeight = doc.internal.pageSize.getHeight();
-      let y = 20;
-
-      const ensureSpace = (amount: number) => {
-        if (y + amount > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-      };
-
-      const addHeading = (title: string) => {
-        ensureSpace(10);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text(title, 14, y);
-        y += 8;
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
-      };
-
-      const addLine = (textLine: string) => {
-        ensureSpace(6);
-        const lines = doc.splitTextToSize(textLine, 180);
-        lines.forEach((line: string) => {
-          doc.text(line, 14, y);
-          y += 6;
-          ensureSpace(0);
-        });
-      };
-
-      const addBulletSection = (sectionTitle: string, items: string[] | undefined) => {
-        if (!items || items.length === 0) return;
-        addHeading(sectionTitle);
-        items.forEach((item) => {
-          ensureSpace(6);
-          const lines = doc.splitTextToSize(`• ${item}`, 176);
-          lines.forEach((line: string) => {
-            doc.text(line, 18, y);
-            y += 6;
-            ensureSpace(0);
-          });
-        });
-      };
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.text("OneShotsmith Character Summary", 14, y);
-      y += 10;
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      addLine(`Name: ${character.name || `${character.role} ${character.class}`}`);
-      addLine(`Role: ${character.role} • Level ${character.level}`);
-      addLine(`Race / Class: ${character.race} ${character.class}`);
-      addLine(`Background: ${character.background}`);
-      addLine(`HP ${character.hp} • AC ${character.ac} • Proficiency +${character.proficiencyBonus}`);
-
-      addHeading("Ability Scores");
-      const abilityLine = Object.entries(character.abilities)
-        .map(([ability, score]) => `${ability}: ${score}`)
-        .join("    ");
-      addLine(abilityLine);
-
-      addBulletSection("Features", character.features);
-      addBulletSection("Equipment", character.equipment);
-      addBulletSection("Spells Prepared", character.spells);
-      addBulletSection("Tactics", character.tactics);
-
-      const fileName = character.name?.replace(/\s+/g, "_") || `${character.role}_level_${character.level}`;
-      doc.save(`${fileName}.pdf`);
-      setFeedback({ type: "success", message: "PDF exported. Check your downloads." });
-      setTimeout(() => setFeedback(null), 4000);
-    } catch (error) {
-      console.error("Failed to export PDF", error);
-      setFeedback({ type: "error", message: "Export failed. Please try again." });
-      setTimeout(() => setFeedback(null), 4000);
-    } finally {
-      setIsExporting(false);
-    }
+  const handleGenerate = (r: Role) => {
+    setRole(r);
+    const fresh = generateCharacter({ level, role: r, seed: randomSeed() });
+    setCharacter(fresh);
+    setSelectedPregen(null);
+    setActiveCharacterId(null);
+    setStep(3);
   };
 
-  const handleSaveCharacter = () => {
-    if (!character) return;
+  const rerollCharacter = () => {
+    if (!role) return;
+    const fresh = generateCharacter({ level, role, seed: randomSeed() });
+    setCharacter(fresh);
+    setActiveCharacterId(null);
+  };
+
+  const handleSave = () => {
+    if (!character || !role) return;
     try {
-      setIsSaving(true);
       const id = activeCharacterId ?? crypto.randomUUID();
-      const payload: StoredCharacter = {
+      const record: StoredCharacter = {
         ...character,
         id,
         savedAt: new Date().toISOString(),
-        label: character.name || `${character.role} Level ${character.level}`,
+        label: character.name || `${role} Level ${level}`,
         source: selectedPregen ? "pregen" : "generated",
         pregenSlug: selectedPregen?.slug,
       };
-      const existing = readStoredCharacters().filter((entry) => entry.id !== id);
-      const updated = [payload, ...existing].slice(0, 50);
-      writeStoredCharacters(updated);
+      const existing = readStoredCharacters().filter((c) => c.id !== id);
+      writeStoredCharacters([record, ...existing].slice(0, 50));
       rememberLastLoadedCharacter(id);
       setActiveCharacterId(id);
-      setAppliedLoadId(id);
-      setAppliedPregenSlug(selectedPregen?.slug ?? null);
-      setFeedback({
-        type: "success",
-        message: "Character saved locally. Visit the Character Vault to reopen it anytime.",
-      });
-    } catch (error) {
-      console.error("Failed to save character", error);
-      setFeedback({
-        type: "error",
-        message: "Save failed. Browser storage may be disabled.",
-      });
-    } finally {
-      setIsSaving(false);
-      setTimeout(() => setFeedback(null), 4000);
+      flash("Saved to your vault (stored in this browser).");
+    } catch {
+      flash("Save failed — browser storage may be disabled.");
     }
   };
 
-  const handleCopyCharacter = async () => {
+  const handleCopy = async () => {
     if (!character) return;
     try {
-      setIsCopying(true);
-      const summary = formatCharacterSummary(
-        character,
-        selectedPregen
-          ? { concept: selectedPregen.concept, highlights: selectedPregen.highlights }
-          : undefined
+      await navigator.clipboard.writeText(
+        formatCharacterSummary(character, selectedPregen ? { concept: selectedPregen.concept, highlights: selectedPregen.highlights } : undefined)
       );
-
-      await navigator.clipboard.writeText(summary);
-      setFeedback({ type: "success", message: "Character summary copied to clipboard." });
-      setTimeout(() => setFeedback(null), 4000);
-    } catch (error) {
-      console.error("Failed to copy character summary", error);
-      setFeedback({ type: "error", message: "Copy failed. Browser permissions may block clipboard access." });
-      setTimeout(() => setFeedback(null), 4000);
-    } finally {
-      setIsCopying(false);
+      flash("Character summary copied to clipboard.");
+    } catch {
+      flash("Couldn't reach the clipboard.");
     }
-  };
-
-  const handleGenerate = async () => {
-    if (!role) return;
-
-    setIsGenerating(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const generated = generateCharacter({ level, role });
-    setCharacter(generated);
-    setSelectedPregen(null);
-    setActiveCharacterId(null);
-    rememberLastLoadedCharacter(null);
-    setAppliedLoadId(null);
-    setAppliedPregenSlug(null);
-    setIsGenerating(false);
-    setStep(3);
   };
 
   const handleReset = () => {
     setStep(1);
-    setLevel(3);
     setRole(null);
     setCharacter(null);
     setSelectedPregen(null);
     setActiveCharacterId(null);
     setAppliedLoadId(null);
     setAppliedPregenSlug(null);
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("pregen");
-      url.searchParams.delete("role");
-      url.searchParams.delete("level");
-      url.searchParams.delete("load");
-      window.history.replaceState(null, "", url.toString());
-    }
     rememberLastLoadedCharacter(null);
+    router.replace("/character-creator");
+  };
+
+  const mod = (score: number) => {
+    const m = Math.floor((score - 10) / 2);
+    return m >= 0 ? `+${m}` : `${m}`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Header */}
-      <header className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" prefetch={false} className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-white" aria-hidden="true" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-                OneShotsmith
-              </span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/character-vault" prefetch={false}>
-                <Button variant="outline" className="border-slate-700 bg-slate-900/70 text-slate-300 hover:border-purple-500 hover:text-white">
-                  Character Vault
-                </Button>
-              </Link>
-              <Button variant="ghost" onClick={handleReset} className="text-slate-300">
-                <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
-                  Back to Start
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-paper">
+      <SiteHeader current="/character-creator" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Progress Bar */}
-        <div className="mb-12">
-          <div className="flex items-center justify-center gap-4">
-            {[1, 2, 3].map((s) => (
-              <div key={s} className="flex items-center gap-2">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                    step >= s
-                      ? "bg-gradient-to-br from-purple-600 to-blue-600 text-white shadow-lg"
-                      : "bg-slate-800 text-slate-500"
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+        {/* Stepper */}
+        <nav aria-label="Progress" className="no-print flex items-center justify-center gap-2">
+          {["Level", "Role", "Sheet"].map((label, i) => {
+            const n = i + 1;
+            const active = step === n;
+            const done = step > n;
+            return (
+              <div key={label} className="flex items-center gap-2">
+                <span
+                  className={`key-circle !h-8 !w-8 text-[0.85rem] ${
+                    active ? "!border-map-deep !bg-map-deep text-map-line" : done ? "!border-map-deep text-map-deep" : "!border-rule text-ink-soft"
                   }`}
                 >
-                  {s}
-                </div>
-                {s < 3 && (
-                  <div
-                    className={`w-16 h-1 rounded ${
-                      step > s ? "bg-gradient-to-r from-purple-600 to-blue-600" : "bg-slate-800"
-                    }`}
-                  />
-                )}
+                  {n}
+                </span>
+                <span className={`display-caps text-[0.68rem] font-semibold ${active ? "text-ink" : "text-ink-soft"}`}>{label}</span>
+                {n < 3 && <span className="mx-1 h-px w-8 bg-rule" aria-hidden="true" />}
               </div>
-            ))}
-          </div>
-          <div className="text-center mt-4 text-slate-400">
-            Step {step} of 3: {step === 1 ? "Choose Level" : step === 2 ? "Select Role" : "Your Character"}
-          </div>
-        </div>
+            );
+          })}
+        </nav>
 
-        {/* Step 1: Choose Level */}
+        {/* Step 1: level */}
         {step === 1 && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl sm:text-5xl font-bold text-white">
-                Choose Your Level
-              </h1>
-              <p className="text-xl text-slate-400">
-                Higher levels get more features and abilities
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {([3, 5, 8] as CharacterLevel[]).map((lvl) => (
-                <Card
-                  key={lvl}
-                  className={`cursor-pointer transition-all duration-300 ${
-                    level === lvl
-                      ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20"
-                      : "border-slate-800 hover:border-purple-500/50 bg-slate-900/50"
-                  }`}
-                  onClick={() => setLevel(lvl)}
+          <section className="mt-10">
+            <h1 className="text-center font-serif text-[1.9rem] font-bold">How seasoned is your hero?</h1>
+            <p className="mt-2 text-center text-ink-soft">Match the level your DM asked for. When in doubt: 3.</p>
+            <div className="mx-auto mt-8 grid max-w-2xl gap-3">
+              {LEVELS.map((l) => (
+                <button
+                  key={l.level}
+                  type="button"
+                  onClick={() => { setLevel(l.level); setStep(2); }}
+                  className={`flex flex-col items-baseline justify-between gap-1 border-2 px-5 py-4 text-left transition-colors hover:border-map-deep sm:flex-row sm:gap-4 ${level === l.level ? "border-map-deep" : "border-rule"}`}
                 >
-                  <CardHeader>
-                    <CardTitle className="text-3xl text-white">
-                      Level {lvl}
-                    </CardTitle>
-                    <CardDescription>
-                      {lvl === 3 && "Beginner friendly, core abilities"}
-                      {lvl === 5 && "Balanced, extra attack/spells"}
-                      {lvl === 8 && "Advanced, powerful features"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400" />
-                        Proficiency bonus: +{lvl <= 4 ? 2 : 3}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400" />
-                        {lvl === 3 && "2-3 class features"}
-                        {lvl === 5 && "Extra attack/3rd level spells"}
-                        {lvl === 8 && "Powerful subclass features"}
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
+                  <span className="display-caps text-[0.9rem] font-bold tracking-[0.1em]">{l.label}</span>
+                  <span className="font-serif italic text-ink-soft">{l.note}</span>
+                </button>
               ))}
             </div>
-
-            <div className="flex justify-center">
-              <Button
-                size="lg"
-                onClick={() => setStep(2)}
-                className="px-12 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg"
-              >
-                Continue
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={handleCopyCharacter}
-                disabled={isCopying}
-                className="px-8 py-6 text-lg border-2 border-blue-500/40 bg-slate-900/70 text-blue-100 hover:border-blue-400 hover:bg-blue-500/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isCopying ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-                    Copying...
-                  </>
-                ) : (
-                  <>
-                    Copy Summary
-                    <Clipboard className="ml-2 h-5 w-5" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+          </section>
         )}
 
-        {/* Step 2: Select Role */}
+        {/* Step 2: role */}
         {step === 2 && (
-          <div className="max-w-6xl mx-auto space-y-8">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl sm:text-5xl font-bold text-white">
-                Choose Your Role
-              </h1>
-              <p className="text-xl text-slate-400">
-                What do you want to do in combat?
-              </p>
+          <section className="mt-10">
+            <h1 className="text-center font-serif text-[1.9rem] font-bold">Pick what sounds fun</h1>
+            <p className="mt-2 text-center text-ink-soft">
+              Roles, not rulebooks — each one is a complete, legal level-{level} build.
+            </p>
+            <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-2">
+              {ROLES.map((r) => (
+                <button
+                  key={r.role}
+                  type="button"
+                  onClick={() => handleGenerate(r.role)}
+                  className="border-2 border-rule px-5 py-4 text-left transition-colors hover:border-map-deep"
+                >
+                  <span className="display-caps block text-[0.8rem] font-bold tracking-[0.12em] text-map-deep">{r.role}</span>
+                  <span className="mt-1 block font-serif text-[1.05rem] italic">{r.pitch}</span>
+                  <span className="mt-1 block text-[0.85rem] text-ink-soft">{r.playsLike}</span>
+                </button>
+              ))}
             </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roles.map((r) => {
-                const RoleIcon = r.icon;
-                return (
-                  <Card
-                    key={r.name}
-                    className={`cursor-pointer transition-all duration-300 ${
-                      role === r.name
-                        ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20 scale-105"
-                        : "border-slate-800 hover:border-purple-500/50 bg-slate-900/50 hover:scale-102"
-                    }`}
-                    onClick={() => setRole(r.name)}
-                  >
-                    <CardHeader>
-                      <div className={`w-16 h-16 bg-gradient-to-br ${r.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
-                        <RoleIcon className="h-8 w-8 text-white" aria-hidden="true" />
-                      </div>
-                      <CardTitle className="text-2xl text-white">
-                        {r.name}
-                      </CardTitle>
-                      <CardDescription className="text-base">
-                        {r.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center gap-4">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setStep(1)}
-                className="px-8 py-6 text-lg border-2 border-slate-700"
-              >
-                <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
-                Back
-              </Button>
-              <Button
-                size="lg"
-                onClick={handleGenerate}
-                disabled={!role || isGenerating}
-                className="px-12 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 disabled:opacity-50 transition-all shadow-lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    Generate Character
-                    <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+            <p className="mt-6 text-center">
+              <button type="button" onClick={() => setStep(1)} className="display-caps text-[0.7rem] font-semibold text-ink-soft underline underline-offset-4 hover:text-map-deep">
+                Back to level
+              </button>
+            </p>
+          </section>
         )}
 
-        {/* Step 3: Character Sheet */}
+        {/* Step 3: the goldenrod sheet */}
         {step === 3 && character && (
-          <div className="max-w-5xl mx-auto space-y-8">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-                {character.name}
-              </h1>
-              <p className="text-xl text-slate-300">
-                Level {character.level} {character.race} {character.class}
+          <section className="mt-8">
+            <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={() => window.print()} className="display-caps border-2 border-map-deep bg-map-deep px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] text-map-line hover:border-map-blue hover:bg-map-blue">
+                  Print sheet
+                </button>
+                <button type="button" onClick={handleSave} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  Save to vault
+                </button>
+                <button type="button" onClick={handleCopy} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  Copy summary
+                </button>
+                <button type="button" onClick={rerollCharacter} className="display-caps border-2 border-ink bg-paper px-4 py-2 text-[0.7rem] font-bold tracking-[0.12em] hover:bg-paper-shade">
+                  Re-roll hero
+                </button>
+              </div>
+              <button type="button" onClick={handleReset} className="display-caps text-[0.68rem] font-semibold text-ink-soft underline underline-offset-4 hover:text-map-deep">
+                Start over
+              </button>
+            </div>
+
+            <div aria-live="polite">
+              {feedback && (
+                <p className="no-print mb-3 border-2 border-success bg-paper-shade px-3 py-2 font-serif text-sm italic text-success">{feedback}</p>
+              )}
+            </div>
+
+            <div className="goldenrod-sheet module-sheet p-5 sm:p-7">
+              <div className="flex items-baseline justify-between">
+                <p className="sheet-label">Character record sheet</p>
+                <p className="sheet-label">OneShotsmith &middot; 5E</p>
+              </div>
+
+              <h1 className="mt-3 font-serif text-[2rem] font-bold leading-tight">{character.name}</h1>
+              <p className="sheet-label mt-1">
+                Level {character.level} {character.race} {character.class} &middot; {character.background} &middot; {character.role}
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300">
-                <Check className="h-4 w-4" aria-hidden="true" />
-                Character Ready!
+
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center sm:grid-cols-6">
+                {(Object.entries(character.abilities) as Array<[string, number]>).map(([ab, score]) => (
+                  <div key={ab} className="sheet-box px-1 py-2.5">
+                    <p className="sheet-label">{ab}</p>
+                    <p className="font-display text-[1.5rem] font-bold leading-none">{score}</p>
+                    <p className="mt-0.5 font-display text-[0.85rem]">{mod(score)}</p>
+                  </div>
+                ))}
               </div>
-            </div>
 
-            {selectedPregen && (
-              <div className="mx-auto max-w-3xl rounded-xl border border-purple-500/30 bg-purple-900/10 p-6 text-left shadow-inner">
-                <p className="text-xs font-semibold uppercase tracking-wide text-purple-300">
-                  Loaded from Pregen Library
-                </p>
-                <h2 className="mt-2 text-2xl font-bold text-white">{selectedPregen.name}</h2>
-                <p className="mt-3 text-slate-200">{selectedPregen.concept}</p>
-                <ul className="mt-4 space-y-2 text-slate-200 list-disc list-inside">
-                  {selectedPregen.highlights.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+              <div className="mt-2.5 grid grid-cols-3 gap-2 text-center">
+                {[["Armor Class", character.ac], ["Hit Points", character.hp], ["Proficiency", `+${character.proficiencyBonus}`]].map(([label, v]) => (
+                  <div key={String(label)} className="sheet-box px-1 py-2.5">
+                    <p className="sheet-label">{label}</p>
+                    <p className="font-display text-[1.5rem] font-bold leading-none">{v}</p>
+                  </div>
+                ))}
               </div>
-            )}
 
-            {/* Stats Grid */}
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle className="text-lg text-slate-300">Hit Points</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-red-400">{character.hp}</div>
-                </CardContent>
-              </Card>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                <div className="sheet-box p-3.5">
+                  <p className="sheet-label">Skills</p>
+                  <p className="mt-1.5 text-[0.95rem]">{character.skills.join(" · ")}</p>
+                  <p className="sheet-label mt-4">Features</p>
+                  <ul className="mt-1.5 list-disc pl-5 text-[0.95rem]">
+                    {character.features.map((f) => <li key={f}>{f}</li>)}
+                  </ul>
+                  <p className="sheet-label mt-4">Equipment</p>
+                  <ul className="mt-1.5 list-disc pl-5 text-[0.95rem]">
+                    {character.equipment.map((e) => <li key={e}>{e}</li>)}
+                  </ul>
+                  {character.spells && character.spells.length > 0 && (
+                    <>
+                      <p className="sheet-label mt-4">Spells</p>
+                      <p className="mt-1.5 text-[0.95rem]">{character.spells.join(", ")}</p>
+                    </>
+                  )}
+                </div>
 
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle className="text-lg text-slate-300">Armor Class</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-blue-400">{character.ac}</div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle className="text-lg text-slate-300">Proficiency</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-purple-400">+{character.proficiencyBonus}</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Abilities */}
-            <Card className="border-slate-800 bg-slate-900/50">
-              <CardHeader>
-                <CardTitle className="text-white">Ability Scores</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                  {Object.entries(character.abilities).map(([ability, score]) => (
-                    <div key={ability} className="text-center">
-                      <div className="text-sm text-slate-400 font-semibold mb-1">{ability}</div>
-                      <div className="text-2xl font-bold text-white">{score}</div>
-                      <div className="text-xs text-slate-500">
-                        ({score >= 10 ? '+' : ''}{Math.floor((score - 10) / 2)})
-                      </div>
+                <div className="space-y-5">
+                  <div className="sheet-box p-3.5">
+                    <p className="sheet-label">On your turn (tactics)</p>
+                    <ul className="mt-1.5 list-disc pl-5 text-[0.95rem]">
+                      {character.tactics.map((t) => <li key={t}>{t}</li>)}
+                    </ul>
+                  </div>
+                  <div className="sheet-box p-3.5">
+                    <p className="sheet-label">Who you are</p>
+                    {character.trait && <p className="mt-1.5 text-[0.95rem]"><strong>Trait.</strong> {character.trait}</p>}
+                    {character.bond && <p className="mt-1.5 text-[0.95rem]"><strong>Bond.</strong> {character.bond}</p>}
+                    {character.flaw && <p className="mt-1.5 text-[0.95rem]"><strong>Flaw.</strong> {character.flaw}</p>}
+                    {character.trinket && <p className="mt-1.5 text-[0.95rem]"><strong>Trinket.</strong> You carry {character.trinket}.</p>}
+                  </div>
+                  {selectedPregen && (
+                    <div className="sheet-box p-3.5">
+                      <p className="sheet-label">Concept &middot; {selectedPregen.name}</p>
+                      <p className="mt-1.5 text-[0.95rem] italic">{selectedPregen.concept}</p>
+                      <ul className="mt-1.5 list-disc pl-5 text-[0.9rem]">
+                        {selectedPregen.highlights.map((h) => <li key={h}>{h}</li>)}
+                      </ul>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Features & Equipment */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle className="text-white">Features</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {character.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-slate-300">
-                        <Check className="h-4 w-4 text-purple-400" aria-hidden="true" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle className="text-white">Equipment</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {character.equipment.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-slate-300">
-                        <Check className="h-4 w-4 text-blue-400" aria-hidden="true" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              </div>
             </div>
 
-            {/* Skills */}
-            <Card className="border-slate-800 bg-slate-900/50">
-              <CardHeader>
-                <CardTitle className="text-white">Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {character.skills.map((skill, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Tactics */}
-            <Card className="border-purple-500/20 bg-purple-900/10">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-purple-300" aria-hidden="true" />
-                  How to Play This Character
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {character.tactics.map((tactic, i) => (
-                    <li key={i} className="flex items-start gap-3 text-slate-300">
-                      <span className="text-purple-400 font-bold">{i + 1}.</span>
-                      <span>{tactic}</span>
-                    </li>
-                  ))}
+            {role && (
+              <div className="no-print mt-6 border-2 border-ink bg-paper p-5">
+                <p className="display-caps text-[0.75rem] font-bold tracking-[0.14em]">First time playing a {role}?</p>
+                <ul className="mt-2.5 list-disc space-y-1.5 pl-5 text-[0.95rem]">
+                  {TABLE_TIPS[role].map((tip) => <li key={tip}>{tip}</li>)}
                 </ul>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={handleReset}
-                className="px-8 py-6 text-lg border-2 border-slate-700"
-              >
-                <RefreshCw className="mr-2 h-5 w-5" aria-hidden="true" />
-                Create Another
-              </Button>
-              <Button
-                size="lg"
-                onClick={handleExportPdf}
-                disabled={isExporting}
-                className="px-8 py-6 text-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:opacity-60"
-              >
-                {isExporting ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-                    Preparing PDF...
-                  </>
-                ) : (
-                  <>
-                    Export as PDF
-                    <FileDown className="ml-2 h-5 w-5" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-              <Button
-                size="lg"
-                onClick={handleSaveCharacter}
-                disabled={isSaving}
-                className="px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 disabled:opacity-60"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    Save Character
-                    <Save className="ml-2 h-5 w-5" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-            </div>
-
-            {feedback && (
-              <div
-                className={`mt-6 rounded-lg border px-4 py-3 text-sm ${
-                  feedback.type === "success"
-                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                    : "border-red-500/40 bg-red-500/10 text-red-200"
-                }`}
-              >
-                {feedback.message}
+                <p className="mt-3 text-[0.9rem] text-ink-soft">
+                  Need an adventure to go with them?{" "}
+                  <Link href="/one-shot-generator" prefetch={false} className="text-map-deep underline underline-offset-2">
+                    Forge a one-shot
+                  </Link>{" "}
+                  at the same level.
+                </p>
               </div>
             )}
-
-            {masteryAdvice.length > 0 && (
-              <Card className="border-blue-500/30 bg-slate-900/60">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Target className="h-5 w-5 text-blue-300" aria-hidden="true" />
-                    Table Leadership Tips
-                  </CardTitle>
-                  <CardDescription className="text-slate-300">
-                    Tactical guidance sourced from veteran GMs for this build.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {masteryAdvice.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-3 text-slate-200">
-                        <span className="text-blue-400 font-semibold">{index + 1}.</span>
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          </section>
         )}
       </main>
+
       <SiteFooter />
     </div>
   );
 }
 
-
-
-
-
+export default function CharacterCreatorPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-paper" />}>
+      <CreatorInner />
+    </Suspense>
+  );
+}

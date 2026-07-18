@@ -1,327 +1,256 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@oneshotsmith/ui";
-import {
-  Clipboard,
-  Download,
-  FolderOpen,
-  Pencil,
-  Sparkles,
-  Trash2,
-} from "lucide-react";
-import { formatCharacterSummary, readStoredCharacters, rememberLastLoadedCharacter, writeStoredCharacters, type StoredCharacter } from "../../lib/local-storage";
-import { pregeneratedCharacters } from "../../lib/pregenerated-characters";
+import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
+import {
+  CHARACTER_STORAGE_KEY,
+  formatCharacterSummary,
+  readStoredCharacters,
+  rememberLastLoadedCharacter,
+  writeStoredCharacters,
+  type StoredCharacter,
+} from "../../lib/local-storage";
+import { pregeneratedCharacters } from "../../lib/pregenerated-characters";
+import {
+  deleteAdventure,
+  readSavedAdventures,
+  type StoredAdventure,
+} from "../../lib/adventure-storage";
 
-interface EditingState {
-  id: string;
-  label: string;
-}
+// The vault: everything saved in this browser — heroes and adventures.
 
 export default function CharacterVaultPage() {
   const router = useRouter();
   const [characters, setCharacters] = useState<StoredCharacter[]>([]);
-  const [editing, setEditing] = useState<EditingState | null>(null);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [adventures, setAdventures] = useState<StoredAdventure[]>([]);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = () => setCharacters(readStoredCharacters());
-    load();
-    const handler = (event: StorageEvent) => {
-      if (event.key === null || event.key === "oneshotsmith:saved-characters") {
-        load();
-      }
-    };
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
-  }, []);
-
-  const totalByRole = useMemo(() => {
-    return characters.reduce<Record<string, number>>((acc, entry) => {
-      acc[entry.role] = (acc[entry.role] ?? 0) + 1;
-      return acc;
-    }, {});
-  }, [characters]);
-
-  const handleDelete = (id: string) => {
-    const updated = characters.filter((entry) => entry.id !== id);
-    writeStoredCharacters(updated);
-    setCharacters(updated);
-    if (updated.length === 0) {
-      rememberLastLoadedCharacter(null);
-    }
-  };
-
-  const handleRename = () => {
-    if (!editing) return;
-    const trimmed = editing.label.trim();
-    if (trimmed.length === 0) {
-      setFeedback({ type: "error", message: "Name cannot be empty." });
-      return;
-    }
-    const updated = characters.map((entry) =>
-      entry.id === editing.id ? { ...entry, label: trimmed } : entry
-    );
-    writeStoredCharacters(updated);
-    setCharacters(updated);
-    setEditing(null);
-    setFeedback({ type: "success", message: "Name updated." });
-    setTimeout(() => setFeedback(null), 2500);
-  };
-
-  const handleCopy = async (character: StoredCharacter) => {
-    try {
-      const pregen = character.pregenSlug
-        ? pregeneratedCharacters.find((entry) => entry.slug === character.pregenSlug)
-        : undefined;
-      const summary = formatCharacterSummary(character, {
-        concept: pregen?.concept,
-        highlights: pregen?.highlights,
-      });
-      await navigator.clipboard.writeText(summary);
-      setFeedback({ type: "success", message: "Summary copied to clipboard." });
-      setTimeout(() => setFeedback(null), 3500);
-    } catch (error) {
-      console.error("Copy failed", error);
-      setFeedback({ type: "error", message: "Copy failed. Check browser permissions." });
-      setTimeout(() => setFeedback(null), 3500);
-    }
-  };
-
-  const handleExport = (character: StoredCharacter) => {
-    try {
-      const blob = new Blob([JSON.stringify(character, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      const filename = `${(character.label || character.name || "character").replace(/\s+/g, "_")}.json`;
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Export failed", error);
-      setFeedback({ type: "error", message: "Export failed. Try again." });
-      setTimeout(() => setFeedback(null), 3500);
-    }
-  };
-
-  const handleOpen = (id: string) => {
-    rememberLastLoadedCharacter(id);
-    router.push(`/character-creator?load=${encodeURIComponent(id)}`);
-  };
-
-  const handleClearAll = () => {
-    writeStoredCharacters([]);
-    setCharacters([]);
-    rememberLastLoadedCharacter(null);
-    setFeedback({ type: "success", message: "Vault cleared." });
+  const flash = (message: string) => {
+    setFeedback(message);
     setTimeout(() => setFeedback(null), 3000);
   };
 
+  useEffect(() => {
+    setCharacters(readStoredCharacters());
+    setAdventures(readSavedAdventures());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === null || e.key === CHARACTER_STORAGE_KEY) {
+        setCharacters(readStoredCharacters());
+      }
+      if (e.key === null || e.key === "oneshotsmith:saved-adventures") {
+        setAdventures(readSavedAdventures());
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const openCharacter = (c: StoredCharacter) => {
+    if (!c.id) return;
+    rememberLastLoadedCharacter(c.id);
+    router.push(`/character-creator?load=${c.id}`);
+  };
+
+  const startRename = (c: StoredCharacter) => {
+    setRenamingId(c.id ?? null);
+    setRenameValue(c.label ?? c.name);
+  };
+
+  const commitRename = () => {
+    const value = renameValue.trim();
+    if (!renamingId || !value) {
+      setRenamingId(null);
+      return;
+    }
+    const updated = characters.map((c) => (c.id === renamingId ? { ...c, label: value } : c));
+    writeStoredCharacters(updated);
+    setCharacters(updated);
+    setRenamingId(null);
+    flash("Renamed.");
+  };
+
+  const deleteCharacter = (id?: string) => {
+    if (!id) return;
+    const updated = characters.filter((c) => c.id !== id);
+    writeStoredCharacters(updated);
+    setCharacters(updated);
+    flash("Removed from the vault.");
+  };
+
+  const copyCharacter = async (c: StoredCharacter) => {
+    const pregen = c.pregenSlug ? pregeneratedCharacters.find((p) => p.slug === c.pregenSlug) : undefined;
+    try {
+      await navigator.clipboard.writeText(
+        formatCharacterSummary(c, pregen ? { concept: pregen.concept, highlights: pregen.highlights } : undefined)
+      );
+      flash("Summary copied to clipboard.");
+    } catch {
+      flash("Couldn't reach the clipboard.");
+    }
+  };
+
+  const exportCharacter = (c: StoredCharacter) => {
+    const blob = new Blob([JSON.stringify(c, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(c.label ?? c.name).replace(/\s+/g, "_")}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const removeAdventure = (id: string) => {
+    setAdventures(deleteAdventure(id));
+    flash("Adventure removed.");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <header className="border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6">
-          <Link href="/" prefetch={false} className="text-sm text-slate-400 hover:text-white transition self-start">
-            ← Home
-          </Link>
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-6 w-6 text-purple-300" aria-hidden="true" />
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-white">Character Vault</h1>
-                <p className="text-slate-300 text-sm mt-1">
-                  Locally saved heroes ready for your next one-shot. Everything stays on this device.
-                </p>
-              </div>
-            </div>
-            {characters.length > 0 && (
-              <Button
-                variant="outline"
-                onClick={handleClearAll}
-                className="border-red-500/40 text-red-300 hover:border-red-400 hover:text-white"
-              >
-                <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
-                Clear Vault
-              </Button>
-            )}
+    <div className="flex min-h-screen flex-col bg-paper">
+      <SiteHeader current="/character-vault" />
+
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
+        <h1 className="font-serif text-[2rem] font-bold">The Vault</h1>
+        <p className="mt-1 max-w-[64ch] text-ink-soft">
+          Heroes and adventures saved in this browser — no account, no cloud. Export
+          anything you can&rsquo;t bear to lose.
+        </p>
+
+        <div aria-live="polite">
+          {feedback && (
+            <p className="mt-4 border-2 border-success bg-paper-shade px-3 py-2 font-serif text-sm italic text-success">{feedback}</p>
+          )}
+        </div>
+
+        {/* ------------------------------------------------ Adventures */}
+        <section aria-label="Saved adventures" className="mt-10">
+          <div className="flex items-baseline justify-between">
+            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em]">Saved adventures</h2>
+            <Link href="/one-shot-generator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-map-deep underline underline-offset-4">
+              Forge a new one
+            </Link>
           </div>
-          {characters.length > 0 && (
-            <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-slate-400">
-              {Object.entries(totalByRole).map(([roleName, count]) => (
-                <span key={roleName} className="rounded-full border border-slate-700 px-3 py-1">
-                  {roleName}: {count}
-                </span>
+          <hr className="module-rule mt-1.5" aria-hidden="true" />
+
+          {adventures.length === 0 ? (
+            <p className="mt-5 border border-rule bg-paper-shade px-4 py-5 text-center font-serif italic text-ink-soft">
+              No adventures saved yet. Generate one and hit &ldquo;Save to vault&rdquo; — it will
+              keep its exact seed, map, and math forever.
+            </p>
+          ) : (
+            <ul className="mt-5 space-y-3">
+              {adventures.map((a) => (
+                <li key={a.id} className="flex flex-col justify-between gap-3 border-2 border-rule bg-paper px-4 py-3.5 sm:flex-row sm:items-center">
+                  <div>
+                    <p className="font-serif text-[1.15rem] font-bold leading-tight">
+                      {a.label}
+                      <span className="display-caps ml-2 align-middle text-[0.6rem] font-semibold text-ink-soft">
+                        Module {a.packet.moduleCode}
+                      </span>
+                    </p>
+                    <p className="imprint mt-1">
+                      {a.packet.input.theme} &middot; level {a.packet.input.level} &middot; {a.packet.input.partySize} players &middot; {a.packet.input.difficulty} &middot; seed {a.packet.input.seed}
+                    </p>
+                  </div>
+                  <div className="flex flex-none gap-2">
+                    <Link
+                      href={`/one-shot-generator?load=${a.id}`}
+                      prefetch={false}
+                      className="display-caps border-2 border-map-deep bg-map-deep px-3.5 py-1.5 text-[0.65rem] font-bold tracking-[0.1em] text-map-line hover:border-map-blue hover:bg-map-blue"
+                    >
+                      Open
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => removeAdventure(a.id)}
+                      className="display-caps border-2 border-rule bg-paper px-3.5 py-1.5 text-[0.65rem] font-bold tracking-[0.1em] text-ink-soft hover:border-stamp hover:text-stamp"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* ------------------------------------------------ Characters */}
+        <section aria-label="Saved characters" className="mt-12">
+          <div className="flex items-baseline justify-between">
+            <h2 className="display-caps text-[0.95rem] font-bold tracking-[0.14em]">Saved heroes</h2>
+            <Link href="/character-creator" prefetch={false} className="display-caps text-[0.68rem] font-semibold text-map-deep underline underline-offset-4">
+              Create a hero
+            </Link>
+          </div>
+          <hr className="module-rule mt-1.5" aria-hidden="true" />
+
+          {characters.length === 0 ? (
+            <p className="mt-5 border border-rule bg-paper-shade px-4 py-5 text-center font-serif italic text-ink-soft">
+              The vault stands empty. Roll a hero in the{" "}
+              <Link href="/character-creator" prefetch={false} className="text-map-deep underline underline-offset-2">creator</Link>{" "}
+              or start from a{" "}
+              <Link href="/pregen-library" prefetch={false} className="text-map-deep underline underline-offset-2">pregen</Link>.
+            </p>
+          ) : (
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {characters.map((c) => (
+                <article key={c.id} className="goldenrod-sheet flex flex-col p-4">
+                  {renamingId === c.id ? (
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") commitRename();
+                        if (e.key === "Escape") setRenamingId(null);
+                      }}
+                      onBlur={commitRename}
+                      aria-label="New name"
+                      className="border-2 border-gold-ink bg-goldenrod px-2 py-1 font-serif text-[1.15rem] font-bold text-gold-ink focus:outline-none"
+                    />
+                  ) : (
+                    <h3 className="font-serif text-[1.2rem] font-bold leading-tight">{c.label ?? c.name}</h3>
+                  )}
+                  <p className="sheet-label mt-1">
+                    Level {c.level} {c.race} {c.class} &middot; {c.role}
+                    {c.source === "pregen" ? " · pregen" : ""}
+                  </p>
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 text-center">
+                    {[["AC", c.ac], ["HP", c.hp], ["Prof", `+${c.proficiencyBonus}`]].map(([label, v]) => (
+                      <div key={String(label)} className="sheet-box px-1 py-1.5">
+                        <p className="sheet-label">{label}</p>
+                        <p className="font-display text-[1.1rem] font-bold leading-none">{v}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+                    <button type="button" onClick={() => openCharacter(c)} className="display-caps border-2 border-gold-ink bg-gold-ink px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.08em] text-goldenrod hover:opacity-85">
+                      Open
+                    </button>
+                    <button type="button" onClick={() => startRename(c)} className="display-caps border-2 border-gold-ink px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.08em] hover:bg-goldenrod-shade">
+                      Rename
+                    </button>
+                    <button type="button" onClick={() => copyCharacter(c)} className="display-caps border-2 border-gold-ink px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.08em] hover:bg-goldenrod-shade">
+                      Copy
+                    </button>
+                    <button type="button" onClick={() => exportCharacter(c)} className="display-caps border-2 border-gold-ink px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.08em] hover:bg-goldenrod-shade">
+                      Export
+                    </button>
+                    <button type="button" onClick={() => deleteCharacter(c.id)} className="display-caps border-2 border-gold-ink px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.08em] hover:border-stamp hover:text-stamp">
+                      Delete
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
           )}
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-        {feedback && (
-          <div
-            className={`rounded-lg border px-4 py-3 text-sm ${
-              feedback.type === "success"
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                : "border-red-500/40 bg-red-500/10 text-red-200"
-            }`}
-          >
-            {feedback.message}
-          </div>
-        )}
-
-        {characters.length === 0 ? (
-          <Card className="border-slate-800 bg-slate-900/70 text-center py-16">
-            <CardHeader>
-              <CardTitle className="text-2xl text-white">No heroes yet</CardTitle>
-              <CardDescription className="text-slate-300">
-                Save a character from the creator or import one to see it here.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-                <Link href="/character-creator" prefetch={false}>
-                  <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
-                    Create a Character
-                  </Button>
-                </Link>
-                <Link href="/pregen-library" prefetch={false}>
-                  <Button size="lg" variant="outline" className="border-slate-700 bg-slate-900/60 text-slate-200 hover:border-purple-500 hover:text-white">
-                    Browse Pregens
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {characters.map((character) => {
-              const pregen = character.pregenSlug
-                ? pregeneratedCharacters.find((entry) => entry.slug === character.pregenSlug)
-                : undefined;
-              const isEditing = editing?.id === character.id;
-              return (
-                <Card key={character.id} className="border-slate-800 bg-slate-900/60 flex flex-col">
-                  <CardHeader className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        {isEditing ? (
-                          <input
-                            value={editing?.label ?? ""}
-                            onChange={(event) => setEditing({ id: character.id, label: event.target.value })}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                event.preventDefault();
-                                handleRename();
-                              }
-                              if (event.key === "Escape") {
-                                event.preventDefault();
-                                setEditing(null);
-                              }
-                            }}
-                            className="w-full rounded-lg bg-slate-900 border border-purple-400/40 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            autoFocus
-                          />
-                        ) : (
-                          <CardTitle className="text-2xl text-white">{character.label || character.name}</CardTitle>
-                        )}
-                        <CardDescription className="text-slate-300">
-                          Level {character.level} {character.race} {character.class}
-                        </CardDescription>
-                      </div>
-                      <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-200">
-                        {character.role}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>Saved {new Date(character.savedAt).toLocaleString()}</span>
-                      {character.source && (
-                        <span className="uppercase tracking-wide text-slate-400">
-                          {character.source === "pregen" ? "Pregen" : "Custom"}
-                        </span>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col justify-between space-y-4">
-                    <div className="space-y-2 text-sm text-slate-300">
-                      <p className="text-slate-200">
-                        HP {character.hp} | AC {character.ac} | Proficiency +{character.proficiencyBonus}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 text-xs">
-                        {Object.entries(character.abilities).map(([ability, score]) => (
-                          <span
-                            key={ability}
-                            className="rounded-full border border-slate-700 bg-slate-900/60 px-2 py-1 text-slate-300"
-                          >
-                            {ability}: {score}
-                          </span>
-                        ))}
-                      </div>
-                      {pregen && (
-                        <div className="rounded-lg border border-purple-500/30 bg-purple-900/10 p-3">
-                          <p className="text-xs uppercase tracking-wide text-purple-300 mb-1">Pregen Concept</p>
-                          <p className="text-xs text-slate-200">{pregen.concept}</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <Button
-                        className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
-                        onClick={() => handleOpen(character.id)}
-                      >
-                        <FolderOpen className="mr-2 h-4 w-4" aria-hidden="true" />
-                        Open in Creator
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          isEditing ? handleRename() : setEditing({ id: character.id, label: character.label || character.name })
-                        }
-                        className="border-slate-700 bg-slate-900/70 text-slate-200 hover:border-purple-500 hover:text-white"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" aria-hidden="true" />
-                        {isEditing ? "Save" : "Rename"}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={() => handleDelete(character.id)}
-                        className="text-red-300 hover:text-white hover:bg-red-500/10"
-                      >
-                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="secondary"
-                        onClick={() => handleCopy(character)}
-                        className="bg-slate-900/60 border border-blue-500/40 text-blue-200 hover:border-blue-400 hover:text-white"
-                      >
-                        <Clipboard className="mr-2 h-4 w-4" aria-hidden="true" />
-                        Copy
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        onClick={() => handleExport(character)}
-                        className="bg-slate-900/60 border border-slate-700 text-slate-200 hover:border-purple-500 hover:text-white"
-                      >
-                        <Download className="mr-2 h-4 w-4" aria-hidden="true" />
-                        Export
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+        </section>
       </main>
+
       <SiteFooter />
     </div>
   );

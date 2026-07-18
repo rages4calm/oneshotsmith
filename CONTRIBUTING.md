@@ -40,7 +40,7 @@ pnpm dev
 ```
 apps/
   web/            # Next.js frontend
-  worker/         # PartyKit real-time server
+  worker/         # PartyKit scaffold (unused at runtime)
 packages/
   ui/             # Shared UI components (shadcn/ui)
   core/           # Game logic and generators

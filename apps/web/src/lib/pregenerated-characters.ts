@@ -46,4 +46,40 @@ export const pregeneratedCharacters: PregenSummary[] = [
       "Teleportation circle notes for fast scene transitions",
     ],
   },
+  {
+    slug: "brother-tobin-of-the-lantern",
+    name: "Brother Tobin of the Lantern",
+    role: "Support",
+    level: 3,
+    concept: "Hill dwarf cleric of a wayfarers' order who believes no one should die in the dark — and carries enough lamp oil to enforce it.",
+    highlights: [
+      "Healing Word at range keeps the line standing",
+      "Bless before the door opens, Spirit Guardians after",
+      "Turn Undead makes crypt work almost relaxing",
+    ],
+  },
+  {
+    slug: "vessa-marchmain",
+    name: "Vessa Marchmain",
+    role: "Face",
+    level: 5,
+    concept: "Half-elf bard and disgraced court herald who knows exactly which secrets are worth a song — and which are worth more unsung.",
+    highlights: [
+      "Bardic Inspiration fuels the whole party's big rolls",
+      "Hypnotic Pattern turns brawls into conversations",
+      "Court etiquette, forgery, and three kinds of laugh",
+    ],
+  },
+  {
+    slug: "korga-emberfist",
+    name: "Korga Emberfist",
+    role: "Frontliner",
+    level: 3,
+    concept: "Half-orc soldier turned caravan guard who has personally carried every one of her charges home — some of them twice.",
+    highlights: [
+      "Second Wind and stubborn CON keep her standing",
+      "Intimidation as a first language, Athletics as a second",
+      "Action Surge saved for the round that matters",
+    ],
+  },
 ];

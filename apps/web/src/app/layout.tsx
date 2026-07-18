@@ -1,13 +1,35 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Jost, Alegreya, Alegreya_SC } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const jost = Jost({
+  subsets: ["latin"],
+  variable: "--font-jost",
+  display: "swap",
+});
+
+const alegreya = Alegreya({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-alegreya",
+  display: "swap",
+});
+
+const alegreyaSC = Alegreya_SC({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-alegreya-sc",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "OneShotsmith - D&D 5e Character & Adventure Generator",
-  description: "Get table-ready in under 10 minutes with our fast character creator and one-shot adventure generator for D&D 5e",
-  manifest: "/oneshot/manifest.json",
+  title: "OneShotsmith — Complete D&D 5e One-Shot Adventures from a Seed",
+  description:
+    "Generate complete, table-ready D&D 5e one-shot modules in your browser: keyed dungeon maps, correct encounter math, read-aloud text, NPCs, secrets, and print-perfect output. Free, no accounts, fully shareable by seed.",
+  keywords: [
+    "D&D", "DnD 5e", "one-shot", "adventure generator", "dungeon map generator",
+    "encounter builder", "DM tools", "tabletop RPG",
+  ],
 };
 
 export default function RootLayout({
@@ -16,9 +38,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${jost.variable} ${alegreya.variable} ${alegreyaSC.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
-

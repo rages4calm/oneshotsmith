@@ -1,27 +1,66 @@
 # OneShotsmith
 
-Build D&D 5e characters and one-shots in minutes. OneShotsmith runs entirely in
-the browser without accounts, databases, or external services, and now ships
-with a local Character Vault plus a pacing clock for game masters.
+**Complete D&D 5e one-shot adventures, forged from a seed — map, math, and story in one click.**
+
+OneShotsmith generates a full, runnable adventure module in your browser: a keyed
+dungeon map in the classic blue style, encounters built on the real DMG XP math, a
+villain with a plan, boxed read-aloud text, NPCs with voices, a secrets checklist,
+treasure, pacing — formatted like a proper early-80s adventure module and
+print-perfect out of the box. No accounts. No server. No AI API. Free forever.
+
+**Every adventure is deterministic.** The seed lives in the URL, so a module can be
+shared, bookmarked, or posted like a link to a song — same seed, same adventure,
+forever.
+
+![OneShotsmith landing page with a live generated module cover](docs/screenshots/landing.png)
 
 ---
 
-## Highlights
+## Why this exists
 
-- **Three-step character creator** - choose a role and level to generate a
-  complete sheet with stats, tactics, PDF export, and clipboard summary.
-- **Character Vault** - save heroes locally, rename them, reopen in the creator,
-  copy the summary, or export to JSON for backups and sharing.
-- **Pregenerated heroes** - load curated pregens with concept blurbs and
-  highlight notes directly into the creator.
-- **One-shot generator** - produce hooks, act beats, encounters, NPCs, treasure,
-  and twists ready to run the same night.
-- **Session pacing clock** - auto-generated timing guidance that adapts to
-  session length, theme, and difficulty so finales land on time.
-- **Modern dark UI** - responsive Tailwind + shadcn design with accessible
-  contrast and tailored artwork.
+The tools DMs actually use each solve a quarter of the problem: map generators have
+no story, story generators have no maps, encounter builders have no plot, and AI
+tools can't do the math. OneShotsmith does all four at once, coherently — the
+numbered rooms on the map *are* the scenes in the text, and the fights in those
+scenes are budgeted for your exact party.
 
----
+## What a generated module contains
+
+Every module ships the full anatomy of a professionally written one-shot:
+
+- **A synopsis for the GM** — what's really going on, twist included
+- **A strong-start hook** with boxed read-aloud text, plus fallbacks for reluctant parties
+- **A keyed site map** — procedurally generated, drawn white-on-blue like the classic
+  modules, with a player-safe version that prints as a separate handout
+- **4–6 scenes** matched to your session length, each with read-aloud text, DM notes,
+  and a decision or lever — never just description
+- **Encounters with honest math** — 2014 DMG XP thresholds and multipliers for your
+  exact party size and level, monster stat lines inline (SRD 5.1), and Sly Flourish's
+  Lazy Encounter Benchmark as a second opinion that flags the edge cases XP math misses
+- **A villain with a motivation, plan, secret, and mannerism** — and a stat block
+- **Three cast NPCs** with appearance, mannerism, voice cue, want, and secret
+- **Eight secrets & clues** to reveal wherever the players look (Lazy DM style)
+- **A twist**, treasure parcels, and a signature magic item with a history
+- **Scaling advice** for weaker/stronger tables, a session clock, a cut list for
+  running behind, and theme-specific random tables
+
+![A generated Haunting module — The Nursery Remembers](docs/screenshots/module.png)
+
+## Features
+
+| | |
+|---|---|
+| **Six themes** | Dungeon Crawl, Heist, Rescue, Haunting, Wilderness, Mystery — each a deep, hand-written content system, not a mad-lib |
+| **Real knobs** | Level 1–20, party size 2–7, four difficulties, 2/3/4-hour session length (the structure actually changes) |
+| **Surgical re-rolls** | New villain, same map. New twist, same everything else. Every section has its own dice, and re-rolls stay in the shareable URL |
+| **Shareable seeds** | The whole adventure derives from the URL — share it, bookmark it, post it |
+| **Print-perfect** | Print/PDF produces a real module: boxed text, keyed entries, stat tables, and the player-map handout on its own page |
+| **Markdown export** | One click copies the entire module as clean Markdown for Obsidian, Notion, or your prep doc |
+| **Local vault** | Save adventures and characters in your browser — rename, reopen, export JSON |
+| **Character creator** | Pick a role and level, get a complete legal 5e character on a goldenrod-style record sheet with tactics that tell you what to do on your turn |
+| **Pregen library** | Ready-made heroes with concepts, voices, and jobs |
+
+![The goldenrod character record sheet](docs/screenshots/character-sheet.png)
 
 ## Quick start
 
@@ -29,122 +68,71 @@ with a local Character Vault plus a pacing clock for game masters.
 git clone https://github.com/rages4calm/oneshotsmith.git
 cd oneshotsmith
 pnpm install
-
-# optional: local environment overrides
-cp apps/web/.env.example apps/web/.env.local
-
-pnpm dev
+pnpm dev            # web app on http://localhost:3000
 ```
 
-| Service   | URL                  |
-|-----------|----------------------|
-| Web app   | http://localhost:3000 |
-| PartyKit* | http://localhost:1999 |
+Build a static export (deploys anywhere — it's just files):
 
-\*PartyKit powers future real-time features. You can stop it while working on
-the UI if you like.
+```bash
+pnpm build          # output in apps/web/out
+```
 
-Need more detail? See [QUICK_START.md](./QUICK_START.md) or the full
-[SETUP_GUIDE.md](./SETUP_GUIDE.md).
+Run the test suite (determinism, DMG math, map integrity):
 
----
+```bash
+pnpm test
+```
 
-## What's new
+## How the generation works
 
-### Character Vault
+Everything derives from a seed string through independent, per-section RNG streams
+(`hash(seed + section + nonce)`), which is what makes surgical re-rolls possible:
+bumping the villain's nonce regenerates the villain — and every sentence that
+mentions them — without touching the map, the title, or the treasure.
 
-- Saves directly from the creator with friendly labels and role badges.
-- Supports rename, delete, reopen, clipboard summary, and JSON export.
-- Lives entirely in `localStorage` so no account is ever required.
+- `packages/core/src/data/themes/` — six theme packs: sites, hooks, villains,
+  twists, clue pools, scene templates, complications (~3,000 lines of original,
+  playable content)
+- `packages/core/src/data/monsters.ts` — 80+ SRD 5.1 monsters with CR, XP, and
+  stat lines, tagged for theme palettes
+- `packages/core/src/data/encounter-math.ts` — the 2014 DMG thresholds and
+  multipliers, the 2024 revised budgets, adventuring-day XP, and the Lazy Benchmark
+- `packages/core/src/generators/oneshot.ts` — assembles the module: scene
+  structure by session length, encounter building against the party budget, clue
+  distribution, pacing
+- `packages/core/src/generators/dungeon-map.ts` — procedural site maps (room
+  placement, corridor MST with loops, doors, features), rendered as SVG in the
+  classic blue style
 
-### Session pacing clock
-
-- Generates a complete timeline for 2, 3, or 4 hour runs.
-- Adds theme- and difficulty-aware guidance for each segment.
-- Uses progress bars to keep track of the remaining time at a glance.
-
-### Creator upgrades
-
-- Pregens pull their concept and highlight notes into the final sheet.
-- Save/clipboard actions include those highlights when relevant.
-- Header actions link directly to the vault for quick reopen flows.
-
----
-
-## Project snapshot
+## Project structure
 
 ```
 apps/
-  web/                     Next.js 15 frontend
-    src/app/
-      page.tsx             Landing page
-      character-creator/   Character wizard
-      character-vault/     Local save/load UI
-      one-shot-generator/  Adventure tools
-      pregen-library/      Curated pregenerated heroes
-    public/images/         Marketing artwork
-  worker/                  PartyKit server (future multiplayer)
+  web/                  Next.js 15 app (static export — no server required)
 packages/
-  core/                    Character & adventure generators
-  ui/                      Shared shadcn/ui components
-  adapters/                PDF/VTT helpers (scaffolding)
-scripts/
-  post-export.mjs          Copies export aliases for cPanel hosting
+  core/                 The engine: generators, theme packs, SRD data, math
+  ui/                   Shared UI primitives
+  adapters/, db/        Scaffolding for future VTT export / sync (unused at runtime)
 ```
 
----
+## Legal
 
-## Tooling
+- **Code:** MIT License
+- **Game content:** This work includes material from the System Reference Document
+  5.1 ("SRD 5.1") by Wizards of the Coast LLC, available at
+  https://www.dndbeyond.com/srd. The SRD 5.1 is licensed under the Creative Commons
+  Attribution 4.0 International License. OneShotsmith is an independent product and
+  is not affiliated with Wizards of the Coast.
+- All adventure prose, names, and theme content are original.
 
-| Area     | Stack                                                     |
-|----------|-----------------------------------------------------------|
-| Frontend | Next.js 15, React 18, TypeScript 5.7, Tailwind, shadcn/ui |
-| Build    | pnpm workspace, static export, ESLint 9 flat config       |
-| Testing  | Vitest, Playwright, TypeScript strict mode                |
+## Roadmap
 
-Common scripts:
-
-```bash
-pnpm dev                               # run dev servers
-pnpm --filter @oneshotsmith/web build  # static export in apps/web/out
-pnpm lint                              # ESLint
-pnpm typecheck                         # TypeScript
-pnpm test                              # Vitest
-pnpm e2e                               # Playwright
-```
-
-Extended commands for database scaffolding (if you enable it later) live in
-`package.json` and mirror the scripts documented in `SETUP_GUIDE.md`.
+- Universal VTT export (`.uvtt` walls/doors/lighting for Foundry, Roll20, Arkenforge)
+- A "run mode" initiative tracker preloaded with the module's monsters
+- Pregen party pack matched to the generated adventure's hooks
+- 2024 rules toggle surfaced in the UI (the math already ships in the engine)
 
 ---
 
-## Deployment
-
-- **Vercel:** import the repository and ship with no extra configuration required.
-- **Static hosting / cPanel:** run the filtered build command above, upload
-  `apps/web/out`, and include the generated `.htaccess`. The export script also
-  creates `oneshot.html` and `oneshot.txt` for existing hosting requirements.
-- **Docker:** build with `docker build -t oneshotsmith .` and run with
-  `docker run -p 3000:3000 oneshotsmith`.
-
-Full instructions, including environment variables and troubleshooting, live in
-[SETUP_GUIDE.md](./SETUP_GUIDE.md).
-
----
-
-## Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for
-coding standards, branching strategy, and commit conventions before opening an
-issue or pull request.
-
----
-
-## License
-
-- **Code:** [MIT License](./LICENSE)
-- **D&D 5e SRD content:** Creative Commons Attribution 4.0 (CC-BY-4.0)
-
-If OneShotsmith helps your table, star the repo and share your session notes!
-
-
+Built by [Carl Prewitt Jr](https://github.com/rages4calm). If OneShotsmith saved
+your game night, a star helps other DMs find it.

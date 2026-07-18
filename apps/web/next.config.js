@@ -9,6 +9,7 @@ const nextConfig = {
   ...(USE_BASE_PATH && { basePath: BASE_PATH }), // Only apply basePath for cPanel
   ...(USE_BASE_PATH && { assetPrefix: BASE_PATH }), // Only apply assetPrefix for cPanel
   reactStrictMode: true,
+  devIndicators: false,
   env: {
     NEXT_PUBLIC_BASE_PATH: BASE_PATH,
   },

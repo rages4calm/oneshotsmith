@@ -1,369 +1,342 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@oneshotsmith/ui";
-import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Dice5, FolderOpen, ScrollText, Sparkles, Users } from "lucide-react";
+import type { OneShotInput, OneShotTheme } from "@oneshotsmith/core";
+import { ALL_THEMES, generateOneShot, randomSeed, XP_THRESHOLDS } from "@oneshotsmith/core";
+import { SiteHeader } from "../components/site-header";
+import { SiteFooter } from "../components/site-footer";
+import { DungeonMapSVG } from "../components/dungeon-map-svg";
+import { inputToParams } from "../lib/share";
+
+// The landing hero is a real generated module cover — the output IS the pitch.
+// A fixed default seed keeps server and client HTML identical on first paint.
+
+const COVER_DEFAULT: OneShotInput = {
+  seed: "welcome",
+  theme: "Dungeon Crawl",
+  level: 3,
+  partySize: 5,
+  difficulty: "Medium",
+  timebox: "3h",
+};
 
 export default function HomePage() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const withBasePath = (path: string) => `${basePath}${path}`;
+  const [coverInput, setCoverInput] = useState<OneShotInput>(COVER_DEFAULT);
+  const [stamped, setStamped] = useState(false);
+  const packet = useMemo(() => generateOneShot(coverInput), [coverInput]);
 
-  const inspirationShots = [
-    {
-      src: "/images/cinematic.png",
-      alt: "Adventuring party planning around a glowing battle map",
-      title: "Cinematic Session Energy",
-      blurb: "Set the tone at the table with vivid prompts that capture the drama of your one-shot.",
-    },
-    {
-      src: "/images/topdown.png",
-      alt: "Game master desk from above with dice, character sheets and artifacts",
-      title: "GM Control Station",
-      blurb: "Organize every detail from characters to treasure in one streamlined control panel.",
-    },
-    {
-      src: "/images/heroic.png",
-      alt: "Victorious heroes celebrating after defeating a dragon",
-      title: "Heroic Moments",
-      blurb: "Keep the spotlight rotating so everyone gets a cinematic moment to remember.",
-    },
-  ];
+  const newCover = () => {
+    const theme = ALL_THEMES[Math.floor(Math.random() * ALL_THEMES.length)] as OneShotTheme;
+    setCoverInput({ ...coverInput, seed: randomSeed(), theme });
+    setStamped(true);
+  };
 
-  const featureCards: Array<{
-    title: string;
-    description: string;
-    icon: LucideIcon;
-    gradient: string;
-    hoverBorder: string;
-    hoverShadow: string;
-  }> = [
-    {
-      title: "Smart Character Builder",
-      description:
-        "Pick a role, level, and generate a complete character with abilities, equipment, and tactical tips.",
-      icon: Sparkles,
-      gradient: "from-purple-500 to-pink-500",
-      hoverBorder: "hover:border-purple-500/50",
-      hoverShadow: "hover:shadow-purple-500/10",
-    },
-    {
-      title: "One-Shot Adventures",
-      description:
-        "Generate full adventures with hooks, encounters, NPCs, and treasure, ready for 2-4 hour sessions.",
-      icon: ScrollText,
-      gradient: "from-blue-500 to-cyan-500",
-      hoverBorder: "hover:border-blue-500/50",
-      hoverShadow: "hover:shadow-blue-500/10",
-    },
-    {
-      title: "Party Balance Meter",
-      description:
-        "Track healing, control, and utility coverage as players join so every party feels ready for action.",
-      icon: Users,
-      gradient: "from-pink-500 to-purple-500",
-      hoverBorder: "hover:border-pink-500/50",
-      hoverShadow: "hover:shadow-pink-500/10",
-    },
-  ];
+  const openHref = `/one-shot-generator?${inputToParams(coverInput).toString()}`;
+  const sampleScene = packet.scenes.find((s) => s.readAloud) ?? packet.scenes[0];
+  const sampleEncounter = packet.scenes.find((s) => s.encounter)?.encounter;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Hero Section */}
-      <main className="relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        </div>
+    <div className="flex min-h-screen flex-col bg-paper">
+      <SiteHeader />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          {/* Header/Nav */}
-          <nav className="flex items-center justify-between mb-16">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <ArrowRight className="text-white" aria-hidden="true" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-                OneShotsmith
-              </span>
-            </div>
-            <a
-              href="https://github.com/rages4calm/oneshotsmith"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="ghost" className="text-slate-300 hover:text-white">
-                GitHub
-              </Button>
-            </a>
-          </nav>
-
-          {/* Hero Content */}
-          <div className="text-center space-y-8 mb-20">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-              </span>
-              D&D 5e SRD 5.1 - Free & Open Source
-            </div>
-
-            {/* Main Heading */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight">
-              <span className="block text-white mb-2">
-                Get Players
-              </span>
-              <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-blue-500 bg-clip-text text-transparent">
-                Table-Ready
-              </span>
-              <span className="block text-white">
-                in 10 Minutes
-              </span>
+      <main className="flex-1">
+        {/* ============================================ Hero: the cover */}
+        <section className="px-4 pb-16 pt-10 sm:px-6 sm:pt-14">
+          <div className="mx-auto max-w-3xl">
+            <p className="display-caps-wide text-center text-[0.72rem] font-semibold text-ink-soft">
+              Free &middot; no accounts &middot; runs entirely in your browser
+            </p>
+            <h1 className="mt-3 text-center font-serif text-[2rem] font-bold leading-[1.15] sm:text-[2.6rem]">
+              Complete D&amp;D one&#8209;shots, forged from a seed.
             </h1>
-
-            {/* Subheading */}
-            <p className="max-w-3xl mx-auto text-xl sm:text-2xl text-slate-300 leading-relaxed">
-              Fast D&D 5e character creation and one-shot adventures.
-              Zero prep panic. <span className="text-purple-400 font-semibold">Zero experience needed.</span>
+            <p className="mx-auto mt-3 max-w-[52ch] text-center text-[1.08rem] leading-relaxed text-ink-soft">
+              Keyed map, correct encounter math, villain with a plan, boxed text,
+              secrets, treasure — a printable adventure module in one click. This one
+              was generated live, just now:
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <Link href="/character-creator" prefetch={false}>
-                <Button
-                  size="lg"
-                  className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 hover:scale-105"
-                >
-                  Create Character
-                  <Dice5 className="ml-2 h-5 w-5" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link href="/one-shot-generator" prefetch={false}>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-8 py-6 text-lg font-semibold border-2 border-slate-700 bg-slate-900/70 text-white hover:border-purple-500 hover:bg-purple-500/20 transition-all duration-300 shadow-lg/40"
-                >
-                  Generate One-Shot
-                  <Dice5 className="ml-2 h-5 w-5" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link href="/character-vault" prefetch={false}>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-8 py-6 text-lg font-semibold border-2 border-blue-500/50 bg-slate-900/70 text-blue-100 hover:border-blue-400 hover:text-white transition-all duration-300 shadow-lg/40"
-                >
-                  Character Vault
-                  <FolderOpen className="ml-2 h-5 w-5" aria-hidden="true" />
-                </Button>
-              </Link>
-            </div>
-
-            {/* Social Proof */}
-            <div className="pt-8 text-sm text-slate-400">
-              <p>Trusted by GMs and new players worldwide</p>
-            </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {featureCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.title}
-                  className={`group relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${card.hoverBorder} ${card.hoverShadow}`}
-                >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="h-6 w-6 text-white" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3">{card.title}</h3>
-                  <p className="text-slate-400 leading-relaxed">{card.description}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Inspiration Gallery */}
-          <div className="mt-32">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
-              <div className="space-y-4 max-w-2xl">
-                <h2 className="text-4xl font-bold text-white">Build the Table Vibe</h2>
-                <p className="text-slate-400 text-lg">
-                  Capture the energy of your session with ready-to-go prompts you can drop into your prep doc,
-                  VTT, or table handouts.
-                </p>
+            {/* The module cover */}
+            <div className="module-frame mt-8 bg-paper p-5 sm:p-7">
+              <div className="display-caps-wide flex items-baseline justify-between gap-3 text-[0.62rem] font-semibold sm:text-[0.7rem]">
+                <span>Adventure Module {packet.moduleCode}</span>
+                <span>OneShotsmith &middot; 5E</span>
               </div>
-              <Link href="/pregen-library" prefetch={false} className="self-start">
-                <Button
-                  variant="outline"
-                  className="!bg-slate-900/70 border border-purple-500/60 text-purple-200 hover:border-purple-400 hover:text-white hover:!bg-purple-500/10"
-                >
-                  Browse Pregen Library
-                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-            </div>
+              <hr className="module-rule mt-2" aria-hidden="true" />
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {inspirationShots.map((shot) => (
-                <div
-                  key={shot.title}
-                  className="group bg-slate-900/40 border border-slate-800 rounded-3xl overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+              <div key={coverInput.seed} className="map-print mt-5 border-2 border-ink">
+                <DungeonMapSVG map={packet.map} animate={stamped} />
+              </div>
+
+              <h2 className="mt-5 text-center font-serif text-[1.6rem] font-bold leading-tight sm:text-[2rem]">
+                {packet.title}
+              </h2>
+              <p className="display-caps mt-2 text-center text-[0.66rem] font-medium tracking-[0.16em] text-ink-soft sm:text-[0.72rem]">
+                An adventure for {coverInput.partySize} characters of level {coverInput.level} &middot; {coverInput.theme}
+              </p>
+              <p className="mx-auto mt-3 max-w-[48ch] text-center font-serif text-[1.02rem] italic leading-relaxed">
+                {packet.tagline}
+              </p>
+
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link
+                  href={openHref}
+                  prefetch={false}
+                  className="display-caps border-2 border-map-deep bg-map-deep px-6 py-3 text-center text-[0.75rem] font-bold tracking-[0.12em] text-map-line transition-colors hover:border-map-blue hover:bg-map-blue"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={withBasePath(shot.src)}
-                      alt={shot.alt}
-                      width={640}
-                      height={480}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  Run this adventure
+                </Link>
+                <button
+                  type="button"
+                  onClick={newCover}
+                  className="display-caps border-2 border-ink bg-paper px-6 py-3 text-[0.75rem] font-bold tracking-[0.12em] transition-colors hover:bg-paper-shade"
+                >
+                  Forge another
+                </button>
+              </div>
+              <p className="imprint mt-4 text-center">
+                seed {coverInput.seed} &middot; same seed, same adventure, forever
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================ The gap (blue band) */}
+        <section className="border-y-2 border-ink bg-map-deep px-4 py-14 text-map-line sm:px-6">
+          <div className="mx-auto max-w-3xl">
+            <p className="font-serif text-[1.35rem] italic leading-relaxed sm:text-[1.6rem]">
+              Map generators have no story. Story generators have no maps. Encounter
+              builders have no plot, and AI tools can&rsquo;t do the math.
+            </p>
+            <p className="mt-4 font-serif text-[1.35rem] font-bold leading-relaxed sm:text-[1.6rem]">
+              OneShotsmith does all four at once — deterministically, from a seed you
+              can share like a link to a song.
+            </p>
+            <div className="mt-8 grid gap-x-10 gap-y-4 text-[0.95rem] leading-relaxed opacity-90 sm:grid-cols-2">
+              <p><strong className="display-caps text-[0.7rem] tracking-[0.12em]">The map is the module.</strong><br />Every keyed room on the blue map is a scene in the text — not two tools taped together.</p>
+              <p><strong className="display-caps text-[0.7rem] tracking-[0.12em]">The math is real.</strong><br />2014 DMG XP thresholds and multipliers, the 2024 budgets, and Sly Flourish&rsquo;s Lazy Benchmark as a second opinion.</p>
+              <p><strong className="display-caps text-[0.7rem] tracking-[0.12em]">Re-roll surgically.</strong><br />New villain, same map. New twist, same everything else. Each section has its own dice.</p>
+              <p><strong className="display-caps text-[0.7rem] tracking-[0.12em]">Print like it&rsquo;s 1981.</strong><br />Boxed read-alouds, keyed entries, a player-safe map handout — a real module out of your printer.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================ Real excerpts */}
+        <section className="px-4 py-16 sm:px-6">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="display-caps text-center text-[1rem] font-bold tracking-[0.16em]">
+              What&rsquo;s inside every module
+            </h2>
+            <p className="mx-auto mt-2 max-w-[54ch] text-center text-ink-soft">
+              These aren&rsquo;t mock-ups — they&rsquo;re live excerpts from{" "}
+              <em>{packet.title}</em> above.
+            </p>
+
+            <div className="mt-10 grid items-start gap-8 lg:grid-cols-5">
+              <div className="lg:col-span-3">
+                <p className="imprint mb-2">Scene {sampleScene.key} &middot; {sampleScene.title}</p>
+                <div className="read-aloud">{sampleScene.readAloud}</div>
+                <ul className="mt-4 list-disc space-y-1.5 pl-5 text-[0.95rem]">
+                  {sampleScene.details.slice(0, 2).map((d, i) => (
+                    <li key={i}>{d}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="lg:col-span-2">
+                {sampleEncounter && (
+                  <div className="stat-block p-3.5">
+                    <div className="flex items-baseline justify-between">
+                      <span className="display-caps text-[0.65rem] font-bold tracking-[0.12em] text-stamp">Encounter</span>
+                      <span className="display-caps text-[0.6rem] text-ink-soft">
+                        {sampleEncounter.adjustedXP.toLocaleString()} XP vs. {sampleEncounter.budget.toLocaleString()} budget
+                      </span>
+                    </div>
+                    <table className="mt-2 w-full text-[0.9rem]">
+                      <tbody>
+                        {sampleEncounter.groups.map((g) => (
+                          <tr key={g.monster.name} className="border-b border-rule last:border-b-0">
+                            <td className="stat-block-name py-1.5 pr-2">{g.count > 1 ? `${g.count} × ` : ""}{g.monster.name}</td>
+                            <td className="py-1.5 text-right text-ink-soft">AC {g.monster.ac} &middot; {g.monster.hp} hp</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  <div className="p-6 space-y-3">
-                    <h3 className="text-xl font-semibold text-white">{shot.title}</h3>
-                    <p className="text-slate-400 leading-relaxed">{shot.blurb}</p>
-                  </div>
+                )}
+                <div className="mt-5 border border-rule bg-paper-shade p-3.5">
+                  <p className="display-caps text-[0.65rem] font-semibold tracking-[0.12em] text-ink-soft">Secrets &amp; clues</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {packet.clues.slice(0, 3).map((c, i) => (
+                      <li key={i} className="flex items-start gap-2 text-[0.88rem] leading-snug">
+                        <span aria-hidden="true" className="mt-1 inline-block h-2.5 w-2.5 flex-none border border-ink" />
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================ How it works */}
+        <section className="border-t-2 border-ink px-4 py-16 sm:px-6">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="display-caps text-center text-[1rem] font-bold tracking-[0.16em]">
+              Table-ready in three moves
+            </h2>
+            <ol className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-3">
+              {[
+                ["Choose the shape", "Theme, level 1–20, party size, difficulty, and how many hours you actually have."],
+                ["Forge the module", "One click. Zero loading bars — it's pure math, and it happens on your machine."],
+                ["Print or run live", "Print a real module (player map included), copy Markdown to your notes, or run it from the screen."],
+              ].map(([title, body], i) => (
+                <li key={title} className="text-center">
+                  <span className="key-circle mx-auto !h-9 !w-9 text-[1.1rem]">{i + 1}</span>
+                  <h3 className="mt-3 font-serif text-[1.15rem] font-bold">{title}</h3>
+                  <p className="mt-1.5 text-[0.95rem] leading-relaxed text-ink-soft">{body}</p>
+                </li>
               ))}
-            </div>
-          </div>
-
-          {/* How It Works */}
-          <div className="mt-32 text-center">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              How It Works
-            </h2>
-            <p className="text-slate-400 text-lg mb-16">
-              Three simple steps to epic adventures
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                  1
-                </div>
-                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 pt-12">
-                  <h3 className="text-xl font-semibold text-white mb-3">Choose Your Role</h3>
-                  <p className="text-slate-400">
-                    Frontliner, Skirmisher, Support, Control, or Face. Pick what sounds fun.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                  2
-                </div>
-                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 pt-12">
-                  <h3 className="text-xl font-semibold text-white mb-3">Click Generate</h3>
-                  <p className="text-slate-400">
-                    Our engine creates a balanced, playable character with everything you need.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-br from-pink-600 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                  3
-                </div>
-                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 pt-12">
-                  <h3 className="text-xl font-semibold text-white mb-3">Start Playing</h3>
-                  <p className="text-slate-400">
-                    Export to PDF, VTT, or use our digital character sheet. You're ready!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="mt-32 text-center bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/20 rounded-2xl p-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Ready to Create Your First Character?
-            </h2>
-            <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of players who've discovered the fastest way to get into D&D 5e.
-            </p>
-            <Link href="/character-creator" prefetch={false}>
-              <Button
-                size="lg"
-                className="px-10 py-6 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 hover:scale-105"
+            </ol>
+            <p className="mt-10 text-center">
+              <Link
+                href="/one-shot-generator"
+                prefetch={false}
+                className="display-caps inline-block border-2 border-map-deep bg-map-deep px-8 py-3 text-[0.78rem] font-bold tracking-[0.12em] text-map-line transition-colors hover:border-map-blue hover:bg-map-blue"
               >
-                Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
-              </Button>
-            </Link>
+                Open the generator
+              </Link>
+            </p>
           </div>
-        </div>
+        </section>
+
+        {/* ============================================ The math, shown */}
+        <section className="border-t-2 border-ink bg-paper-shade px-4 py-16 sm:px-6">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
+            <div>
+              <h2 className="display-caps text-[1rem] font-bold tracking-[0.16em]">
+                Encounter math you can defend
+              </h2>
+              <p className="mt-3 leading-relaxed">
+                Every fight is built against the actual 2014 <em>Dungeon Master&rsquo;s Guide</em> XP
+                thresholds for your exact party — with the official multipliers for monster
+                count and party size — then sanity-checked against Sly Flourish&rsquo;s Lazy
+                Encounter Benchmark, which catches the solo-boss and horde edge cases the
+                XP math famously misses. The revised 2024 budgets ship in the engine too.
+              </p>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                The module shows its work on every encounter: raw XP, adjusted XP,
+                budget, and multiplier. If a fight runs hot, it warns you before your
+                players find out the hard way.
+              </p>
+            </div>
+            <div className="stat-block bg-paper p-4">
+              <p className="display-caps text-[0.65rem] font-semibold tracking-[0.12em] text-ink-soft">
+                XP thresholds per character (2014 DMG)
+              </p>
+              <table className="mt-2 w-full text-center font-display text-[0.9rem]">
+                <thead>
+                  <tr className="display-caps border-b-2 border-ink text-[0.6rem] tracking-[0.1em]">
+                    <th className="py-1.5 text-left">Level</th>
+                    <th>Easy</th><th>Medium</th><th>Hard</th>
+                    <th className="text-stamp">Deadly</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[1, 3, 5, 8, 11, 17, 20].map((lvl) => (
+                    <tr key={lvl} className="border-b border-rule last:border-b-0">
+                      <td className="py-1.5 text-left font-bold">{lvl}</td>
+                      {XP_THRESHOLDS[lvl].map((xp, i) => (
+                        <td key={i} className={i === 3 ? "text-stamp" : undefined}>{xp.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================ Characters */}
+        <section className="border-t-2 border-ink px-4 py-16 sm:px-6">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
+            <div className="goldenrod-sheet order-2 p-5 lg:order-1">
+              <div className="flex items-baseline justify-between">
+                <p className="sheet-label">Character record</p>
+                <p className="sheet-label">OneShotsmith</p>
+              </div>
+              <p className="mt-2 font-serif text-[1.5rem] font-bold">Kara Ravenshaw</p>
+              <p className="sheet-label mt-0.5">Level 3 Human Fighter &middot; Folk Hero</p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center sm:grid-cols-6">
+                {[["STR", 16], ["DEX", 11], ["CON", 15], ["INT", 9], ["WIS", 13], ["CHA", 14]].map(([label, score]) => (
+                  <div key={label} className="sheet-box px-1 py-2">
+                    <p className="sheet-label">{label}</p>
+                    <p className="font-display text-[1.3rem] font-bold leading-none">{score}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                {[["Armor Class", 16], ["Hit Points", 31], ["Prof.", "+2"]].map(([label, v]) => (
+                  <div key={String(label)} className="sheet-box px-1 py-2">
+                    <p className="sheet-label">{label}</p>
+                    <p className="font-display text-[1.3rem] font-bold leading-none">{v}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[0.9rem] italic">
+                &ldquo;I face problems head-on. A simple, direct solution is the best path.&rdquo;
+              </p>
+            </div>
+            <div className="order-1 lg:order-2">
+              <h2 className="display-caps text-[1rem] font-bold tracking-[0.16em]">
+                Players get the goldenrod sheet
+              </h2>
+              <p className="mt-3 leading-relaxed">
+                Never played? Pick a role — Frontliner, Skirmisher, Support, Control, or
+                Face — and get a complete, legal character with tactics that tell you
+                what to actually do on your turn. Save heroes to a local vault, rename
+                them, and print sheets styled after the classic goldenrod record.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/character-creator"
+                  prefetch={false}
+                  className="display-caps border-2 border-map-deep bg-map-deep px-5 py-2.5 text-[0.72rem] font-bold tracking-[0.12em] text-map-line transition-colors hover:border-map-blue hover:bg-map-blue"
+                >
+                  Create a character
+                </Link>
+                <Link
+                  href="/pregen-library"
+                  prefetch={false}
+                  className="display-caps border-2 border-ink bg-paper px-5 py-2.5 text-[0.72rem] font-bold tracking-[0.12em] transition-colors hover:bg-paper-shade"
+                >
+                  Browse pregens
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================ Final CTA */}
+        <section className="border-t-2 border-ink bg-map-deep px-4 py-16 text-center text-map-line sm:px-6">
+          <h2 className="mx-auto max-w-[26ch] font-serif text-[1.8rem] font-bold leading-snug sm:text-[2.2rem]">
+            It&rsquo;s 6:40. The session is at 7:30. You have nothing.
+          </h2>
+          <p className="mx-auto mt-3 max-w-[44ch] font-serif text-[1.1rem] italic opacity-90">
+            You are, in fact, fine.
+          </p>
+          <Link
+            href="/one-shot-generator"
+            prefetch={false}
+            className="display-caps mt-8 inline-block border-2 border-map-line bg-map-line px-8 py-3 text-[0.78rem] font-bold tracking-[0.12em] text-map-deep transition-colors hover:bg-paper"
+          >
+            Forge tonight&rsquo;s adventure
+          </Link>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-800 mt-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-white" aria-hidden="true" />
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-                  OneShotsmith
-                </span>
-              </div>
-              <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-                Fast, friendly D&D 5e character creation and one-shot adventures.
-                Built with passion for the tabletop community.
-              </p>
-              <p className="text-slate-500 text-xs mt-4">
-                Code: MIT License | SRD Content: CC-BY-4.0
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/character-creator" prefetch={false} className="text-slate-400 hover:text-purple-400 transition">Character Creator</Link></li>
-                <li><Link href="/one-shot-generator" prefetch={false} className="text-slate-400 hover:text-purple-400 transition">One-Shot Generator</Link></li>
-                <li><Link href="/pregen-library" prefetch={false} className="text-slate-400 hover:text-purple-400 transition">Pregen Library</Link></li>
-                <li><Link href="/character-vault" prefetch={false} className="text-slate-400 hover:text-purple-400 transition">Character Vault</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a
-                    href="https://github.com/rages4calm/oneshotsmith"
-                    className="text-slate-400 hover:text-purple-400 transition"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    GitHub
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-500 text-sm">
-            <p>
-              Portions of the materials used are property of Wizards of the Coast LLC and are used under CC-BY-4.0.
-            </p>
-            <p className="mt-2">
-              {"\u00A9"} {new Date().getFullYear()} Carl Prewitt Jr. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
-
-
-
-

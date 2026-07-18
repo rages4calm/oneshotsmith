@@ -1,2 +1,0 @@
-// Core type definitions
-export {};

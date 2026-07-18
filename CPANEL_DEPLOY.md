@@ -110,18 +110,15 @@ Remove the `#` symbols to activate HTTPS redirect.
 
 ## ⚠️ Limitations of Static Export
 
-Since this is a **static HTML export**, these features won't work:
-- Real-time multiplayer (PartyKit)
-- Database storage (characters are not saved)
-- Server-side API routes
+Since this is a **static HTML export**, server-side API routes are unavailable —
+and OneShotsmith doesn't need any:
 
-**Everything else works perfectly:**
-- ✅ Character creator
-- ✅ Adventure generator
-- ✅ Beautiful UI and animations
-- ✅ All client-side features
+- ✅ One-shot generator (modules, maps, encounter math — all client-side)
+- ✅ Character creator and pregen library
+- ✅ Vault saves (browser localStorage — no database required)
+- ✅ Shareable seed URLs, printing, Markdown export
 
-Characters and adventures generate instantly in the browser!
+Everything generates instantly in the browser.
 
 ---
 
@@ -213,4 +210,4 @@ cd c:\Users\crono\Desktop\oneshot\apps\web
 vercel
 ```
 
-See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for details.
+See the [README](./README.md) for project details.
