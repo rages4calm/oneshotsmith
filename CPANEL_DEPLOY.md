@@ -176,19 +176,23 @@ Your `public_html/oneshot` should look like this:
 ```
 public_html/oneshot/
 ├── index.html
+├── 404.html
 ├── .htaccess
 ├── _next/
-│   ├── static/
-│   │   ├── chunks/
-│   │   ├── css/
-│   │   └── media/
-│   └── ...
-├── character-creator.html
-├── character-vault.html
-├── one-shot-generator.html
-├── pregen-library.html
-└── favicon.ico
+│   └── static/ ...
+├── art/
+├── character-creator/index.html
+├── character-vault/index.html
+├── one-shot-generator/index.html
+├── pregen-library/index.html
+├── icon.svg, icon-192.png, icon-512.png
+└── manifest.json
 ```
+
+Every page is a real folder with an `index.html`, so deep links work on any
+web server with zero rewrite rules. One optional touch: edit `.htaccess` and
+change the `ErrorDocument` line to `/oneshot/404.html` so bad URLs show the
+styled 404 page.
 
 ---
 

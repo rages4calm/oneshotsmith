@@ -6,6 +6,7 @@ const BASE_PATH = USE_BASE_PATH ? '/oneshot' : '';
 
 const nextConfig = {
   output: 'export', // Static HTML export for cPanel
+  trailingSlash: true, // route/index.html — deep links work on any static host, no rewrite rules needed
   ...(USE_BASE_PATH && { basePath: BASE_PATH }), // Only apply basePath for cPanel
   ...(USE_BASE_PATH && { assetPrefix: BASE_PATH }), // Only apply assetPrefix for cPanel
   reactStrictMode: true,

@@ -22,6 +22,8 @@ const alegreyaSC = Alegreya_SC({
   display: "swap",
 });
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "OneShotsmith — Complete D&D 5e One-Shot Adventures from a Seed",
   description:
@@ -30,6 +32,14 @@ export const metadata: Metadata = {
     "D&D", "DnD 5e", "one-shot", "adventure generator", "dungeon map generator",
     "encounter builder", "DM tools", "tabletop RPG",
   ],
+  manifest: `${basePath}/manifest.json`,
+  icons: {
+    icon: [
+      { url: `${basePath}/icon.svg`, type: "image/svg+xml" },
+      { url: `${basePath}/icon-192.png`, type: "image/png", sizes: "192x192" },
+    ],
+    apple: `${basePath}/icon-192.png`,
+  },
 };
 
 export default function RootLayout({
