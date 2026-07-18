@@ -166,6 +166,12 @@ export interface Scene {
   minutes: number;
   /** True if this scene can be skipped when running behind schedule. */
   cuttable?: boolean;
+  /**
+   * Connective tissue read before this scene opens: how the party gets here
+   * from the previous scene, built from the map's real geometry. Absent on
+   * the first scene (the hook delivers the party there).
+   */
+  transition?: string;
 }
 
 export interface Villain {
@@ -290,6 +296,11 @@ export interface OneShotPacket {
   };
   /** What to cut when running behind. */
   cutList: string[];
+  /**
+   * A ready-to-drop extra scene from the unused pool, for tables running
+   * ahead of schedule. Not keyed to the map (key 0). Optional in old saves.
+   */
+  spareScene?: Scene;
   tables: RandomTable[];
   pacing: PacingSegment[];
   /** Total XP across all encounters, and per-character share. */

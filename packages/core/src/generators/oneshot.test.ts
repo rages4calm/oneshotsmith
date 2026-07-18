@@ -86,6 +86,29 @@ describe("generateOneShot", () => {
     }
   });
 
+  it("every scene after the first carries a map-aware transition", () => {
+    for (const theme of ALL_THEMES) {
+      const packet = generateOneShot({ ...baseInput, theme, seed: `tr-${theme}` });
+      expect(packet.scenes[0].transition).toBeUndefined();
+      for (const scene of packet.scenes.slice(1)) {
+        expect(scene.transition, `${theme} / ${scene.title}`).toBeTruthy();
+        // The spatial half references real map areas and distances.
+        expect(scene.transition).toMatch(/area \d+/i);
+        expect(scene.transition).toMatch(/\d+ feet/);
+      }
+    }
+  });
+
+  it("offers a spare scene that is off-map and off-clock", () => {
+    const packet = generateOneShot(baseInput);
+    expect(packet.spareScene).toBeDefined();
+    expect(packet.spareScene!.key).toBe(0);
+    expect(packet.spareScene!.transition).toBeUndefined();
+    // The spare never duplicates a scene already in the session.
+    const titles = new Set(packet.scenes.map((s) => s.title));
+    expect(titles.has(packet.spareScene!.title)).toBe(false);
+  });
+
   it("climax includes the villain's stat block", () => {
     const packet = generateOneShot(baseInput);
     const climax = packet.scenes[packet.scenes.length - 1];

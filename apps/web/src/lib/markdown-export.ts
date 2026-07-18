@@ -3,7 +3,11 @@ import type { OneShotPacket, Scene } from "@oneshotsmith/core";
 // Markdown export for prep tools (Obsidian, Notion, plain text editors).
 
 function sceneToMarkdown(scene: Scene): string {
-  const lines: string[] = [`## ${scene.key}. ${scene.title}`, ""];
+  const heading = scene.key > 0 ? `${scene.key}. ${scene.title}` : `Spare scene: ${scene.title}`;
+  const lines: string[] = [`## ${heading}`, ""];
+  if (scene.transition) {
+    lines.push(`> **Getting there.** ${scene.transition}`, "");
+  }
   lines.push(`*${scene.type} · ~${scene.minutes} min${scene.cuttable ? " · cuttable" : ""}*`, "");
   if (scene.readAloud) {
     lines.push(`> **Read aloud:** ${scene.readAloud}`, "");
@@ -84,6 +88,13 @@ export function packetToMarkdown(packet: OneShotPacket): string {
     "# The Scenes",
     "",
     ...packet.scenes.map((s) => sceneToMarkdown(s)),
+    ...(packet.spareScene
+      ? [
+          "*The spare scene below is not on the map or the clock — drop it in only if the table runs ahead of schedule.*",
+          "",
+          sceneToMarkdown(packet.spareScene),
+        ]
+      : []),
     "## Secrets & Clues",
     "",
     ...packet.clues.map((c) => `- [ ] ${c}`),

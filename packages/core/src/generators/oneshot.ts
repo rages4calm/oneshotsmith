@@ -19,6 +19,7 @@ import { buildEncounter, partyThreshold } from "../data/encounter-math";
 import { npcName, randomAncestry, settlementName, tavernName, OCCUPATIONS, APPEARANCES, MANNERISMS, VOICES, npcGoalAndSecret } from "../data/names";
 import { treasureParcels, signatureItem } from "../data/treasure";
 import { generateDungeonMap } from "./dungeon-map";
+import { composeTransition } from "./transitions";
 import { THEME_PACKS } from "../data/themes";
 import { DC_BY_TIER, type SceneTemplate, type ThemePack } from "../data/themes/schema";
 
@@ -245,17 +246,17 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
 
   const middleDifficulty = stepDown(difficulty);
   let clueIdx = 0;
-  const scenes: Scene[] = templates.map(({ t, minutes }, i) => {
+  const makeScene = (t: SceneTemplate, id: string, key: number, minutes: number, cuttable: boolean): Scene => {
     const scene: Scene = {
-      id: `scene-${i + 1}`,
-      key: i + 1,
+      id,
+      key,
       title: fill(t.title, vars),
       type: t.type,
       readAloud: t.readAloud ? fill(t.readAloud, vars) : undefined,
       summary: fill(t.summary, vars),
       details: t.details.map((d) => fill(d, vars)),
       minutes,
-      cuttable: i > 0 && i < templates.length - 2 && !isCombatType(t.type),
+      cuttable,
     };
     if (isCombatType(t.type) && t.combat) {
       const isClimax = t.type === "climax";
@@ -279,7 +280,18 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
       scene.clue = clues[clueIdx++];
     }
     return scene;
-  });
+  };
+
+  const scenes: Scene[] = templates.map(({ t, minutes }, i) =>
+    makeScene(t, `scene-${i + 1}`, i + 1, minutes, i > 0 && i < templates.length - 2 && !isCombatType(t.type))
+  );
+
+  // A ready-to-drop extra scene from the unused middle pool, for tables that
+  // run fast. Not keyed to the map; the DM places it wherever it fits.
+  const spareTemplate = eligible(pack.scenes.middle).find((t) => !middlesT.includes(t));
+  const spareScene = spareTemplate
+    ? makeScene(spareTemplate, "scene-spare", 0, structure.minutes.middle, true)
+    : undefined;
 
   // --- Map -----------------------------------------------------------------
   const mapRng = rngFor("map", nonce("map"));
@@ -289,6 +301,13 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
     extraLabels: pickN(mapRng, site.roomLabels, 3),
     title: siteName,
   });
+
+  // --- Transitions ---------------------------------------------------------
+  // Composed after the map exists so distances and directions are real.
+  const transitionRng = rngFor("transitions", nonce("scenes"));
+  for (let i = 1; i < scenes.length; i++) {
+    scenes[i].transition = composeTransition(transitionRng, map, scenes[i - 1], scenes[i]);
+  }
 
   // --- Tables --------------------------------------------------------------
   const tableRng = rngFor("tables", nonce("tables"));
@@ -366,6 +385,7 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
     treasure: { parcels, signatureItem: item },
     scaling,
     cutList: pack.cutAdvice.map((c) => fill(c, vars)),
+    spareScene,
     tables,
     pacing,
     xpSummary: {

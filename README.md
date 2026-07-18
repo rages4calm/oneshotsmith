@@ -42,6 +42,13 @@ Every module ships the full anatomy of a professionally written one-shot:
   modules, with a player-safe version that prints as a separate handout
 - **4–6 scenes** matched to your session length, each with read-aloud text, DM notes,
   and a decision or lever — never just description
+- **Scene transitions** — "getting there" connective text between every scene,
+  generated from the map's actual geometry (direction, distance, doors) and aware
+  of what kind of scene just ended and what kind begins
+- **A floating spare scene** to drop in if the table runs fast, alongside the cut
+  list for tables running slow
+- **A first-time-DM primer** — the whole job in eight lines, so someone who has
+  never run a game can pick this up and go
 - **Encounters with honest math** — 2014 DMG XP thresholds and multipliers for your
   exact party size and level, monster stat lines inline (SRD 5.1), and Sly Flourish's
   Lazy Encounter Benchmark as a second opinion that flags the edge cases XP math misses

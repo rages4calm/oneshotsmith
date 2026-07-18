@@ -118,8 +118,17 @@ function EncounterBlock({ encounter, level, partySize }: { encounter: EncounterP
 function SceneEntry({ scene, level, partySize }: { scene: Scene; level: number; partySize: number }) {
   return (
     <section className="avoid-break mt-8 first:mt-5" aria-label={`Scene ${scene.key}: ${scene.title}`}>
+      {scene.transition && (
+        <p className="mb-4 flex items-start gap-2.5 border-y border-rule bg-paper-shade px-3.5 py-2.5 font-serif text-[0.95rem] italic leading-relaxed text-ink">
+          <svg viewBox="0 0 24 24" className="mt-1 h-3.5 w-3.5 flex-none" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 4 L14.5 13 L12 11.5 L9.5 13 Z" fill="currentColor" stroke="none" />
+          </svg>
+          <span><strong className="font-sc not-italic">Getting there.</strong> {scene.transition}</span>
+        </p>
+      )}
       <div className="flex items-center gap-3">
-        <span className="key-circle" aria-hidden="true">{scene.key}</span>
+        <span className="key-circle" aria-hidden="true">{scene.key > 0 ? scene.key : "+"}</span>
         <h3 className="font-serif text-[1.3rem] font-bold leading-snug">{scene.title}</h3>
       </div>
       <p className="imprint mt-1 pl-10">
@@ -230,6 +239,23 @@ export function ModuleSheet({ packet, onReroll }: Props) {
         Total combat XP {packet.xpSummary.total.toLocaleString()} ({packet.xpSummary.perCharacter.toLocaleString()} per character) — a full session&rsquo;s reward at this level.
       </p>
 
+      {/* First-time-DM primer: the module should be runnable cold. */}
+      <div className="avoid-break mt-5 border border-rule bg-paper-shade px-4 py-3.5">
+        <p className="display-caps text-[0.68rem] font-bold tracking-[0.14em] text-ink-soft">
+          Never run a game before? The whole job, in eight lines
+        </p>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-[0.9rem] leading-snug">
+          <li><strong className="font-sc">Prep</strong> = read this module once, top to bottom. That&rsquo;s it. Fifteen minutes.</li>
+          <li><strong className="font-sc">Boxed text</strong> is read aloud to the players, word for word. Everything else is yours alone.</li>
+          <li><strong className="font-sc">When a player tries something chancy</strong>, pick the listed skill and DC — they roll a d20, add their skill bonus, and meet-or-beat the DC to succeed.</li>
+          <li><strong className="font-sc">Combat:</strong> everyone rolls a d20 + initiative bonus to set turn order; on a turn you move and act; attacks that meet-or-beat the target&rsquo;s AC roll the listed damage against its HP.</li>
+          <li><strong className="font-sc">The monsters&rsquo; numbers</strong> are all in this module&rsquo;s encounter tables — you never need another book. The tactics lines tell you how they fight.</li>
+          <li><strong className="font-sc">Clues</strong> can be found anywhere — hand one out whenever players investigate, in any order. They&rsquo;re your steering wheel.</li>
+          <li><strong className="font-sc">Watch the clock column.</strong> Behind? Use the cut list. Ahead? Use the spare scene at the end of Part Three.</li>
+          <li><strong className="font-sc">One-shot parties spend everything</strong> — spells, potions, luck. When in doubt, let the fight run hot; the scaling notes have your back. And the golden rule: if it makes the table lean in, it&rsquo;s correct.</li>
+        </ol>
+      </div>
+
       {/* ------------------------------------------------ Hook */}
       <SectionHead section="hook" onReroll={onReroll}>Part One &middot; The Hook</SectionHead>
       <div className="mt-5 space-y-4">
@@ -337,6 +363,22 @@ export function ModuleSheet({ packet, onReroll }: Props) {
       {packet.scenes.map((scene) => (
         <SceneEntry key={scene.id} scene={scene} level={input.level} partySize={input.partySize} />
       ))}
+
+      {packet.spareScene && (
+        <>
+          <div className="avoid-break mt-10 border-2 border-dashed border-ink-soft bg-paper-shade px-4 py-3">
+            <p className="display-caps text-[0.68rem] font-bold tracking-[0.14em] text-ink-soft">
+              The spare scene &mdash; only if they&rsquo;re running fast
+            </p>
+            <p className="mt-1 text-[0.9rem] text-ink-soft">
+              Not on the map and not on the clock. If the table is ahead of schedule,
+              drop this in an unkeyed room or on the road between areas; otherwise it
+              never existed.
+            </p>
+          </div>
+          <SceneEntry scene={packet.spareScene} level={input.level} partySize={input.partySize} />
+        </>
+      )}
 
       {/* ------------------------------------------------ Secrets & twist */}
       <SectionHead section="twist" onReroll={onReroll}>Secrets &amp; Clues</SectionHead>
