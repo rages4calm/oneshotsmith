@@ -41,6 +41,32 @@ describe("generateOneShot", () => {
     expect(b.treasure).toEqual(a.treasure);
   });
 
+  it("re-roll results are independent of the order the user rolled in", () => {
+    // Generation is a pure function of (seed, settings, nonce-map) — the
+    // path taken to reach a set of re-roll counts must never matter.
+    // (Design note courtesy of u/tentkeys' playtest feedback on ordering.)
+    const viaVillainFirst = generateOneShot({
+      ...baseInput,
+      rerolls: { villain: 2, twist: 1, map: 3 },
+    });
+    const viaMapFirst = generateOneShot({
+      ...baseInput,
+      rerolls: { map: 3, twist: 1, villain: 2 },
+    });
+    expect(viaVillainFirst).toEqual(viaMapFirst);
+  });
+
+  it("re-rolling scenes leaves every other section's picks untouched", () => {
+    const a = generateOneShot(baseInput);
+    const b = generateOneShot({ ...baseInput, rerolls: { scenes: 3 } });
+    expect(b.title).toEqual(a.title);
+    expect(b.villain.name).toEqual(a.villain.name);
+    expect(b.npcs.map((n) => n.name)).toEqual(a.npcs.map((n) => n.name));
+    expect(b.twist).toEqual(a.twist);
+    expect(b.treasure.signatureItem.name).toEqual(a.treasure.signatureItem.name);
+    expect(b.location.name).toEqual(a.location.name);
+  });
+
   it("re-rolling the villain can change the villain", () => {
     const rolls = [0, 1, 2, 3, 4].map(
       (n) => generateOneShot({ ...baseInput, rerolls: { villain: n } }).villain.name
