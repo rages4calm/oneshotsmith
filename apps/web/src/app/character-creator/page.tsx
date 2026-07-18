@@ -64,7 +64,9 @@ function CreatorInner() {
     if (!loadId || appliedLoadId === loadId) return;
     const stored = readStoredCharacters().find((c) => c.id === loadId);
     if (!stored) return;
-    const { id, pregenSlug, savedAt: _savedAt, label: _label, source: _source, ...rest } = stored;
+    // Strip the storage-only fields; what remains is the Character.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, pregenSlug, savedAt, label, source, ...rest } = stored;
     setCharacter(rest as Character);
     setLevel(stored.level as CharacterLevel);
     setRole(stored.role as Role);
