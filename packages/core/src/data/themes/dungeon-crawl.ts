@@ -420,12 +420,12 @@ export const DUNGEON_CRAWL: ThemePack = {
         readAloud:
           "The final chamber is a drum of stone around a single object: the last seal, a disk of gray metal the size of a millstone, and the only thing in {site} with no dust on it at all. {villain} stands over it, work interrupted, and for one long moment nobody moves — because everyone in this room, on both sides, can hear what is on the other side of that seal, and it has noticed the door is thinner.",
         summary:
-          "The finale: stop {villain} at the seal itself. The fight has a clock, a centerpiece that must not break, and — if the party learned the wards' truth on the way down — more than one way to 'win.'",
+          "The finale: stop {villain} at the seal itself. The fight has a clock, a centerpiece that must not break, and — {?confession:armed with the warden's confession|if the party learned the wards' truth on the way down} — more than one way to 'win.'",
         details: [
           "Clock: each round, {villain} (or their strongest minion, if engaged) spends an action on the seal. After 4 such actions the seal opens — run the aftermath, not a TPK: what comes out is a campaign seed, and getting OUT alive becomes the scene.",
-          "The seal is terrain: standing ON it grants the villain's foes advantage against fear (the wards' last kindness — stated outright in the warden's confession, if the party found that letter).",
-          "The warden's seal (if carried) can, once, as an action: counter one villain action at the disk, banish one summoned guard, or re-lock one opened increment. Spend it like the plot coupon it is.",
-          "Endings that count as victory: villain dead or bound; villain PERSUADED (DC 15 Persuasion with the warden's confession in hand, DC 20 without); or the seal held for 6 rounds until the site's own defenses finish waking. State the survivors' walk out; it is earned.",
+          "The seal is terrain: standing ON it grants the villain's foes advantage against fear (the wards' last kindness — {?confession:stated outright in the warden's confession's postscript|a DC 12 Religion check while touching the disk intuits it}).",
+          "{?warden-seal:The warden's seal can, once, as an action: counter one villain action at the disk, banish one summoned guard, or re-lock one opened increment. Spend it like the plot coupon it is.}",
+          "Endings that count as victory: villain dead or bound; villain PERSUADED ({?confession:DC 15 Persuasion with the warden's confession in hand|DC 20 Persuasion — without the warden's written leverage, only raw conviction}); or the seal held for 6 rounds until the site's own defenses finish waking. State the survivors' walk out; it is earned.",
         ],
         combat: {
           tactics: "{villain} fights at the seal and will not be baited off it; minions screen and body-block. At half HP the villain offers terms one final time — safe passage for the seal left in peace — sincerely, mid-swing.",
@@ -461,7 +461,7 @@ export const DUNGEON_CRAWL: ThemePack = {
           "The standing court animates in waves of three per round once the villain falls below half HP — or instantly, all of them, if a party member touches the throne.",
           "The ceremony completes in 5 rounds. Completion doesn't end the fight; it PROMOTES the villain (max HP, +2 to hit, visibly wrong) — a second phase with the same initiative order.",
           "The banners burn beautifully: fire panics the court (they shield the banners over themselves — 1 round of wave-delay per banner burnt, three banners).",
-          "The throne is the site's true anchor (stated outright in the warden's confession if the party found it; otherwise DC 14 Arcana at the throne reveals it). Destroying it (AC 17, 40 HP, immune to piercing) ends the animation, the ceremony, and — gently, room by room — the site itself. Fifteen minutes to daylight. Make the walk out a victory lap with a countdown.",
+          "The throne is the site's true anchor ({?confession:the warden's confession states it outright|DC 14 Arcana at the throne reveals it}). Destroying it (AC 17, 40 HP, immune to piercing) ends the animation, the ceremony, and — gently, room by room — the site itself. Fifteen minutes to daylight. Make the walk out a victory lap with a countdown.",
         ],
         combat: {
           tactics: "{villain} opens with their strongest control option on the party's obvious heavy, monologues only while it holds, and uses the court as both shield wall and audience. They genuinely prefer the party alive until the ceremony completes.",

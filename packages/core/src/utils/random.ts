@@ -86,3 +86,22 @@ export function fill(template: string, vars: Record<string, string>): string {
       .replace(/\b([Tt]he) The\b/g, "$1")
   );
 }
+
+/**
+ * Resolve "{?flag:text-if-set|text-if-unset}" spans against a set of flags
+ * (the union of the selected scenes' `provides` tags). The else-branch is
+ * optional — "{?flag:text}" vanishes entirely when the flag is unset, so a
+ * whole detail bullet can be conditional. Runs after fill(), so branches
+ * contain no other braces. Design credit: u/tentkeys, who proposed resolving
+ * cross-piece references with a flag pass so any piece can combine with any
+ * other and re-rolls simply re-gather the flags.
+ */
+export function resolveFlags(text: string, flags: ReadonlySet<string>): string {
+  return text
+    .replace(/\{\?([\w-]+):([^{}|]*)(?:\|([^{}]*))?\}/g, (_m, flag: string, ifSet: string, ifUnset = "") =>
+      flags.has(flag) ? ifSet : ifUnset
+    )
+    .replace(/ {2,}/g, " ")
+    .replace(/ ([.,;:])/g, "$1")
+    .trim();
+}

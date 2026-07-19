@@ -42,10 +42,16 @@ export interface SceneTemplate {
   /**
    * Story-artifact tags this scene introduces (e.g. "confession").
    * Scenes are selected in session order; a scene whose `requires` tags are
-   * not all provided by earlier-selected scenes is ineligible. Text that only
-   * MENTIONS a sibling scene's artifact should instead be written
-   * conditionally ("if the party found the warden's confession…") so every
-   * combination reads correctly.
+   * not all provided by earlier-selected scenes is ineligible.
+   *
+   * Provides tags double as STORY FLAGS for conditional text spans. Any
+   * template string in any scene may write:
+   *   "{?confession:text when the providing scene was selected|fallback}"
+   * The else-branch is optional — "{?warden-seal:whole bullet}" makes a
+   * detail vanish entirely when unset. Flags are gathered from the four
+   * definite session slots only (never the spare scene, which may not run),
+   * and are re-gathered on every re-roll, so no combination can dangle.
+   * (Flag-pass design credit: u/tentkeys.)
    */
   provides?: string[];
   requires?: string[];

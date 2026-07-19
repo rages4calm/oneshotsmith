@@ -92,6 +92,8 @@ describe("generateOneShot", () => {
         expect(text).not.toMatch(/\{(villain|epithet|site|place|patron|tavern|monster|item|adj|noun)\}/);
         // Article collisions from interpolated proper nouns ("at the The Anvil").
         expect(text).not.toMatch(/\b[Tt]he The\b/);
+        // Unresolved flag-conditional spans must never reach players.
+        expect(text).not.toContain("{?");
       }
     }
   });
@@ -171,6 +173,47 @@ describe("generateOneShot", () => {
         }
       }
     }
+  });
+
+  it("resolves flag-conditional text to the correct branch in every adventure", () => {
+    // The confession flag set: modules must never mix branches. When the
+    // Warden's Confession scene is absent, no set-branch text may appear;
+    // when present, no fallback text may appear. Absence assertions hold
+    // regardless of which climax was rolled.
+    const SET_BRANCH = [
+      "warden's confession's postscript",
+      "with the warden's confession in hand",
+      "confession states it outright",
+      "The warden's seal can, once",
+    ];
+    const UNSET_BRANCH = [
+      "DC 14 Arcana at the throne",
+      "DC 12 Religion check while touching the disk",
+      "without the warden's written leverage",
+    ];
+    let sawSet = false;
+    let sawUnset = false;
+    for (let i = 0; i < 80; i++) {
+      const packet = generateOneShot({
+        seed: `flag-${i}`,
+        theme: "Dungeon Crawl",
+        level: 3,
+        partySize: 5,
+        difficulty: "Medium",
+        timebox: "3h",
+      });
+      const text = JSON.stringify(packet);
+      const hasConfession = packet.scenes.some((s) => s.title === "The Warden's Confession");
+      const forbidden = hasConfession ? UNSET_BRANCH : SET_BRANCH;
+      for (const phrase of forbidden) {
+        expect(text, `seed flag-${i} (confession: ${hasConfession})`).not.toContain(phrase);
+      }
+      if (hasConfession) sawSet = true;
+      else sawUnset = true;
+    }
+    // The scan must have exercised both states to prove anything.
+    expect(sawSet).toBe(true);
+    expect(sawUnset).toBe(true);
   });
 
   it("regression: no unconditional confession references (Reddit report, seed n0qwq5)", () => {

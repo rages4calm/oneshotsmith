@@ -13,7 +13,7 @@ import type {
   TimeBox,
   Villain,
 } from "../types";
-import { hashString, pick, pickN, sectionRng, fill, type Rng } from "../utils/random";
+import { hashString, pick, pickN, sectionRng, fill, resolveFlags, type Rng } from "../utils/random";
 import { MONSTERS, crValue } from "../data/monsters";
 import { buildEncounter, partyThreshold } from "../data/encounter-math";
 import { npcName, randomAncestry, settlementName, tavernName, OCCUPATIONS, APPEARANCES, MANNERISMS, VOICES, npcGoalAndSecret } from "../data/names";
@@ -245,16 +245,26 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
   ];
 
   const middleDifficulty = stepDown(difficulty);
+
+  // Story flags for conditional text spans ({?flag:…|…}) — the union of the
+  // definite session scenes' provides tags. The spare scene consumes flags
+  // but never sets them: it may not be run at all. Re-rolling any section
+  // simply re-gathers these on the next full regeneration.
+  const sessionFlags = new Set<string>(
+    [arrivalT, ...middlesT, revelationT, climaxT].flatMap((t) => t.provides ?? [])
+  );
+  const ff = (s: string) => resolveFlags(fill(s, vars), sessionFlags);
+
   let clueIdx = 0;
   const makeScene = (t: SceneTemplate, id: string, key: number, minutes: number, cuttable: boolean): Scene => {
     const scene: Scene = {
       id,
       key,
-      title: fill(t.title, vars),
+      title: ff(t.title),
       type: t.type,
-      readAloud: t.readAloud ? fill(t.readAloud, vars) : undefined,
-      summary: fill(t.summary, vars),
-      details: t.details.map((d) => fill(d, vars)),
+      readAloud: t.readAloud ? ff(t.readAloud) : undefined,
+      summary: ff(t.summary),
+      details: t.details.map((d) => ff(d)).filter(Boolean),
       minutes,
       cuttable,
     };
@@ -269,12 +279,18 @@ export function generateOneShot(input: OneShotInput): OneShotPacket {
         difficulty: isClimax ? difficulty : middleDifficulty,
         rng: sceneRng,
         anchor: isClimax ? villainStats : undefined,
-        tactics: fill(t.combat.tactics, vars),
-        terrain: fill(t.combat.terrain, vars),
+        tactics: ff(t.combat.tactics),
+        terrain: ff(t.combat.terrain),
       });
     }
     if (t.skill) {
-      scene.skillChallenge = resolveSkillChallenge(t.skill, level, vars);
+      const sc = resolveSkillChallenge(t.skill, level, vars);
+      scene.skillChallenge = {
+        description: resolveFlags(sc.description, sessionFlags),
+        checks: sc.checks.map((c) => ({ ...c, use: resolveFlags(c.use, sessionFlags) })),
+        success: resolveFlags(sc.success, sessionFlags),
+        failure: resolveFlags(sc.failure, sessionFlags),
+      };
     }
     if (t.type !== "climax" && clueIdx < clues.length) {
       scene.clue = clues[clueIdx++];

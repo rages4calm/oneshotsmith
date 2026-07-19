@@ -108,10 +108,13 @@ mentions them — without touching the map, the title, or the treasure.
 Re-rolls can't tangle, no matter what order you roll in: every re-roll re-runs
 the whole pipeline from scratch as a pure function of `(seed, settings,
 nonce-map)` — there is no incremental state to get out of sync, and the test
-suite proves order-independence directly. Cross-scene story references are
-written to be valid in every combination ("stated in the warden's confession
-*if the party found it* — otherwise DC 14 Arcana reveals it") rather than
-switched by flags, so no roll can strand a dangling reference.
+suite proves order-independence directly. Cross-scene story references resolve
+through a **story-flag pass** (design credit: u/tentkeys): a scene's `provides`
+tags set flags, and any text can write `{?confession:clean confident
+reference|self-contained fallback}` — so "per the warden's confession" appears
+only in adventures where that scene was actually rolled, a DC-based fallback
+renders otherwise, and re-rolls simply re-gather the flags. Tests assert no
+adventure can ever mix branches or leak an unresolved span.
 
 - `packages/core/src/data/themes/` — six theme packs: sites, hooks, villains,
   twists, clue pools, scene templates, complications (~3,000 lines of original,
