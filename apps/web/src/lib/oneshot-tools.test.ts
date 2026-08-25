@@ -73,9 +73,10 @@ class FakeController implements OneShotToolController {
   }
 }
 
-// Tool returns are deliberately loose (any JSON-serializable value, per spec),
-// so assertions index into a record rather than a typed shape.
-type ToolResult = Record<string, never> & { [key: string]: unknown };
+// Tool returns are deliberately loose — the spec allows any JSON-serializable
+// value — so assertions index into a dynamic record rather than a typed shape.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ToolResult = Record<string, any>;
 
 const call = (
   tools: ModelContextTool[],
