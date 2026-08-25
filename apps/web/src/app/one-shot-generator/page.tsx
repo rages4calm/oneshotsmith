@@ -14,6 +14,8 @@ import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { ModuleSheet } from "../../components/module-sheet";
 import { inputToParams, paramsToInput, themeSlug } from "../../lib/share";
+import { useWebMcp } from "../../hooks/use-webmcp";
+import type { OneShotToolController } from "../../lib/oneshot-tools";
 import { packetToMarkdown } from "../../lib/markdown-export";
 import { readSavedAdventures, saveAdventure } from "../../lib/adventure-storage";
 
@@ -84,6 +86,32 @@ export default function OneShotGeneratorPage() {
     },
     []
   );
+
+  // --- WebMCP -------------------------------------------------------------
+  // Agent tools mirror the controls on this page. The controller is rebuilt
+  // each render and read through a ref, so tools always act on current state
+  // while staying registered exactly once (see hooks/use-webmcp.ts).
+  const controllerRef = useRef<OneShotToolController>(
+    undefined as unknown as OneShotToolController
+  );
+  controllerRef.current = {
+    getState: () => ({ settings, seed, rerolls, packet }),
+    generate: ({ settings: settingsPatch, seed: seedPatch, rerolls: rerollsPatch }) => {
+      const nextSettings = settingsPatch ? { ...settings, ...settingsPatch } : settings;
+      const nextSeed = (seedPatch ?? seed) || randomSeed();
+      const nextRerolls = rerollsPatch ?? rerolls;
+      if (settingsPatch) setSettings(nextSettings);
+      if (nextSeed !== seed) setSeed(nextSeed);
+      if (rerollsPatch) setRerolls(nextRerolls);
+      return run(nextSettings, nextSeed, nextRerolls);
+    },
+    print: () => window.print(),
+    announce: (message) => flash(message),
+    shareUrl: (input) =>
+      `${window.location.origin}${window.location.pathname}?${inputToParams(input).toString()}`,
+    newSeed: () => randomSeed(),
+  };
+  const webmcp = useWebMcp(controllerRef);
 
   // Restore from URL (?s=…) or from a vault save (?load=…) on first mount.
   useEffect(() => {
@@ -214,10 +242,22 @@ export default function OneShotGeneratorPage() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         {/* ------------------------------------------------ Commission slip */}
         <section aria-label="Adventure settings" className="no-print border border-room-edge bg-room-raised">
-          <div className="border-b border-room-edge bg-room-deep px-4 py-2.5 sm:px-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-room-edge bg-room-deep px-4 py-2.5 sm:px-5">
             <h1 className="display-caps text-[0.85rem] font-bold tracking-[0.16em] text-brass">
               Commission an Adventure
             </h1>
+            {webmcp.available && (
+              <span
+                className="display-caps flex items-center gap-1.5 border border-brass-soft px-2 py-0.5 text-[0.58rem] font-semibold text-brass"
+                title={`WebMCP tools registered on ${webmcp.surface}.modelContext — an AI agent in this browser can drive this page directly.`}
+              >
+                <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brass opacity-70" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brass" />
+                </span>
+                {webmcp.toolCount} agent tools live
+              </span>
+            )}
           </div>
 
           <div className="grid gap-x-8 gap-y-6 px-4 py-5 sm:px-5 lg:grid-cols-[1fr_auto]">
@@ -398,6 +438,15 @@ export default function OneShotGeneratorPage() {
           </div>
         </section>
 
+        {/* Always visible: the human sees every agent action land here. */}
+        <div aria-live="polite" className="no-print">
+          {feedback && (
+            <p className="mt-3 border border-success bg-room-raised px-3 py-2 font-serif text-sm italic text-[color:var(--success-bright)]">
+              {feedback}
+            </p>
+          )}
+        </div>
+
         {/* ------------------------------------------------ Output */}
         {packet ? (
           <>
@@ -421,14 +470,6 @@ export default function OneShotGeneratorPage() {
                   </button>
                 </div>
               </div>
-            </div>
-
-            <div aria-live="polite" className="no-print">
-              {feedback && (
-                <p className="mt-3 border border-success bg-room-raised px-3 py-2 font-serif text-sm italic text-[color:var(--success-bright)]">
-                  {feedback}
-                </p>
-              )}
             </div>
 
             <div className="mt-6">

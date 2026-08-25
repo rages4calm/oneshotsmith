@@ -61,6 +61,19 @@ Every module ships the full anatomy of a professionally written one-shot:
 
 ![A generated Haunting module — The Nursery Remembers](docs/screenshots/module.png)
 
+## Agent-ready: WebMCP built in
+
+OneShotsmith registers eight [WebMCP](https://webmachinelearning.github.io/webmcp/)
+tools, so an AI agent in your browser can drive the generator with typed
+parameters instead of scraping the page — and you watch the module change as it
+works. Ask for *"a three-hour haunting for four level-5 players, then keep the map
+but give me a different villain"* and it happens, on screen, with the encounter
+math still correct and the permalink still reproducible.
+
+The division of labor is the point: **the agent brings language and taste; the page
+brings the DMG math, the keyed map, and exact reproducibility.** Neither can do the
+other's job. Full details, tool table, and local test instructions: **[WEBMCP.md](WEBMCP.md)**.
+
 ## Features
 
 | | |
@@ -74,6 +87,7 @@ Every module ships the full anatomy of a professionally written one-shot:
 | **Local vault** | Save adventures and characters in your browser — rename, reopen, export JSON |
 | **Character creator** | Pick a role and level, get a complete legal 5e character on a goldenrod-style record sheet with tactics that tell you what to do on your turn |
 | **Pregen library** | Ready-made heroes with concepts, voices, and jobs |
+| **WebMCP tools** | Eight registered tools let an AI agent generate, re-roll, re-budget, read, and print modules — mirroring the UI exactly ([WEBMCP.md](WEBMCP.md)) |
 
 ![The goldenrod character record sheet](docs/screenshots/character-sheet.png)
 
