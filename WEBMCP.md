@@ -12,6 +12,42 @@ job, and an agent cannot fake the page's half by scraping it.
 
 ---
 
+## Prior work vs. work done for the WebMCP Challenge
+
+OneShotsmith existed before the challenge. Everything below is the honest line
+between what was already built and what was added with WebMCP during the
+submission period (which opened **25 Aug 2026, 11:00 AM PT**).
+
+**Added during the submission period — the WebMCP extension.**
+Commit [`7ac9ec0`](https://github.com/rages4calm/oneshotsmith/commit/7ac9ec0),
+authored **25 Aug 2026, 1:56 PM PT** (`2026-08-25T15:56:19-05:00`), +1,158 lines:
+
+| File | New | Purpose |
+|---|---|---|
+| `apps/web/src/lib/webmcp.ts` | ✓ | Dual-surface detection and registration |
+| `apps/web/src/lib/oneshot-tools.ts` | ✓ | The eight tool definitions |
+| `apps/web/src/lib/oneshot-tools.test.ts` | ✓ | 12 tests for the tool surface |
+| `apps/web/src/hooks/use-webmcp.ts` | ✓ | Registration lifecycle |
+| `WEBMCP.md` | ✓ | This document |
+| `apps/web/src/app/one-shot-generator/page.tsx` | modified | Controller + "agent tools live" indicator |
+| `README.md`, `vitest.config.ts` | modified | Docs and test scope |
+
+Later commits in the period add the deploy script and this demo-video pipeline.
+
+**Prior work — everything before the period.** The generator engine, the six
+theme packs, the SRD monster data and DMG encounter math, the procedural map
+generator, the character creator, the vault, and the module/print design all
+predate the challenge. The last pre-period commit is
+[`a2047ce`](https://github.com/rages4calm/oneshotsmith/commit/a2047ce),
+**18 Jul 2026** — over a month before the submission window opened. `git log`
+shows the full history, and the gap between 18 Jul and 25 Aug is the boundary.
+
+That prior work is exactly why the WebMCP layer is worth judging: the tools
+expose a deterministic, rules-correct engine that an agent genuinely cannot
+reproduce by scraping a page.
+
+---
+
 ## The tools
 
 Every tool mirrors a control the human can already reach. There is no shadow API

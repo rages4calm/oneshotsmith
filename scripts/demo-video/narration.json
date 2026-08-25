@@ -1,0 +1,55 @@
+{
+  "voice_note": "Warm, dry, unhurried. A storyteller who has run a hundred sessions. Never salesy.",
+  "segments": [
+    {
+      "id": "01_cold_open",
+      "text": "It's twenty to seven. Your game starts at half past. And you have nothing prepared.",
+      "beat": "Hero: dark table, lamplight, module lying on the wood."
+    },
+    {
+      "id": "02_what_it_is",
+      "text": "OneShotsmith forges a complete Dungeons and Dragons one-shot in your browser. A keyed map. Encounters costed against the real rulebook math. A villain with an actual plan. No account, no server, and no AI anywhere in the generator.",
+      "beat": "Scroll the module: map, title, scenes."
+    },
+    {
+      "id": "03_webmcp",
+      "text": "It also registers eight WebMCP tools. So the AI in my browser doesn't have to squint at the page and guess. It can just call it.",
+      "beat": "Zoom the 'agent tools live' indicator."
+    },
+    {
+      "id": "04_generate",
+      "text": "One sentence. The agent picks the theme, sets the table, and the module appears. Map, scenes, encounters, treasure. Every number correct.",
+      "beat": "generate_oneshot fires; module renders."
+    },
+    {
+      "id": "05_reroll",
+      "text": "Now the part no screen-scraper could ever do. Keep the map. Give me a different villain. One section re-rolls. Everything else stays byte for byte identical, because every section rolls its own dice.",
+      "beat": "THE MONEY SHOT. reroll_section; villain changes, map does not."
+    },
+    {
+      "id": "06_adjust",
+      "text": "Someone drops out. Someone brings a level eight. Every fight is re-costed against the actual Dungeon Master's Guide thresholds, and the story never moves an inch.",
+      "beat": "adjust_party; XP numbers change, title and villain hold."
+    },
+    {
+      "id": "07_scene",
+      "text": "Ask it about scene three, and it reads the real scene. The page hands over the text. The model gives it a voice. Neither one is guessing.",
+      "beat": "get_scene returns; scroll the scene with read-aloud box."
+    },
+    {
+      "id": "08_print",
+      "text": "Then print it like it's nineteen eighty-one. Boxed text, keyed entries, and a player map on its own page.",
+      "beat": "Print view: module + handout."
+    },
+    {
+      "id": "09_permalink",
+      "text": "And the link regenerates it exactly. Same map, same villain, same maths. Forever.",
+      "beat": "Paste permalink in a clean window; identical module."
+    },
+    {
+      "id": "10_close",
+      "text": "The agent brings the language. The page brings the map, the maths, and the memory. Neither can do it alone. That's the whole idea.",
+      "beat": "Pull back to the lamplit table. End card."
+    }
+  ]
+}

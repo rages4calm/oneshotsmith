@@ -62,3 +62,11 @@ test-results/
 playwright-report/
 playwright/.cache/
 *.vsix
+
+# Demo video pipeline outputs (regenerate with scripts/demo-video)
+scripts/demo-video/audio/
+scripts/demo-video/raw-video/
+scripts/demo-video/work/
+scripts/demo-video/frames/
+scripts/demo-video/timings.json
+scripts/demo-video/*.mp4
