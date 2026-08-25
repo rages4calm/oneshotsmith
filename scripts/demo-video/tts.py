@@ -21,18 +21,23 @@ VOICE = "en-IE-ConnorNeural"
 RATE = "-6%"      # a touch slower: storyteller, not announcer
 PITCH = "-2Hz"
 
-# Silence padding after each line so beats can breathe (seconds).
+# Chatterbox reads at ~175 wpm regardless of cfg_weight, which is brisk for
+# narration. atempo slows it without touching pitch; 0.92 lands near 160 wpm.
+CHATTERBOX_TEMPO = 0.92
+
+# Silence padding after each line so beats can breathe, and so the video has
+# room to show what the tool call just did (seconds).
 GAP_AFTER = {
-    "01_cold_open": 1.1,
-    "02_what_it_is": 0.7,
-    "03_webmcp": 0.7,
-    "04_generate": 0.8,
-    "05_reroll": 0.9,
-    "06_adjust": 0.7,
-    "07_scene": 0.7,
-    "08_print": 0.6,
-    "09_permalink": 0.9,
-    "10_close": 1.4,
+    "01_cold_open": 1.2,
+    "02_what_it_is": 1.0,
+    "03_webmcp": 1.0,
+    "04_generate": 2.2,
+    "05_reroll": 2.6,
+    "06_adjust": 2.0,
+    "07_scene": 1.6,
+    "08_print": 1.8,
+    "09_permalink": 1.8,
+    "10_close": 1.6,
 }
 
 
@@ -56,7 +61,7 @@ async def synth_edge(segments):
 
 def synth_chatterbox(segments):
     import torch
-    import torchaudio
+    import soundfile as sf
     from chatterbox.tts import ChatterboxTTS
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -70,7 +75,16 @@ def synth_chatterbox(segments):
             cfg_weight=0.4,      # slower, more deliberate delivery
             temperature=0.7,
         )
-        torchaudio.save(str(target), wav, model.sr)
+        # torchaudio.save now routes through TorchCodec; soundfile keeps this
+        # independent of whichever audio backend torchaudio ships this month.
+        raw = OUT / f"_raw_{seg['id']}.wav"
+        sf.write(str(raw), wav.squeeze(0).detach().cpu().numpy(), model.sr)
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", str(raw), "-af", f"atempo={CHATTERBOX_TEMPO}",
+             "-ar", "48000", str(target)],
+            check=True, capture_output=True,
+        )
+        raw.unlink()
         print(f"  {seg['id']}: {duration(target):.2f}s")
 
 
