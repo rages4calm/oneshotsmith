@@ -15,7 +15,9 @@
     "db:migrate": "cd packages/db && drizzle-kit migrate",
     "db:studio": "cd packages/db && drizzle-kit studio",
     "dev:all": "pnpm -r --parallel dev",
-    "audit:prod": "node scripts/prod-audit.mjs"
+    "audit:prod": "node scripts/prod-audit.mjs",
+    "deploy": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1",
+    "deploy:preview": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 -DryRun"
   },
   "engines": {
     "node": ">=20",

@@ -1,5 +1,16 @@
 # 🚀 cPanel Deployment - Simple Guide
 
+> **Fastest path (zip upload):** run `$env:USE_BASE_PATH="true"; pnpm build`, then
+> upload `apps/web/out` as a zip to `public_html/oneshot` and use cPanel File
+> Manager's **Extract**. This guarantees the hidden `.htaccess` makes it, which is
+> the one file FTP clients love to skip.
+>
+> **One-command deploys:** `pnpm deploy` builds, verifies the `/oneshot` basePath
+> and `.htaccess`, then syncs over SFTP/FTP. It reads credentials from environment
+> variables you set in your own shell (see the header of `scripts/deploy.ps1`) —
+> nothing secret is ever stored in this repo. Use `pnpm deploy:preview` to see what
+> would change without uploading anything.
+
 Your OneShotsmith app will be deployed to **carl-prewitt.com/oneshot**
 
 This guide is for deploying to a **subdirectory** on your cPanel hosting.
